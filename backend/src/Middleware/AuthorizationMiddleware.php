@@ -29,6 +29,7 @@ final readonly class AuthorizationMiddleware implements MiddlewareInterface
         Routes::Health->value,
         Routes::AuthenticationLogin->value,
         Routes::AuthenticationSignUp->value,
+        Routes::Mcp->value,
     ];
 
     public function __construct(private UserProviderInterface $userProvider)

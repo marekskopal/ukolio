@@ -16,6 +16,6 @@ final class StderrLogger extends AbstractLogger
         if ($context !== []) {
             $line .= ' ' . json_encode($context, JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR);
         }
-        fwrite(STDERR, $line . PHP_EOL);
+        error_log($line);
     }
 }

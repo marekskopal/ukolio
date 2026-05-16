@@ -27,4 +27,6 @@ enum Routes: string
 
     case Task = '/api/tasks/{taskId:number}';
     case TaskMove = '/api/tasks/{taskId:number}/move';
+
+    case Mcp = '/api/mcp';
 }

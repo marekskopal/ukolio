@@ -26,6 +26,17 @@ docker compose --profile dev up -d        # +Adminer
 make migrate                               # Apply migrations
 ```
 
+## MCP server
+
+Exposed at `POST/GET/DELETE /api/mcp` (Streamable HTTP transport, `mcp/sdk`). Mirrors `fingather/backend/src/Mcp/`. Bearer auth: send the regular access JWT as `Authorization: Bearer <token>`. Sessions persisted to `MCP_SESSION_DIR` (defaults to `<tmp>/task-manager-mcp-sessions`).
+
+Tools live in `backend/src/Mcp/Tool/` (auto-discovered by basePath/scanDirs):
+- `ProjectTools` — list/find/get/create/delete projects
+- `WorkflowTools` — list/find statuses for a project's workflow
+- `TaskTools` — list/find/get/create/update/move/delete tasks (move accepts `statusId` or `statusName`)
+
+Designed for AI-agent-driven flows; the frontend stays for human overview.
+
 ## Testing
 
 ```bash

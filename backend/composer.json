@@ -16,6 +16,7 @@
         "marekskopal/orm": "^1.0",
         "marekskopal/orm-migrations": "^1.0",
         "marekskopal/router": "^1.1",
+        "mcp/sdk": "^0.5.0",
         "nette/caching": "^3.3",
         "nette/utils": "^4.0",
         "nyholm/psr7": "^1.8",
@@ -26,7 +27,8 @@
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "psr/log": "^3.0",
-        "symfony/console": "^8.0"
+        "symfony/console": "^8.0",
+        "symfony/finder": "^8.0"
     },
     "require-dev": {
         "phpstan/phpstan": "^2.0",

@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace TaskManager\App\ServiceProvider;
 
 use League\Container\ServiceProvider\AbstractServiceProvider;
+use Psr\Log\LoggerInterface;
+use TaskManager\Mcp\McpUserContext;
+use TaskManager\Mcp\McpUserContextInterface;
+use TaskManager\Mcp\Server\TaskManagerServer;
 use TaskManager\Service\Provider\EventProvider;
 use TaskManager\Service\Provider\EventProviderInterface;
 use TaskManager\Service\Provider\ProjectProvider;
@@ -32,6 +36,8 @@ final class DomainServiceProvider extends AbstractServiceProvider
             StatusProviderInterface::class,
             TaskProviderInterface::class,
             EventProviderInterface::class,
+            McpUserContextInterface::class,
+            TaskManagerServer::class,
         ], true);
     }
 
@@ -45,5 +51,11 @@ final class DomainServiceProvider extends AbstractServiceProvider
         $c->add(WorkflowProviderInterface::class, WorkflowProvider::class);
         $c->add(ProjectProviderInterface::class, ProjectProvider::class);
         $c->add(TaskProviderInterface::class, TaskProvider::class);
+        $c->add(McpUserContextInterface::class, McpUserContext::class);
+        $c->add(TaskManagerServer::class, function () use ($c) {
+            $logger = $c->get(LoggerInterface::class);
+            assert($logger instanceof LoggerInterface);
+            return new TaskManagerServer($c, $logger);
+        });
     }
 }
