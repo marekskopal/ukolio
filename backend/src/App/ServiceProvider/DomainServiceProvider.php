@@ -26,36 +26,36 @@ use TaskManager\Service\Request\RequestServiceInterface;
 
 final class DomainServiceProvider extends AbstractServiceProvider
 {
-    public function provides(string $id): bool
-    {
-        return in_array($id, [
-            RequestServiceInterface::class,
-            UserProviderInterface::class,
-            ProjectProviderInterface::class,
-            WorkflowProviderInterface::class,
-            StatusProviderInterface::class,
-            TaskProviderInterface::class,
-            EventProviderInterface::class,
-            McpUserContextInterface::class,
-            TaskManagerServer::class,
-        ], true);
-    }
+	public function provides(string $id): bool
+	{
+		return in_array($id, [
+			RequestServiceInterface::class,
+			UserProviderInterface::class,
+			ProjectProviderInterface::class,
+			WorkflowProviderInterface::class,
+			StatusProviderInterface::class,
+			TaskProviderInterface::class,
+			EventProviderInterface::class,
+			McpUserContextInterface::class,
+			TaskManagerServer::class,
+		], true);
+	}
 
-    public function register(): void
-    {
-        $c = $this->getContainer();
-        $c->add(RequestServiceInterface::class, RequestService::class);
-        $c->add(UserProviderInterface::class, UserProvider::class);
-        $c->add(EventProviderInterface::class, EventProvider::class);
-        $c->add(StatusProviderInterface::class, StatusProvider::class);
-        $c->add(WorkflowProviderInterface::class, WorkflowProvider::class);
-        $c->add(ProjectProviderInterface::class, ProjectProvider::class);
-        $c->add(TaskProviderInterface::class, TaskProvider::class);
-        $c->add(McpUserContextInterface::class, McpUserContext::class);
-        $c->add(TaskManagerServer::class, function () use ($c) {
-            $logger = $c->get(LoggerInterface::class);
-            assert($logger instanceof LoggerInterface);
-            return new TaskManagerServer($c, $logger);
-        });
-    }
+	public function register(): void
+	{
+		$c = $this->getContainer();
+		$c->add(RequestServiceInterface::class, RequestService::class);
+		$c->add(UserProviderInterface::class, UserProvider::class);
+		$c->add(EventProviderInterface::class, EventProvider::class);
+		$c->add(StatusProviderInterface::class, StatusProvider::class);
+		$c->add(WorkflowProviderInterface::class, WorkflowProvider::class);
+		$c->add(ProjectProviderInterface::class, ProjectProvider::class);
+		$c->add(TaskProviderInterface::class, TaskProvider::class);
+		$c->add(McpUserContextInterface::class, McpUserContext::class);
+		$c->add(TaskManagerServer::class, function () use ($c): TaskManagerServer {
+			$logger = $c->get(LoggerInterface::class);
+			assert($logger instanceof LoggerInterface);
+			return new TaskManagerServer($c, $logger);
+		});
+	}
 }

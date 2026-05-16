@@ -10,10 +10,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractCommand extends Command
 {
-    abstract protected function process(InputInterface $input, OutputInterface $output): int;
+	abstract protected function process(InputInterface $input, OutputInterface $output): int;
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        return $this->process($input, $output);
-    }
+	protected function execute(InputInterface $input, OutputInterface $output): int
+	{
+		return $this->process($input, $output);
+	}
 }

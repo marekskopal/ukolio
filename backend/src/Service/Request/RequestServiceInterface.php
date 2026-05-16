@@ -10,15 +10,15 @@ use TaskManager\Model\Entity\User;
 
 interface RequestServiceInterface
 {
-    public function getUser(ServerRequestInterface $request): User;
+	public function getUser(ServerRequestInterface $request): User;
 
-    /** @return array<mixed> */
-    public function getRequestBody(ServerRequestInterface $request): array;
+	/** @return array<mixed> */
+	public function getRequestBody(ServerRequestInterface $request): array;
 
-    /**
-     * @template T of ArrayFactoryInterface
-     * @param class-string<T> $dtoClass
-     * @return T
-     */
-    public function getRequestBodyDto(ServerRequestInterface $request, string $dtoClass): object;
+	/**
+	 * @param class-string<T> $dtoClass
+	 * @return T
+	 * @template T of ArrayFactoryInterface
+	 */
+	public function getRequestBodyDto(ServerRequestInterface $request, string $dtoClass): object;
 }

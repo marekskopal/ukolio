@@ -11,17 +11,17 @@ use TaskManager\Model\Entity\Status;
 /** @extends AbstractRepository<Status> */
 final class StatusRepository extends AbstractRepository
 {
-    public function findById(int $statusId): ?Status
-    {
-        return $this->findOne(['id' => $statusId]);
-    }
+	public function findById(int $statusId): ?Status
+	{
+		return $this->findOne(['id' => $statusId]);
+	}
 
-    /** @return Iterator<Status> */
-    public function findByWorkflow(int $workflowId): Iterator
-    {
-        return $this->select()
-            ->where(['workflow_id' => $workflowId])
-            ->orderBy('position', 'ASC')
-            ->fetchAll();
-    }
+	/** @return Iterator<Status> */
+	public function findByWorkflow(int $workflowId): Iterator
+	{
+		return $this->select()
+			->where(['workflow_id' => $workflowId])
+			->orderBy('position', 'ASC')
+			->fetchAll();
+	}
 }

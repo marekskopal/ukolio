@@ -44,3 +44,12 @@ make test           # All tests (backend + frontend)
 make test-backend   # PHPUnit
 make test-frontend  # Vitest
 ```
+
+## Linting
+
+Backend uses PHPStan at `max` level (with `bleedingEdge.neon` + strict/deprecation/phpunit/shipmonk rules + cognitive-complexity + unused-public) and PHPCS with the slevomat ruleset (ported from fingather; tabs, single-line method signatures ≤140 chars). Custom PHPStan extension `TaskManager\PhpStan\OrmReadWritePropertiesExtension` marks `Column`/`ManyToOne`/`ColumnEnum`-attributed properties as ORM-managed (always read, always written, always initialized).
+
+```bash
+make lint           # PHPStan + PHPCS
+make lint-fix       # phpcbf auto-fix
+```

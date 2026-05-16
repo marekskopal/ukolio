@@ -10,13 +10,13 @@ use TaskManager\Service\Authentication\AuthenticationServiceInterface;
 
 final class AuthenticationServiceProvider extends AbstractServiceProvider
 {
-    public function provides(string $id): bool
-    {
-        return $id === AuthenticationServiceInterface::class;
-    }
+	public function provides(string $id): bool
+	{
+		return $id === AuthenticationServiceInterface::class;
+	}
 
-    public function register(): void
-    {
-        $this->getContainer()->add(AuthenticationServiceInterface::class, AuthenticationService::class);
-    }
+	public function register(): void
+	{
+		$this->getContainer()->add(AuthenticationServiceInterface::class, AuthenticationService::class);
+	}
 }

@@ -12,13 +12,13 @@ use TaskManager\Model\Repository\UserRepository;
 #[Entity(repositoryClass: UserRepository::class)]
 class User extends AEntity
 {
-    public function __construct(
-        #[Column(type: Type::String)]
-        public string $email,
-        #[Column(type: Type::String)]
-        public string $password,
-        #[Column(type: Type::String)]
-        public string $name,
-    ) {
-    }
+	public function __construct(
+		#[Column(type: Type::String)]
+		public string $email,
+		#[Column(type: Type::String)]
+		public string $password,
+		#[Column(type: Type::String)]
+		public string $name,
+	) {
+	}
 }

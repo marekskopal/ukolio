@@ -1,4 +1,4 @@
-.PHONY: up down logs build migrate test test-backend test-frontend install
+.PHONY: up down logs build migrate test test-backend test-frontend lint lint-backend lint-fix install
 
 ## Start stack
 up:
@@ -35,3 +35,14 @@ test-backend:
 ## Frontend unit tests (Vitest)
 test-frontend:
 	cd frontend && pnpm run test
+
+## Backend static analysis + code style
+lint: lint-backend
+
+lint-backend:
+	cd backend && vendor/bin/phpstan analyse --no-progress
+	cd backend && vendor/bin/phpcs
+
+## Auto-fix backend code style
+lint-fix:
+	cd backend && vendor/bin/phpcbf

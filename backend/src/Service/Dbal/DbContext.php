@@ -13,38 +13,40 @@ use MarekSkopal\ORM\Schema\Schema;
 
 final readonly class DbContext
 {
-    private DatabaseInterface $database;
-    private Schema $schema;
-    private ORM $orm;
+	private DatabaseInterface $database;
 
-    public function __construct(string $host, string $name, string $user, string $password)
-    {
-        $this->database = new MySqlDatabase($host, $user, $password, $name);
+	private Schema $schema;
 
-        $this->schema = new SchemaBuilder()
-            ->addEntityPath(__DIR__ . '/../../Model/Entity')
-            ->build();
+	private ORM $orm;
 
-        $this->orm = new ORM($this->database, $this->schema);
-    }
+	public function __construct(string $host, string $name, string $user, string $password)
+	{
+		$this->database = new MySqlDatabase($host, $user, $password, $name);
 
-    public function getOrm(): ORM
-    {
-        return $this->orm;
-    }
+		$this->schema = new SchemaBuilder()
+			->addEntityPath(__DIR__ . '/../../Model/Entity')
+			->build();
 
-    public function getDatabase(): DatabaseInterface
-    {
-        return $this->database;
-    }
+		$this->orm = new ORM($this->database, $this->schema);
+	}
 
-    public function getMigrator(): Migrator
-    {
-        return new Migrator(__DIR__ . '/../../../migrations/', $this->database);
-    }
+	public function getOrm(): ORM
+	{
+		return $this->orm;
+	}
 
-    public function getSchema(): Schema
-    {
-        return $this->schema;
-    }
+	public function getDatabase(): DatabaseInterface
+	{
+		return $this->database;
+	}
+
+	public function getMigrator(): Migrator
+	{
+		return new Migrator(__DIR__ . '/../../../migrations/', $this->database);
+	}
+
+	public function getSchema(): Schema
+	{
+		return $this->schema;
+	}
 }

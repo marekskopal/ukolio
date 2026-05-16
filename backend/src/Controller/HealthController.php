@@ -12,9 +12,9 @@ use TaskManager\Route\Routes;
 
 final readonly class HealthController
 {
-    #[RouteGet(Routes::Health->value)]
-    public function actionHealth(ServerRequestInterface $request): ResponseInterface
-    {
-        return new JsonResponse(['status' => 'ok']);
-    }
+	#[RouteGet(Routes::Health->value)]
+	public function actionHealth(ServerRequestInterface $request): ResponseInterface
+	{
+		return new JsonResponse(['status' => 'ok']);
+	}
 }

@@ -10,20 +10,20 @@ use TaskManager\App\ApplicationFactory;
 
 final class MigrationGenerateCommand extends AbstractCommand
 {
-    protected function configure(): void
-    {
-        $this->setName('migration:generate');
-    }
+	protected function configure(): void
+	{
+		$this->setName('migration:generate');
+	}
 
-    protected function process(InputInterface $input, OutputInterface $output): int
-    {
-        $application = ApplicationFactory::create();
+	protected function process(InputInterface $input, OutputInterface $output): int
+	{
+		$application = ApplicationFactory::create();
 
-        $application->dbContext->getMigrator()->generate(
-            $application->dbContext->getSchema(),
-            name: 'NewMigration',
-        );
+		$application->dbContext->getMigrator()->generate(
+			$application->dbContext->getSchema(),
+			name: 'NewMigration',
+		);
 
-        return self::SUCCESS;
-    }
+		return self::SUCCESS;
+	}
 }

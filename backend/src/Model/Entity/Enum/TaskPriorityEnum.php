@@ -6,7 +6,7 @@ namespace TaskManager\Model\Entity\Enum;
 
 enum TaskPriorityEnum: string
 {
-    case Low = 'Low';
-    case Medium = 'Medium';
-    case High = 'High';
+	case Low = 'Low';
+	case Medium = 'Medium';
+	case High = 'High';
 }

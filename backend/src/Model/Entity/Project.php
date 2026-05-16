@@ -13,13 +13,13 @@ use TaskManager\Model\Repository\ProjectRepository;
 #[Entity(repositoryClass: ProjectRepository::class)]
 class Project extends AEntity
 {
-    public function __construct(
-        #[ManyToOne(entityClass: User::class)]
-        public readonly User $user,
-        #[Column(type: Type::String)]
-        public string $name,
-        #[Column(type: Type::Text, nullable: true)]
-        public ?string $description = null,
-    ) {
-    }
+	public function __construct(
+		#[ManyToOne(entityClass: User::class)]
+		public readonly User $user,
+		#[Column(type: Type::String)]
+		public string $name,
+		#[Column(type: Type::Text, nullable: true)]
+		public ?string $description = null,
+	) {
+	}
 }

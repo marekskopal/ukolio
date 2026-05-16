@@ -14,13 +14,13 @@ use TaskManager\Service\Request\RequestServiceInterface;
 
 final readonly class CurrentUserController
 {
-    public function __construct(private RequestServiceInterface $requestService)
-    {
-    }
+	public function __construct(private RequestServiceInterface $requestService)
+	{
+	}
 
-    #[RouteGet(Routes::CurrentUser->value)]
-    public function actionGetCurrentUser(ServerRequestInterface $request): ResponseInterface
-    {
-        return new JsonResponse(UserDto::fromEntity($this->requestService->getUser($request)));
-    }
+	#[RouteGet(Routes::CurrentUser->value)]
+	public function actionGetCurrentUser(ServerRequestInterface $request): ResponseInterface
+	{
+		return new JsonResponse(UserDto::fromEntity($this->requestService->getUser($request)));
+	}
 }

@@ -19,92 +19,92 @@ use TaskManager\Service\Provider\UserProviderInterface;
 
 final readonly class AuthorizationMiddleware implements MiddlewareInterface
 {
-    public const string AttributeToken = 'token';
-    public const string AttributeUser = 'user';
+	public const string AttributeUser = 'user';
 
-    public const string AuthHeader = 'Authorization';
-    public const string AuthHeaderType = 'Bearer ';
+	private const string AttributeToken = 'token';
+	private const string AuthHeader = 'Authorization';
+	private const string AuthHeaderType = 'Bearer ';
 
-    private const array OpenRoutes = [
-        Routes::Health->value,
-        Routes::AuthenticationLogin->value,
-        Routes::AuthenticationSignUp->value,
-        Routes::Mcp->value,
-    ];
+	private const array OpenRoutes = [
+		Routes::Health->value,
+		Routes::AuthenticationLogin->value,
+		Routes::AuthenticationSignUp->value,
+		Routes::Mcp->value,
+	];
 
-    public function __construct(private UserProviderInterface $userProvider)
-    {
-    }
+	public function __construct(private UserProviderInterface $userProvider)
+	{
+	}
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
-        if (in_array($request->getUri()->getPath(), self::OpenRoutes, strict: true)) {
-            return $handler->handle($request);
-        }
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+	{
+		if (in_array($request->getUri()->getPath(), self::OpenRoutes, strict: true)) {
+			return $handler->handle($request);
+		}
 
-        if ($request->getMethod() === 'OPTIONS') {
-            return $handler->handle($request);
-        }
+		if ($request->getMethod() === 'OPTIONS') {
+			return $handler->handle($request);
+		}
 
-        $jwtToken = $this->extractToken($request);
+		$jwtToken = $this->extractToken($request);
 
-        try {
-            /** @var object{id: int}&stdClass $token */
-            $token = JWT::decode(
-                $jwtToken,
-                new Key((string) getenv('AUTHORIZATION_TOKEN_KEY'), AuthenticationServiceInterface::TokenAlgorithm),
-            );
-        } catch (ExpiredException $exception) {
-            return $this->handleExpiredToken($request, $handler, $exception);
-        } catch (\Throwable $exception) {
-            throw new NotAuthorizedException('AccessToken is invalid.', $request, 401, $exception);
-        }
+		try {
+			/** @var object{id: int}&stdClass $token */
+			$token = JWT::decode(
+				$jwtToken,
+				new Key((string) getenv('AUTHORIZATION_TOKEN_KEY'), AuthenticationServiceInterface::TokenAlgorithm),
+			);
+		} catch (ExpiredException $exception) {
+			return $this->handleExpiredToken($request, $handler, $exception);
+		} catch (\Throwable $exception) {
+			throw new NotAuthorizedException('AccessToken is invalid.', $request, 401, $exception);
+		}
 
-        $request = $this->withUserAttribute($request, $token->id);
-        $request = $request->withAttribute(self::AttributeToken, $jwtToken);
+		$request = $this->withUserAttribute($request, $token->id);
+		$request = $request->withAttribute(self::AttributeToken, $jwtToken);
 
-        return $handler->handle($request);
-    }
+		return $handler->handle($request);
+	}
 
-    private function extractToken(ServerRequestInterface $request): string
-    {
-        $authorizationHeader = $request->getHeader(self::AuthHeader)[0] ?? null;
+	private function extractToken(ServerRequestInterface $request): string
+	{
+		$authorizationHeader = $request->getHeader(self::AuthHeader)[0] ?? null;
 
-        if ($authorizationHeader === null) {
-            throw new NotAuthorizedException('Authorization header not found', $request);
-        }
+		if ($authorizationHeader === null) {
+			throw new NotAuthorizedException('Authorization header not found', $request);
+		}
 
-        if (!str_starts_with($authorizationHeader, self::AuthHeaderType)) {
-            throw new NotAuthorizedException('Authorization header is not Bearer type', $request);
-        }
+		if (!str_starts_with($authorizationHeader, self::AuthHeaderType)) {
+			throw new NotAuthorizedException('Authorization header is not Bearer type', $request);
+		}
 
-        return substr($authorizationHeader, strlen(self::AuthHeaderType));
-    }
+		return substr($authorizationHeader, strlen(self::AuthHeaderType));
+	}
 
-    private function handleExpiredToken(
-        ServerRequestInterface $request,
-        RequestHandlerInterface $handler,
-        ExpiredException $exception,
-    ): ResponseInterface {
-        if ($request->getUri()->getPath() !== Routes::AuthenticationRefreshToken->value) {
-            throw new NotAuthorizedException('AccessToken is expired.', $request, 401, $exception);
-        }
+	private function handleExpiredToken(
+		ServerRequestInterface $request,
+		RequestHandlerInterface $handler,
+		ExpiredException $exception,
+	): ResponseInterface {
+		if ($request->getUri()->getPath() !== Routes::AuthenticationRefreshToken->value) {
+			throw new NotAuthorizedException('AccessToken is expired.', $request, 401, $exception);
+		}
 
-        /** @var object{id: int} $payload */
-        $payload = $exception->getPayload();
+		/** @var object{id: int} $payload */
+		$payload = $exception->getPayload();
 
-        $request = $this->withUserAttribute($request, $payload->id);
+		$request = $this->withUserAttribute($request, $payload->id);
 
-        return $handler->handle($request);
-    }
+		return $handler->handle($request);
+	}
 
-    private function withUserAttribute(ServerRequestInterface $request, int $userId): ServerRequestInterface
-    {
-        $user = $this->userProvider->getUser($userId);
-        if ($user === null) {
-            throw new NotAuthorizedException('User is not authorized.', $request);
-        }
+	private function withUserAttribute(ServerRequestInterface $request, int $userId): ServerRequestInterface
+	{
+		$user = $this->userProvider->getUser($userId);
+		if ($user === null) {
+			throw new NotAuthorizedException('User is not authorized.', $request);
+		}
 
-        return $request->withAttribute(self::AttributeUser, $user);
-    }
+		return $request->withAttribute(self::AttributeUser, $user);
+	}
 }

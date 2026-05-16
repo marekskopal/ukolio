@@ -13,11 +13,11 @@ use TaskManager\Model\Repository\WorkflowRepository;
 #[Entity(repositoryClass: WorkflowRepository::class)]
 class Workflow extends AEntity
 {
-    public function __construct(
-        #[ManyToOne(entityClass: Project::class)]
-        public readonly Project $project,
-        #[Column(type: Type::String)]
-        public string $name,
-    ) {
-    }
+	public function __construct(
+		#[ManyToOne(entityClass: Project::class)]
+		public readonly Project $project,
+		#[Column(type: Type::String)]
+		public string $name,
+	) {
+	}
 }

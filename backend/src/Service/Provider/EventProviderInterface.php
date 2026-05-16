@@ -12,9 +12,9 @@ use TaskManager\Model\Entity\User;
 
 interface EventProviderInterface
 {
-    /** @param array<string,mixed> $metadata */
-    public function recordEvent(User $author, Project $project, EventTypeEnum $type, array $metadata, ?int $taskId = null): Event;
+	/** @param array<string,mixed> $metadata */
+	public function recordEvent(User $author, Project $project, EventTypeEnum $type, array $metadata, ?int $taskId = null): Event;
 
-    /** @return Iterator<Event> */
-    public function getEvents(Project $project, int $limit = 100, int $offset = 0): Iterator;
+	/** @return Iterator<Event> */
+	public function getEvents(Project $project, int $limit = 100, int $offset = 0): Iterator;
 }

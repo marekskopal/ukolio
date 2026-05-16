@@ -12,23 +12,23 @@ use TaskManager\Service\Logger\StderrLogger;
 
 final class InfrastructureServiceProvider extends AbstractServiceProvider
 {
-    public function provides(string $id): bool
-    {
-        return in_array($id, [
-            LoggerInterface::class,
-            ResponseFactoryInterface::class,
-        ], true);
-    }
+	public function provides(string $id): bool
+	{
+		return in_array($id, [
+			LoggerInterface::class,
+			ResponseFactoryInterface::class,
+		], true);
+	}
 
-    public function register(): void
-    {
-        $container = $this->getContainer();
+	public function register(): void
+	{
+		$container = $this->getContainer();
 
-        $container->add(LoggerInterface::class, fn (): LoggerInterface => new StderrLogger());
+		$container->add(LoggerInterface::class, fn (): LoggerInterface => new StderrLogger());
 
-        $container->add(
-            ResponseFactoryInterface::class,
-            fn (): ResponseFactoryInterface => Psr17FactoryDiscovery::findResponseFactory(),
-        );
-    }
+		$container->add(
+			ResponseFactoryInterface::class,
+			fn (): ResponseFactoryInterface => Psr17FactoryDiscovery::findResponseFactory(),
+		);
+	}
 }

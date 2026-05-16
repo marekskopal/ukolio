@@ -13,54 +13,54 @@ use TaskManager\Model\Repository\ProjectRepository;
 
 final readonly class ProjectProvider implements ProjectProviderInterface
 {
-    public function __construct(
-        private ProjectRepository $projectRepository,
-        private WorkflowProviderInterface $workflowProvider,
-        private EventProviderInterface $eventProvider,
-    ) {
-    }
+	public function __construct(
+		private ProjectRepository $projectRepository,
+		private WorkflowProviderInterface $workflowProvider,
+		private EventProviderInterface $eventProvider,
+	) {
+	}
 
-    /** @return Iterator<Project> */
-    public function getProjects(User $user): Iterator
-    {
-        return $this->projectRepository->findProjectsByUser($user->id);
-    }
+	/** @return Iterator<Project> */
+	public function getProjects(User $user): Iterator
+	{
+		return $this->projectRepository->findProjectsByUser($user->id);
+	}
 
-    public function getProject(User $user, int $projectId): ?Project
-    {
-        return $this->projectRepository->findProject($user->id, $projectId);
-    }
+	public function getProject(User $user, int $projectId): ?Project
+	{
+		return $this->projectRepository->findProject($user->id, $projectId);
+	}
 
-    public function createProject(User $user, string $name, ?string $description): Project
-    {
-        $now = new DateTimeImmutable();
-        $project = new Project(user: $user, name: $name, description: $description);
-        $project->createdAt = $now;
-        $project->updatedAt = $now;
+	public function createProject(User $user, string $name, ?string $description): Project
+	{
+		$now = new DateTimeImmutable();
+		$project = new Project(user: $user, name: $name, description: $description);
+		$project->createdAt = $now;
+		$project->updatedAt = $now;
 
-        $this->projectRepository->persist($project);
+		$this->projectRepository->persist($project);
 
-        $this->workflowProvider->createDefaultWorkflow($project);
+		$this->workflowProvider->createDefaultWorkflow($project);
 
-        $this->eventProvider->recordEvent($user, $project, EventTypeEnum::ProjectCreated, ['name' => $name]);
+		$this->eventProvider->recordEvent($user, $project, EventTypeEnum::ProjectCreated, ['name' => $name]);
 
-        return $project;
-    }
+		return $project;
+	}
 
-    public function updateProject(Project $project, string $name, ?string $description): Project
-    {
-        $project->name = $name;
-        $project->description = $description;
-        $project->updatedAt = new DateTimeImmutable();
-        $this->projectRepository->persist($project);
+	public function updateProject(Project $project, string $name, ?string $description): Project
+	{
+		$project->name = $name;
+		$project->description = $description;
+		$project->updatedAt = new DateTimeImmutable();
+		$this->projectRepository->persist($project);
 
-        $this->eventProvider->recordEvent($project->user, $project, EventTypeEnum::ProjectUpdated, ['name' => $name]);
+		$this->eventProvider->recordEvent($project->user, $project, EventTypeEnum::ProjectUpdated, ['name' => $name]);
 
-        return $project;
-    }
+		return $project;
+	}
 
-    public function deleteProject(Project $project): void
-    {
-        $this->projectRepository->delete($project);
-    }
+	public function deleteProject(Project $project): void
+	{
+		$this->projectRepository->delete($project);
+	}
 }

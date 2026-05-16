@@ -22,298 +22,302 @@ use TaskManager\Service\Provider\WorkflowProviderInterface;
 
 final readonly class TaskTools
 {
-    public function __construct(
-        private McpUserContextInterface $userContext,
-        private ProjectProviderInterface $projectProvider,
-        private WorkflowProviderInterface $workflowProvider,
-        private StatusProviderInterface $statusProvider,
-        private TaskProviderInterface $taskProvider,
-    ) {
-    }
+	public function __construct(
+		private McpUserContextInterface $userContext,
+		private ProjectProviderInterface $projectProvider,
+		private WorkflowProviderInterface $workflowProvider,
+		private StatusProviderInterface $statusProvider,
+		private TaskProviderInterface $taskProvider,
+	) {
+	}
 
-    /**
-     * List all tasks in a project, ordered by status then position. Optionally filter by status.
-     *
-     * @param int $projectId Project ID
-     * @param int|null $statusId Optional: only return tasks in this status
-     */
-    #[McpTool(name: 'list_tasks', description: 'List tasks in a project, optionally filtered by status')]
-    public function listTasks(int $projectId, ?int $statusId = null): McpTaskListDto
-    {
-        $project = $this->requireProject($projectId);
+	/**
+	 * List all tasks in a project, ordered by status then position. Optionally filter by status.
+	 *
+	 * @param int $projectId Project ID
+	 * @param int|null $statusId Optional: only return tasks in this status
+	 */
+	#[McpTool(name: 'list_tasks', description: 'List tasks in a project, optionally filtered by status')]
+	public function listTasks(int $projectId, ?int $statusId = null): McpTaskListDto
+	{
+		$project = $this->requireProject($projectId);
 
-        $tasks = [];
-        foreach ($this->taskProvider->getTasksByProject($project) as $task) {
-            if ($statusId !== null && $task->status->id !== $statusId) {
-                continue;
-            }
-            $tasks[] = McpTaskDto::fromEntity($task);
-        }
+		$tasks = [];
+		foreach ($this->taskProvider->getTasksByProject($project) as $task) {
+			if ($statusId !== null && $task->status->id !== $statusId) {
+				continue;
+			}
+			$tasks[] = McpTaskDto::fromEntity($task);
+		}
 
-        return new McpTaskListDto($tasks);
-    }
+		return new McpTaskListDto($tasks);
+	}
 
-    /**
-     * Find a task by case-insensitive name match within a project. Returns the first match,
-     * preferring exact matches over substring matches.
-     *
-     * @param int $projectId Project ID
-     * @param string $name Task name to search for
-     */
-    #[McpTool(name: 'find_task_by_name', description: 'Find a task in a project by name (case-insensitive). Prefers exact matches over substring matches.')]
-    public function findTaskByName(int $projectId, string $name): ?McpTaskDto
-    {
-        $project = $this->requireProject($projectId);
-        $needle = mb_strtolower($name);
+	/**
+	 * Find a task by case-insensitive name match within a project. Returns the first match,
+	 * preferring exact matches over substring matches.
+	 *
+	 * @param int $projectId Project ID
+	 * @param string $name Task name to search for
+	 */
+	#[McpTool(
+		name: 'find_task_by_name',
+		description: 'Find a task in a project by name (case-insensitive). Prefers exact matches over substring matches.',
+	)]
+	public function findTaskByName(int $projectId, string $name): ?McpTaskDto
+	{
+		$project = $this->requireProject($projectId);
+		$needle = mb_strtolower($name);
 
-        $exact = null;
-        $partial = null;
-        foreach ($this->taskProvider->getTasksByProject($project) as $task) {
-            $haystack = mb_strtolower($task->name);
-            if ($haystack === $needle) {
-                $exact = $task;
-                break;
-            }
-            if ($partial === null && str_contains($haystack, $needle)) {
-                $partial = $task;
-            }
-        }
+		$exact = null;
+		$partial = null;
+		foreach ($this->taskProvider->getTasksByProject($project) as $task) {
+			$haystack = mb_strtolower($task->name);
+			if ($haystack === $needle) {
+				$exact = $task;
+				break;
+			}
+			if ($partial === null && str_contains($haystack, $needle)) {
+				$partial = $task;
+			}
+		}
 
-        $found = $exact ?? $partial;
+		$found = $exact ?? $partial;
 
-        return $found !== null ? McpTaskDto::fromEntity($found) : null;
-    }
+		return $found !== null ? McpTaskDto::fromEntity($found) : null;
+	}
 
-    /**
-     * Get a single task by ID.
-     *
-     * @param int $taskId Task ID
-     */
-    #[McpTool(name: 'get_task', description: 'Get a single task by ID')]
-    public function getTask(int $taskId): McpTaskDto
-    {
-        return McpTaskDto::fromEntity($this->requireTask($taskId));
-    }
+	/**
+	 * Get a single task by ID.
+	 *
+	 * @param int $taskId Task ID
+	 */
+	#[McpTool(name: 'get_task', description: 'Get a single task by ID')]
+	public function getTask(int $taskId): McpTaskDto
+	{
+		return McpTaskDto::fromEntity($this->requireTask($taskId));
+	}
 
-    /**
-     * Create a new task. By default it lands in the project's Start status (e.g. "To Do").
-     * Provide statusId or statusName to put it in a different column.
-     *
-     * @param int $projectId Project ID
-     * @param string $name Task name
-     * @param string|null $description Optional markdown description
-     * @param string $priority Priority: Low, Medium (default), or High
-     * @param int|null $statusId Optional explicit status ID
-     * @param string|null $statusName Optional status name (case-insensitive); ignored if statusId is given
-     * @param string|null $dueDate Optional due date (YYYY-MM-DD)
-     */
-    #[McpTool(name: 'create_task', description: 'Create a task in a project. Lands in Start status by default.')]
-    public function createTask(
-        int $projectId,
-        string $name,
-        ?string $description = null,
-        string $priority = 'Medium',
-        ?int $statusId = null,
-        ?string $statusName = null,
-        ?string $dueDate = null,
-    ): McpTaskDto {
-        $user = $this->userContext->getUser();
-        $project = $this->requireProject($projectId);
-        $priorityEnum = $this->parsePriority($priority);
-        $status = $this->resolveStatus($project, $statusId, $statusName)
-            ?? $this->findStatusByType($project, StatusTypeEnum::Start)
-            ?? throw new RuntimeException(sprintf('No Start status found for project %d.', $projectId));
+	/**
+	 * Create a new task. By default it lands in the project's Start status (e.g. "To Do").
+	 * Provide statusId or statusName to put it in a different column.
+	 *
+	 * @param int $projectId Project ID
+	 * @param string $name Task name
+	 * @param string|null $description Optional markdown description
+	 * @param string $priority Priority: Low, Medium (default), or High
+	 * @param int|null $statusId Optional explicit status ID
+	 * @param string|null $statusName Optional status name (case-insensitive); ignored if statusId is given
+	 * @param string|null $dueDate Optional due date (YYYY-MM-DD)
+	 */
+	#[McpTool(name: 'create_task', description: 'Create a task in a project. Lands in Start status by default.')]
+	public function createTask(
+		int $projectId,
+		string $name,
+		?string $description = null,
+		string $priority = 'Medium',
+		?int $statusId = null,
+		?string $statusName = null,
+		?string $dueDate = null,
+	): McpTaskDto {
+		$user = $this->userContext->getUser();
+		$project = $this->requireProject($projectId);
+		$priorityEnum = $this->parsePriority($priority);
+		$status = $this->resolveStatus($project, $statusId, $statusName)
+			?? $this->findStatusByType($project, StatusTypeEnum::Start)
+			?? throw new RuntimeException(sprintf('No Start status found for project %d.', $projectId));
 
-        $task = $this->taskProvider->createTask(
-            author: $user,
-            project: $project,
-            status: $status,
-            name: $name,
-            description: $description,
-            priority: $priorityEnum,
-            dueDate: $dueDate !== null ? new DateTimeImmutable($dueDate) : null,
-        );
+		$task = $this->taskProvider->createTask(
+			author: $user,
+			project: $project,
+			status: $status,
+			name: $name,
+			description: $description,
+			priority: $priorityEnum,
+			dueDate: $dueDate !== null ? new DateTimeImmutable($dueDate) : null,
+		);
 
-        return McpTaskDto::fromEntity($task);
-    }
+		return McpTaskDto::fromEntity($task);
+	}
 
-    /**
-     * Update a task's editable fields. Omitted parameters are left unchanged.
-     *
-     * @param int $taskId Task ID
-     * @param string|null $name New name
-     * @param string|null $description New description
-     * @param string|null $priority New priority: Low, Medium, or High
-     * @param string|null $dueDate New due date (YYYY-MM-DD), or empty string to clear
-     */
-    #[McpTool(name: 'update_task', description: 'Update a task. Use move_task to change status.')]
-    public function updateTask(
-        int $taskId,
-        ?string $name = null,
-        ?string $description = null,
-        ?string $priority = null,
-        ?string $dueDate = null,
-    ): McpTaskDto {
-        $user = $this->userContext->getUser();
-        $task = $this->requireTask($taskId);
+	/**
+	 * Update a task's editable fields. Omitted parameters are left unchanged.
+	 *
+	 * @param int $taskId Task ID
+	 * @param string|null $name New name
+	 * @param string|null $description New description
+	 * @param string|null $priority New priority: Low, Medium, or High
+	 * @param string|null $dueDate New due date (YYYY-MM-DD), or empty string to clear
+	 */
+	#[McpTool(name: 'update_task', description: 'Update a task. Use move_task to change status.')]
+	public function updateTask(
+		int $taskId,
+		?string $name = null,
+		?string $description = null,
+		?string $priority = null,
+		?string $dueDate = null,
+	): McpTaskDto {
+		$user = $this->userContext->getUser();
+		$task = $this->requireTask($taskId);
 
-        $newDueDate = $task->dueDate;
-        if ($dueDate !== null) {
-            $newDueDate = $dueDate === '' ? null : new DateTimeImmutable($dueDate);
-        }
+		$newDueDate = $task->dueDate;
+		if ($dueDate !== null) {
+			$newDueDate = $dueDate === '' ? null : new DateTimeImmutable($dueDate);
+		}
 
-        $updated = $this->taskProvider->updateTask(
-            author: $user,
-            task: $task,
-            name: $name ?? $task->name,
-            description: $description ?? $task->description,
-            priority: $priority !== null ? $this->parsePriority($priority) : $task->priority,
-            dueDate: $newDueDate,
-            status: $task->status,
-        );
+		$updated = $this->taskProvider->updateTask(
+			author: $user,
+			task: $task,
+			name: $name ?? $task->name,
+			description: $description ?? $task->description,
+			priority: $priority !== null ? $this->parsePriority($priority) : $task->priority,
+			dueDate: $newDueDate,
+			status: $task->status,
+		);
 
-        return McpTaskDto::fromEntity($updated);
-    }
+		return McpTaskDto::fromEntity($updated);
+	}
 
-    /**
-     * Move a task to a different status (column). Provide either statusId or statusName.
-     * The task is appended to the end of the destination column.
-     *
-     * @param int $taskId Task ID
-     * @param int|null $statusId Target status ID
-     * @param string|null $statusName Target status name (case-insensitive); ignored if statusId is given
-     */
-    #[McpTool(name: 'move_task', description: 'Move a task to a different status. Appends to the end of the destination column.')]
-    public function moveTask(int $taskId, ?int $statusId = null, ?string $statusName = null): McpTaskDto
-    {
-        $user = $this->userContext->getUser();
-        $task = $this->requireTask($taskId);
-        $status = $this->resolveStatus($task->project, $statusId, $statusName);
-        if ($status === null) {
-            throw new RuntimeException('Provide statusId or statusName to move the task.');
-        }
+	/**
+	 * Move a task to a different status (column). Provide either statusId or statusName.
+	 * The task is appended to the end of the destination column.
+	 *
+	 * @param int $taskId Task ID
+	 * @param int|null $statusId Target status ID
+	 * @param string|null $statusName Target status name (case-insensitive); ignored if statusId is given
+	 */
+	#[McpTool(name: 'move_task', description: 'Move a task to a different status. Appends to the end of the destination column.')]
+	public function moveTask(int $taskId, ?int $statusId = null, ?string $statusName = null): McpTaskDto
+	{
+		$user = $this->userContext->getUser();
+		$task = $this->requireTask($taskId);
+		$status = $this->resolveStatus($task->project, $statusId, $statusName);
+		if ($status === null) {
+			throw new RuntimeException('Provide statusId or statusName to move the task.');
+		}
 
-        $position = $this->nextPositionInStatus($status->id);
-        $moved = $this->taskProvider->moveTask($user, $task, $status, $position);
+		$position = $this->nextPositionInStatus($status->id);
+		$moved = $this->taskProvider->moveTask($user, $task, $status, $position);
 
-        return McpTaskDto::fromEntity($moved);
-    }
+		return McpTaskDto::fromEntity($moved);
+	}
 
-    /**
-     * Delete a task.
-     *
-     * @param int $taskId Task ID
-     */
-    #[McpTool(name: 'delete_task', description: 'Delete a task (irreversible)')]
-    public function deleteTask(int $taskId): string
-    {
-        $user = $this->userContext->getUser();
-        $task = $this->requireTask($taskId);
+	/**
+	 * Delete a task.
+	 *
+	 * @param int $taskId Task ID
+	 */
+	#[McpTool(name: 'delete_task', description: 'Delete a task (irreversible)')]
+	public function deleteTask(int $taskId): string
+	{
+		$user = $this->userContext->getUser();
+		$task = $this->requireTask($taskId);
 
-        $this->taskProvider->deleteTask($user, $task);
+		$this->taskProvider->deleteTask($user, $task);
 
-        return 'Task deleted.';
-    }
+		return 'Task deleted.';
+	}
 
-    private function requireProject(int $projectId): Project
-    {
-        $project = $this->projectProvider->getProject($this->userContext->getUser(), $projectId);
-        if ($project === null) {
-            throw new RuntimeException(sprintf('Project %d not found.', $projectId));
-        }
+	private function requireProject(int $projectId): Project
+	{
+		$project = $this->projectProvider->getProject($this->userContext->getUser(), $projectId);
+		if ($project === null) {
+			throw new RuntimeException(sprintf('Project %d not found.', $projectId));
+		}
 
-        return $project;
-    }
+		return $project;
+	}
 
-    private function requireTask(int $taskId): Task
-    {
-        $task = $this->taskProvider->getTask($taskId);
-        if ($task === null || $task->project->user->id !== $this->userContext->getUser()->id) {
-            throw new RuntimeException(sprintf('Task %d not found.', $taskId));
-        }
+	private function requireTask(int $taskId): Task
+	{
+		$task = $this->taskProvider->getTask($taskId);
+		if ($task === null || $task->project->user->id !== $this->userContext->getUser()->id) {
+			throw new RuntimeException(sprintf('Task %d not found.', $taskId));
+		}
 
-        return $task;
-    }
+		return $task;
+	}
 
-    private function parsePriority(string $priority): TaskPriorityEnum
-    {
-        $enum = TaskPriorityEnum::tryFrom($priority);
-        if ($enum === null) {
-            throw new RuntimeException(sprintf(
-                'Invalid priority "%s". Valid values: %s',
-                $priority,
-                implode(', ', array_column(TaskPriorityEnum::cases(), 'value')),
-            ));
-        }
+	private function parsePriority(string $priority): TaskPriorityEnum
+	{
+		$enum = TaskPriorityEnum::tryFrom($priority);
+		if ($enum === null) {
+			throw new RuntimeException(sprintf(
+				'Invalid priority "%s". Valid values: %s',
+				$priority,
+				implode(', ', array_column(TaskPriorityEnum::cases(), 'value')),
+			));
+		}
 
-        return $enum;
-    }
+		return $enum;
+	}
 
-    private function resolveStatus(Project $project, ?int $statusId, ?string $statusName): ?Status
-    {
-        if ($statusId !== null) {
-            $status = $this->statusProvider->getStatus($statusId);
-            if ($status === null || $status->workflow->project->id !== $project->id) {
-                throw new RuntimeException(sprintf('Status %d not found in project %d.', $statusId, $project->id));
-            }
-            return $status;
-        }
+	private function resolveStatus(Project $project, ?int $statusId, ?string $statusName): ?Status
+	{
+		if ($statusId !== null) {
+			$status = $this->statusProvider->getStatus($statusId);
+			if ($status === null || $status->workflow->project->id !== $project->id) {
+				throw new RuntimeException(sprintf('Status %d not found in project %d.', $statusId, $project->id));
+			}
+			return $status;
+		}
 
-        if ($statusName !== null) {
-            $workflow = $this->workflowProvider->getWorkflowByProject($project);
-            if ($workflow === null) {
-                throw new RuntimeException(sprintf('Workflow for project %d not found.', $project->id));
-            }
-            $needle = mb_strtolower($statusName);
-            foreach ($this->statusProvider->getStatuses($workflow) as $status) {
-                if (mb_strtolower($status->name) === $needle) {
-                    return $status;
-                }
-            }
-            throw new RuntimeException(sprintf('Status "%s" not found in project %d.', $statusName, $project->id));
-        }
+		if ($statusName !== null) {
+			$workflow = $this->workflowProvider->getWorkflowByProject($project);
+			if ($workflow === null) {
+				throw new RuntimeException(sprintf('Workflow for project %d not found.', $project->id));
+			}
+			$needle = mb_strtolower($statusName);
+			foreach ($this->statusProvider->getStatuses($workflow) as $status) {
+				if (mb_strtolower($status->name) === $needle) {
+					return $status;
+				}
+			}
 
-        return null;
-    }
+			throw new RuntimeException(sprintf('Status "%s" not found in project %d.', $statusName, $project->id));
+		}
 
-    private function findStatusByType(Project $project, StatusTypeEnum $type): ?Status
-    {
-        $workflow = $this->workflowProvider->getWorkflowByProject($project);
-        if ($workflow === null) {
-            return null;
-        }
+		return null;
+	}
 
-        foreach ($this->statusProvider->getStatuses($workflow) as $status) {
-            if ($status->type === $type) {
-                return $status;
-            }
-        }
+	private function findStatusByType(Project $project, StatusTypeEnum $type): ?Status
+	{
+		$workflow = $this->workflowProvider->getWorkflowByProject($project);
+		if ($workflow === null) {
+			return null;
+		}
 
-        return null;
-    }
+		foreach ($this->statusProvider->getStatuses($workflow) as $status) {
+			if ($status->type === $type) {
+				return $status;
+			}
+		}
 
-    private function nextPositionInStatus(int $statusId): int
-    {
-        $max = -1;
-        foreach ($this->taskProvider->getTasksByProject($this->resolveAnyProjectForStatus($statusId)) as $task) {
-            if ($task->status->id !== $statusId) {
-                continue;
-            }
-            if ($task->position > $max) {
-                $max = $task->position;
-            }
-        }
+		return null;
+	}
 
-        return $max + 1;
-    }
+	private function nextPositionInStatus(int $statusId): int
+	{
+		$max = -1;
+		foreach ($this->taskProvider->getTasksByProject($this->resolveAnyProjectForStatus($statusId)) as $task) {
+			if ($task->status->id !== $statusId) {
+				continue;
+			}
+			if ($task->position > $max) {
+				$max = $task->position;
+			}
+		}
 
-    private function resolveAnyProjectForStatus(int $statusId): Project
-    {
-        $status = $this->statusProvider->getStatus($statusId);
-        if ($status === null) {
-            throw new RuntimeException(sprintf('Status %d not found.', $statusId));
-        }
+		return $max + 1;
+	}
 
-        return $status->workflow->project;
-    }
+	private function resolveAnyProjectForStatus(int $statusId): Project
+	{
+		$status = $this->statusProvider->getStatus($statusId);
+		if ($status === null) {
+			throw new RuntimeException(sprintf('Status %d not found.', $statusId));
+		}
+
+		return $status->workflow->project;
+	}
 }

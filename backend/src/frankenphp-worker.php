@@ -20,17 +20,17 @@ assert($logger instanceof LoggerInterface);
 $emitter = new SapiEmitter();
 
 $handler = static function () use ($application, $logger, $emitter): void {
-    try {
-        $request = ServerRequestFactory::fromGlobals();
-        $response = $application->handler->handle($request);
-        $emitter->emit($response);
-    } catch (\Throwable $e) {
-        $logger->error($e->getMessage(), ['exception' => $e]);
-        $emitter->emit(ErrorResponse::fromException($e));
-    }
+	try {
+		$request = ServerRequestFactory::fromGlobals();
+		$response = $application->handler->handle($request);
+		$emitter->emit($response);
+	} catch (\Throwable $e) {
+		$logger->error($e->getMessage(), ['exception' => $e]);
+		$emitter->emit(ErrorResponse::fromException($e));
+	}
 };
 
 while (frankenphp_handle_request($handler)) {
-    $application->dbContext->getOrm()->getEntityCache()->clear();
-    gc_collect_cycles();
+	$application->dbContext->getOrm()->getEntityCache()->clear();
+	gc_collect_cycles();
 }

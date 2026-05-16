@@ -8,7 +8,7 @@ use TaskManager\Model\Entity\User;
 
 interface McpUserContextInterface
 {
-    public function setUser(User $user): void;
+	public function setUser(User $user): void;
 
-    public function getUser(): User;
+	public function getUser(): User;
 }

@@ -10,11 +10,11 @@ use TaskManager\Model\Entity\User;
 
 interface AuthenticationServiceInterface
 {
-    public const string TokenAlgorithm = 'HS256';
+	public const string TokenAlgorithm = 'HS256';
 
-    public function authenticate(CredentialsDto $credentials): AuthenticationDto;
+	public function authenticate(CredentialsDto $credentials): AuthenticationDto;
 
-    public function createAuthentication(User $user): AuthenticationDto;
+	public function createAuthentication(User $user): AuthenticationDto;
 
-    public function validateAccessToken(string $token): User;
+	public function validateAccessToken(string $token): User;
 }

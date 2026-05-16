@@ -12,14 +12,14 @@ use TaskManager\Validator\PasswordValidator;
 #[CoversClass(PasswordValidator::class)]
 final class PasswordValidatorTest extends TestCase
 {
-    #[TestWith(['Passw0rd', true])]
-    #[TestWith(['Passw0rd!', true])]
-    #[TestWith(['short1A', false])]
-    #[TestWith(['passw0rd', false])]
-    #[TestWith(['PASSW0RD', false])]
-    #[TestWith(['Password', false])]
-    public function testIsValid(string $password, bool $expected): void
-    {
-        self::assertSame($expected, PasswordValidator::isValid($password));
-    }
+	#[TestWith(['Passw0rd', true])]
+	#[TestWith(['Passw0rd!', true])]
+	#[TestWith(['short1A', false])]
+	#[TestWith(['passw0rd', false])]
+	#[TestWith(['PASSW0RD', false])]
+	#[TestWith(['Password', false])]
+	public function testIsValid(string $password, bool $expected): void
+	{
+		self::assertSame($expected, PasswordValidator::isValid($password));
+	}
 }

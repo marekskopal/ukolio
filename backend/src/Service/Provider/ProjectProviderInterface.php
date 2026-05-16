@@ -10,14 +10,14 @@ use TaskManager\Model\Entity\User;
 
 interface ProjectProviderInterface
 {
-    /** @return Iterator<Project> */
-    public function getProjects(User $user): Iterator;
+	/** @return Iterator<Project> */
+	public function getProjects(User $user): Iterator;
 
-    public function getProject(User $user, int $projectId): ?Project;
+	public function getProject(User $user, int $projectId): ?Project;
 
-    public function createProject(User $user, string $name, ?string $description): Project;
+	public function createProject(User $user, string $name, ?string $description): Project;
 
-    public function updateProject(Project $project, string $name, ?string $description): Project;
+	public function updateProject(Project $project, string $name, ?string $description): Project;
 
-    public function deleteProject(Project $project): void;
+	public function deleteProject(Project $project): void;
 }

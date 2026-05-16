@@ -12,36 +12,33 @@ use const PASSWORD_BCRYPT;
 
 final readonly class UserProvider implements UserProviderInterface
 {
-    public function __construct(private UserRepository $userRepository)
-    {
-    }
+	public function __construct(private UserRepository $userRepository)
+	{
+	}
 
-    public function getUser(int $userId): ?User
-    {
-        return $this->userRepository->findUserById($userId);
-    }
+	public function getUser(int $userId): ?User
+	{
+		return $this->userRepository->findUserById($userId);
+	}
 
-    public function getUserByEmail(string $email): ?User
-    {
-        return $this->userRepository->findUserByEmail($email);
-    }
+	public function getUserByEmail(string $email): ?User
+	{
+		return $this->userRepository->findUserByEmail($email);
+	}
 
-    public function createUser(
-        #[SensitiveParameter] string $email,
-        #[SensitiveParameter] string $password,
-        string $name,
-    ): User {
-        $now = new DateTimeImmutable();
-        $user = new User(
-            email: $email,
-            password: password_hash($password, PASSWORD_BCRYPT),
-            name: $name,
-        );
-        $user->createdAt = $now;
-        $user->updatedAt = $now;
+	public function createUser(#[SensitiveParameter] string $email, #[SensitiveParameter] string $password, string $name,): User
+	{
+		$now = new DateTimeImmutable();
+		$user = new User(
+			email: $email,
+			password: password_hash($password, PASSWORD_BCRYPT),
+			name: $name,
+		);
+		$user->createdAt = $now;
+		$user->updatedAt = $now;
 
-        $this->userRepository->persist($user);
+		$this->userRepository->persist($user);
 
-        return $user;
-    }
+		return $user;
+	}
 }

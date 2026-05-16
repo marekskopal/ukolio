@@ -18,30 +18,31 @@ use TaskManager\Service\Request\RequestServiceInterface;
 
 final readonly class EventController
 {
-    public function __construct(
-        private ProjectProviderInterface $projectProvider,
-        private EventProviderInterface $eventProvider,
-        private RequestServiceInterface $requestService,
-    ) {
-    }
+	public function __construct(
+		private ProjectProviderInterface $projectProvider,
+		private EventProviderInterface $eventProvider,
+		private RequestServiceInterface $requestService,
+	) {
+	}
 
-    #[RouteGet(Routes::ProjectEvents->value)]
-    public function actionGetEvents(ServerRequestInterface $request, int $projectId): ResponseInterface
-    {
-        $user = $this->requestService->getUser($request);
-        $project = $this->projectProvider->getProject($user, $projectId);
-        if ($project === null) {
-            return new NotFoundResponse('Project with id "' . $projectId . '" was not found.');
-        }
+	#[RouteGet(Routes::ProjectEvents->value)]
+	public function actionGetEvents(ServerRequestInterface $request, int $projectId): ResponseInterface
+	{
+		$user = $this->requestService->getUser($request);
+		$project = $this->projectProvider->getProject($user, $projectId);
+		if ($project === null) {
+			return new NotFoundResponse('Project with id "' . $projectId . '" was not found.');
+		}
 
-        $limit = (int) ($request->getQueryParams()['limit'] ?? 100);
-        $offset = (int) ($request->getQueryParams()['offset'] ?? 0);
+		$query = $request->getQueryParams();
+		$limit = is_numeric($query['limit'] ?? null) ? (int) $query['limit'] : 100;
+		$offset = is_numeric($query['offset'] ?? null) ? (int) $query['offset'] : 0;
 
-        $events = array_map(
-            fn (Event $e): EventDto => EventDto::fromEntity($e),
-            iterator_to_array($this->eventProvider->getEvents($project, $limit, $offset), false),
-        );
+		$events = array_map(
+			fn (Event $e): EventDto => EventDto::fromEntity($e),
+			iterator_to_array($this->eventProvider->getEvents($project, $limit, $offset), false),
+		);
 
-        return new JsonResponse($events);
-    }
+		return new JsonResponse($events);
+	}
 }

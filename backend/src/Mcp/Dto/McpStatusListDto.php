@@ -6,8 +6,8 @@ namespace TaskManager\Mcp\Dto;
 
 final readonly class McpStatusListDto
 {
-    /** @param list<McpStatusDto> $statuses */
-    public function __construct(public array $statuses)
-    {
-    }
+	/** @param list<McpStatusDto> $statuses */
+	public function __construct(public array $statuses)
+	{
+	}
 }

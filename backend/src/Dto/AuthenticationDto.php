@@ -6,7 +6,7 @@ namespace TaskManager\Dto;
 
 final readonly class AuthenticationDto
 {
-    public function __construct(public string $accessToken, public string $refreshToken, public int $userId)
-    {
-    }
+	public function __construct(public string $accessToken, public string $refreshToken, public int $userId)
+	{
+	}
 }
