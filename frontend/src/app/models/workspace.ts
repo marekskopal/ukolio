@@ -1,3 +1,5 @@
+export type WorkspaceRole = 'Owner' | 'Admin' | 'Member';
+
 export interface Workspace {
     id: number;
     name: string;
@@ -9,7 +11,7 @@ export interface WorkspaceMember {
     userId: number;
     name: string;
     email: string;
-    role: 'Owner' | 'Member';
+    role: WorkspaceRole;
 }
 
 export interface Invitation {
@@ -18,7 +20,7 @@ export interface Invitation {
     workspaceName: string;
     email: string;
     inviterName: string;
-    role: 'Owner' | 'Member';
+    role: WorkspaceRole;
     expiresAt: string;
     acceptedAt: string | null;
 }

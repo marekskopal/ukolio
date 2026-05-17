@@ -6,6 +6,9 @@ namespace Ukolio\Service\Provider;
 
 use DateTimeImmutable;
 use Iterator;
+use ReflectionProperty;
+use RuntimeException;
+use Ukolio\Model\Entity\Enum\EventTypeEnum;
 use Ukolio\Model\Entity\Enum\WorkspaceRoleEnum;
 use Ukolio\Model\Entity\User;
 use Ukolio\Model\Entity\Workspace;
@@ -20,6 +23,7 @@ final readonly class WorkspaceProvider implements WorkspaceProviderInterface
 		private WorkspaceRepository $workspaceRepository,
 		private WorkspaceUserRepository $workspaceUserRepository,
 		private UserRepository $userRepository,
+		private EventProviderInterface $eventProvider,
 	) {
 	}
 
@@ -102,6 +106,77 @@ final readonly class WorkspaceProvider implements WorkspaceProviderInterface
 	public function removeMember(WorkspaceUser $membership): void
 	{
 		$this->workspaceUserRepository->delete($membership);
+	}
+
+	public function changeMemberRole(User $actor, WorkspaceUser $membership, WorkspaceRoleEnum $newRole): WorkspaceUser
+	{
+		if ($newRole === WorkspaceRoleEnum::Owner) {
+			throw new RuntimeException('Use transferOwnership() to assign the Owner role.');
+		}
+		if ($membership->role === WorkspaceRoleEnum::Owner) {
+			throw new RuntimeException('Cannot change the Owner\'s role directly.');
+		}
+
+		$previous = $membership->role;
+		$membership->role = $newRole;
+		$membership->updatedAt = new DateTimeImmutable();
+		$this->workspaceUserRepository->persist($membership);
+
+		$this->eventProvider->recordWorkspaceEvent(
+			$actor,
+			$membership->workspace,
+			EventTypeEnum::MemberRoleChanged,
+			[
+				'userId' => $membership->user->id,
+				'userName' => $membership->user->name,
+				'fromRole' => $previous->value,
+				'toRole' => $newRole->value,
+			],
+		);
+
+		return $membership;
+	}
+
+	public function transferOwnership(User $actor, Workspace $workspace, WorkspaceUser $newOwnerMembership): void
+	{
+		if ($newOwnerMembership->workspace->id !== $workspace->id) {
+			throw new RuntimeException('Target membership belongs to a different workspace.');
+		}
+		if ($newOwnerMembership->user->id === $workspace->owner->id) {
+			throw new RuntimeException('Target user is already the owner.');
+		}
+
+		$previousOwner = $workspace->owner;
+		$previousMembership = $this->findMembership($previousOwner, $workspace);
+
+		$now = new DateTimeImmutable();
+
+		if ($previousMembership !== null) {
+			$previousMembership->role = WorkspaceRoleEnum::Admin;
+			$previousMembership->updatedAt = $now;
+			$this->workspaceUserRepository->persist($previousMembership);
+		}
+
+		$newOwnerMembership->role = WorkspaceRoleEnum::Owner;
+		$newOwnerMembership->updatedAt = $now;
+		$this->workspaceUserRepository->persist($newOwnerMembership);
+
+		$reflection = new ReflectionProperty($workspace, 'owner');
+		$reflection->setValue($workspace, $newOwnerMembership->user);
+		$workspace->updatedAt = $now;
+		$this->workspaceRepository->persist($workspace);
+
+		$this->eventProvider->recordWorkspaceEvent(
+			$actor,
+			$workspace,
+			EventTypeEnum::OwnershipTransferred,
+			[
+				'fromUserId' => $previousOwner->id,
+				'fromUserName' => $previousOwner->name,
+				'toUserId' => $newOwnerMembership->user->id,
+				'toUserName' => $newOwnerMembership->user->name,
+			],
+		);
 	}
 
 	public function switchCurrentWorkspace(User $user, Workspace $workspace): void

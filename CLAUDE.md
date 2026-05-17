@@ -11,16 +11,31 @@ Minimalistic Kanban task manager. Multi-user JWT auth. Architecture clones FinGa
 ## Domain
 
 - `Workspace` (owner, name) — top-level container; users belong to one or more workspaces
-- `WorkspaceUser` (workspace, user, role ∈ Owner/Member) — membership
+- `WorkspaceUser` (workspace, user, role ∈ Owner/Admin/Member) — membership
 - `Invitation` (workspace, inviter, email, tokenHash, role, expiresAt, acceptedAt?) — pending invites
-- `User` (email, password, name, currentWorkspaceId?) — `currentWorkspaceId` is the active workspace used to scope data
+- `User` (email, password, name, currentWorkspaceId?, systemRole ∈ User/SystemAdmin) — `currentWorkspaceId` is the active workspace used to scope data; `systemRole = SystemAdmin` grants global admin access
 - `Project` (workspace, name, description) → has one `Workflow`, many `Tasks`
 - `Workflow` (project, name) → has many `Status`
 - `Status` (workflow, name, color, position, type ∈ start/normal/finish)
 - `Task` (project, status, name, description [markdown], priority, dueDate, position)
-- `Event` (author, project, taskId?, type, metadata JSON) — append-only audit log
+- `Event` (author, type, metadata JSON, project?, workspaceId?, taskId?) — append-only audit log; `project`/`workspaceId` are nullable to allow workspace-level and admin events alongside project events
 
 On sign-up a personal `Workspace` is auto-created and the user becomes its owner. New `Project` auto-seeds workflow `To Do → In Progress → Done`. Inviting a member sends an email via Symfony Mailer (SMTP env: `SMTP_HOST/PORT/USER/PASSWORD`, `EMAIL_FROM`); `mailpit` is wired in `docker-compose.yml` for local capture.
+
+## Roles & permissions
+
+Authorization is centralized in `Ukolio\Service\Auth\PermissionChecker` (interface + impl). Every mutating controller and the SystemAdmin endpoints route their decisions through it.
+
+- **SystemAdmin** (`User.systemRole`): global; passes every `can*` check. Operates on workspaces they don't belong to via dedicated `/api/admin/*` endpoints (see `Ukolio\Controller\Admin\`) with a separate frontend at `/admin/users` and `/admin/workspaces`. Inside their own workspaces they act as a normal member of whatever role they hold.
+- **Owner** (workspace‑scoped): one per workspace. Rename/delete workspace, manage all members, transfer ownership (sole way to assign a new Owner).
+- **Admin** (workspace‑scoped): manage members (Member ↔ Admin), invite Members (cannot invite Admins or Owners), full CRUD on projects, statuses, and tasks. Cannot remove or demote the Owner.
+- **Member** (workspace‑scoped): full CRUD on tasks; read‑only on projects, workflows, and statuses.
+
+Ownership transfer (`POST /api/workspaces/{id}/transfer-ownership`) atomically updates `Workspace.owner` and both `WorkspaceUser` rows (old Owner becomes Admin). Workspace owner removal is blocked — transfer first.
+
+The first SystemAdmin is seeded by the init migration as `admin@ukolio.com` / `admin`. **Rotate this password immediately in any non-dev environment.**
+
+MCP tools remain scoped to `currentWorkspace` — sysadmins must use the web admin UI for cross-workspace management.
 
 ## i18n
 

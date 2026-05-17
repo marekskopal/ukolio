@@ -6,27 +6,29 @@ namespace Ukolio\Dto;
 
 use Ukolio\Model\Entity\User;
 
-final readonly class UserDto
+final readonly class AdminUserDto
 {
 	public function __construct(
 		public int $id,
 		public string $email,
 		public string $name,
 		public string $locale,
-		public ?int $currentWorkspaceId,
 		public string $systemRole,
+		public int $workspaceCount,
+		public int $ownedWorkspaceCount,
 	) {
 	}
 
-	public static function fromEntity(User $user): self
+	public static function fromEntity(User $user, int $workspaceCount, int $ownedWorkspaceCount): self
 	{
 		return new self(
 			id: $user->id,
 			email: $user->email,
 			name: $user->name,
 			locale: $user->locale->value,
-			currentWorkspaceId: $user->currentWorkspaceId,
 			systemRole: $user->systemRole->value,
+			workspaceCount: $workspaceCount,
+			ownedWorkspaceCount: $ownedWorkspaceCount,
 		);
 	}
 }

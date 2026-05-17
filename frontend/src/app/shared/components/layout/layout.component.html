@@ -36,6 +36,11 @@
                 <a routerLink="/projects" routerLinkActive="nav-link--active" [routerLinkActiveOptions]="{exact: false}" class="nav-link">
                     {{ 'app.nav.projects' | translate }}
                 </a>
+                @if (isSystemAdmin()) {
+                    <a routerLink="/admin/users" routerLinkActive="nav-link--active" [routerLinkActiveOptions]="{exact: false}" class="nav-link">
+                        {{ 'app.nav.admin' | translate }}
+                    </a>
+                }
 
                 <div class="lang-switcher">
                     <button type="button" class="nav-link" (click)="toggleLangMenu()">

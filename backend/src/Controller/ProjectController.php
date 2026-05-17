@@ -16,9 +16,11 @@ use Ukolio\Dto\ProjectDto;
 use Ukolio\Dto\ProjectUpdateDto;
 use Ukolio\Model\Entity\Project;
 use Ukolio\Response\ErrorResponse;
+use Ukolio\Response\NotAuthorizedResponse;
 use Ukolio\Response\NotFoundResponse;
 use Ukolio\Response\OkResponse;
 use Ukolio\Route\Routes;
+use Ukolio\Service\Auth\PermissionCheckerInterface;
 use Ukolio\Service\Provider\ProjectProviderInterface;
 use Ukolio\Service\Provider\WorkspaceProviderInterface;
 use Ukolio\Service\Request\RequestServiceInterface;
@@ -28,6 +30,7 @@ final readonly class ProjectController
 	public function __construct(
 		private ProjectProviderInterface $projectProvider,
 		private WorkspaceProviderInterface $workspaceProvider,
+		private PermissionCheckerInterface $permissionChecker,
 		private RequestServiceInterface $requestService,
 	) {
 	}
@@ -73,6 +76,10 @@ final readonly class ProjectController
 			return new ErrorResponse('No active workspace.', 422);
 		}
 
+		if (!$this->permissionChecker->canManageProjects($user, $workspace)) {
+			return new NotAuthorizedResponse('You do not have permission to create projects.');
+		}
+
 		$dto = $this->requestService->getRequestBodyDto($request, ProjectCreateDto::class);
 
 		$project = $this->projectProvider->createProject($user, $workspace, $dto->name, $dto->description);
@@ -94,6 +101,10 @@ final readonly class ProjectController
 			return new NotFoundResponse('Project with id "' . $projectId . '" was not found.');
 		}
 
+		if (!$this->permissionChecker->canManageProjects($user, $workspace)) {
+			return new NotAuthorizedResponse('You do not have permission to update projects.');
+		}
+
 		$dto = $this->requestService->getRequestBodyDto($request, ProjectUpdateDto::class);
 
 		$project = $this->projectProvider->updateProject(
@@ -109,7 +120,8 @@ final readonly class ProjectController
 	#[RouteDelete(Routes::Project->value)]
 	public function actionDeleteProject(ServerRequestInterface $request, int $projectId): ResponseInterface
 	{
-		$workspace = $this->workspaceProvider->getCurrentWorkspace($this->requestService->getUser($request));
+		$user = $this->requestService->getUser($request);
+		$workspace = $this->workspaceProvider->getCurrentWorkspace($user);
 		if ($workspace === null) {
 			return new NotFoundResponse('Project with id "' . $projectId . '" was not found.');
 		}
@@ -117,6 +129,10 @@ final readonly class ProjectController
 		$project = $this->projectProvider->getProject($workspace, $projectId);
 		if ($project === null) {
 			return new NotFoundResponse('Project with id "' . $projectId . '" was not found.');
+		}
+
+		if (!$this->permissionChecker->canManageProjects($user, $workspace)) {
+			return new NotAuthorizedResponse('You do not have permission to delete projects.');
 		}
 
 		$this->projectProvider->deleteProject($project);

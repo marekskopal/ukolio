@@ -6,6 +6,7 @@ import {AlertService} from '@app/services/alert.service';
 import {AuthenticationService} from '@app/services/authentication.service';
 import {CurrentUserService} from '@app/services/current-user.service';
 import {LanguageService} from '@app/services/language.service';
+import {PermissionsService} from '@app/services/permissions.service';
 import {WorkspaceService} from '@app/services/workspace.service';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 
@@ -22,9 +23,12 @@ export class LayoutComponent implements OnInit {
     private readonly currentUserService = inject(CurrentUserService);
     private readonly workspaceService = inject(WorkspaceService);
     private readonly languageService = inject(LanguageService);
+    private readonly permissionsService = inject(PermissionsService);
     private readonly translate = inject(TranslateService);
     private readonly alertService = inject(AlertService);
     private readonly router = inject(Router);
+
+    protected readonly isSystemAdmin = this.permissionsService.isSystemAdmin;
 
     protected readonly user = signal<User | null>(null);
     protected readonly workspaces = this.workspaceService.workspaces;
@@ -44,6 +48,7 @@ export class LayoutComponent implements OnInit {
             this.user.set(user);
             this.workspaceService.currentWorkspaceId.set(user.currentWorkspaceId);
             await this.workspaceService.loadAll();
+            await this.workspaceService.loadCurrentMembers();
         } catch {
             // Interceptor handles 401 -> refresh / logout
         }

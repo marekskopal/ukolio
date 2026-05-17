@@ -18,12 +18,14 @@ class Event extends AEntity
 	public function __construct(
 		#[ManyToOne(entityClass: User::class)]
 		public readonly User $author,
-		#[ManyToOne(entityClass: Project::class)]
-		public readonly Project $project,
 		#[ColumnEnum(enum: EventTypeEnum::class)]
 		public EventTypeEnum $type,
 		#[Column(type: Type::Text)]
 		public string $metadata,
+		#[ManyToOne(entityClass: Project::class, nullable: true)]
+		public readonly ?Project $project = null,
+		#[Column(type: Type::Int, size: 11, nullable: true)]
+		public ?int $workspaceId = null,
 		#[Column(type: Type::Int, nullable: true)]
 		public ?int $taskId = null,
 	) {

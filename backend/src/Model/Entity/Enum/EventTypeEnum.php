@@ -21,4 +21,10 @@ enum EventTypeEnum: string
 	case TaskUpdated = 'TaskUpdated';
 	case TaskDeleted = 'TaskDeleted';
 	case TaskMoved = 'TaskMoved';
+
+	case MemberRoleChanged = 'MemberRoleChanged';
+	case OwnershipTransferred = 'OwnershipTransferred';
+	case AdminDeletedWorkspace = 'AdminDeletedWorkspace';
+	case AdminDeletedUser = 'AdminDeletedUser';
+	case AdminChangedSystemRole = 'AdminChangedSystemRole';
 }

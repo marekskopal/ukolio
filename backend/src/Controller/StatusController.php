@@ -18,12 +18,13 @@ use Ukolio\Model\Entity\Status;
 use Ukolio\Model\Entity\User;
 use Ukolio\Model\Entity\Workflow;
 use Ukolio\Response\ErrorResponse;
+use Ukolio\Response\NotAuthorizedResponse;
 use Ukolio\Response\NotFoundResponse;
 use Ukolio\Response\OkResponse;
 use Ukolio\Route\Routes;
+use Ukolio\Service\Auth\PermissionCheckerInterface;
 use Ukolio\Service\Provider\StatusProviderInterface;
 use Ukolio\Service\Provider\WorkflowProviderInterface;
-use Ukolio\Service\Provider\WorkspaceProviderInterface;
 use Ukolio\Service\Request\RequestServiceInterface;
 
 final readonly class StatusController
@@ -31,7 +32,7 @@ final readonly class StatusController
 	public function __construct(
 		private WorkflowProviderInterface $workflowProvider,
 		private StatusProviderInterface $statusProvider,
-		private WorkspaceProviderInterface $workspaceProvider,
+		private PermissionCheckerInterface $permissionChecker,
 		private RequestServiceInterface $requestService,
 	) {
 	}
@@ -45,6 +46,10 @@ final readonly class StatusController
 			return new NotFoundResponse('Workflow not found.');
 		}
 		assert($workflow !== null);
+
+		if (!$this->permissionChecker->canManageProjects($user, $workflow->project->workspace)) {
+			return new NotAuthorizedResponse('You do not have permission to manage workflow statuses.');
+		}
 
 		$dto = $this->requestService->getRequestBodyDto($request, StatusCreateDto::class);
 
@@ -69,6 +74,10 @@ final readonly class StatusController
 		}
 		assert($status !== null);
 
+		if (!$this->permissionChecker->canManageProjects($user, $status->workflow->project->workspace)) {
+			return new NotAuthorizedResponse('You do not have permission to manage workflow statuses.');
+		}
+
 		$dto = $this->requestService->getRequestBodyDto($request, StatusUpdateDto::class);
 		$status = $this->statusProvider->updateStatus($status, $dto->name, $dto->color, $dto->type);
 
@@ -84,6 +93,10 @@ final readonly class StatusController
 			return new NotFoundResponse('Status not found.');
 		}
 		assert($status !== null);
+
+		if (!$this->permissionChecker->canManageProjects($user, $status->workflow->project->workspace)) {
+			return new NotAuthorizedResponse('You do not have permission to manage workflow statuses.');
+		}
 
 		$dto = $this->requestService->getRequestBodyDto($request, StatusMoveDto::class);
 		$status = $this->statusProvider->moveStatus($status, $dto->position);
@@ -101,6 +114,10 @@ final readonly class StatusController
 		}
 		assert($status !== null);
 
+		if (!$this->permissionChecker->canManageProjects($user, $status->workflow->project->workspace)) {
+			return new NotAuthorizedResponse('You do not have permission to manage workflow statuses.');
+		}
+
 		$siblings = iterator_to_array($this->statusProvider->getStatuses($status->workflow), false);
 		if (count($siblings) <= 1) {
 			return new ErrorResponse('Cannot delete the last status of a workflow.', 422);
@@ -116,7 +133,7 @@ final readonly class StatusController
 		if ($workflow === null) {
 			return false;
 		}
-		return $this->workspaceProvider->isMember($user, $workflow->project->workspace);
+		return $this->permissionChecker->canViewWorkspace($user, $workflow->project->workspace);
 	}
 
 	private function canAccessStatus(User $user, ?Status $status): bool
@@ -124,6 +141,6 @@ final readonly class StatusController
 		if ($status === null) {
 			return false;
 		}
-		return $this->workspaceProvider->isMember($user, $status->workflow->project->workspace);
+		return $this->permissionChecker->canViewWorkspace($user, $status->workflow->project->workspace);
 	}
 }

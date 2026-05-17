@@ -11,8 +11,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ukolio\Dto\WorkflowDto;
 use Ukolio\Dto\WorkflowUpdateDto;
+use Ukolio\Response\NotAuthorizedResponse;
 use Ukolio\Response\NotFoundResponse;
 use Ukolio\Route\Routes;
+use Ukolio\Service\Auth\PermissionCheckerInterface;
 use Ukolio\Service\Provider\ProjectProviderInterface;
 use Ukolio\Service\Provider\WorkflowProviderInterface;
 use Ukolio\Service\Provider\WorkspaceProviderInterface;
@@ -24,6 +26,7 @@ final readonly class WorkflowController
 		private ProjectProviderInterface $projectProvider,
 		private WorkflowProviderInterface $workflowProvider,
 		private WorkspaceProviderInterface $workspaceProvider,
+		private PermissionCheckerInterface $permissionChecker,
 		private RequestServiceInterface $requestService,
 	) {
 	}
@@ -52,7 +55,8 @@ final readonly class WorkflowController
 	#[RoutePut(Routes::ProjectWorkflow->value)]
 	public function actionPutWorkflow(ServerRequestInterface $request, int $projectId): ResponseInterface
 	{
-		$workspace = $this->workspaceProvider->getCurrentWorkspace($this->requestService->getUser($request));
+		$user = $this->requestService->getUser($request);
+		$workspace = $this->workspaceProvider->getCurrentWorkspace($user);
 		if ($workspace === null) {
 			return new NotFoundResponse('Project with id "' . $projectId . '" was not found.');
 		}
@@ -60,6 +64,10 @@ final readonly class WorkflowController
 		$project = $this->projectProvider->getProject($workspace, $projectId);
 		if ($project === null) {
 			return new NotFoundResponse('Project with id "' . $projectId . '" was not found.');
+		}
+
+		if (!$this->permissionChecker->canManageProjects($user, $workspace)) {
+			return new NotAuthorizedResponse('You do not have permission to update the workflow.');
 		}
 
 		$workflow = $this->workflowProvider->getWorkflowByProject($project);

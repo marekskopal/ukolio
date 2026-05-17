@@ -13,6 +13,10 @@ use Ukolio\OAuth\AuthorizationService;
 use Ukolio\OAuth\AuthorizationServiceInterface;
 use Ukolio\OAuth\ClientService;
 use Ukolio\OAuth\ClientServiceInterface;
+use Ukolio\Service\Auth\AdminService;
+use Ukolio\Service\Auth\AdminServiceInterface;
+use Ukolio\Service\Auth\PermissionChecker;
+use Ukolio\Service\Auth\PermissionCheckerInterface;
 use Ukolio\Service\Provider\EventProvider;
 use Ukolio\Service\Provider\EventProviderInterface;
 use Ukolio\Service\Provider\InvitationProvider;
@@ -42,6 +46,8 @@ final class DomainServiceProvider extends AbstractServiceProvider
 			RequestServiceInterface::class,
 			UserProviderInterface::class,
 			WorkspaceProviderInterface::class,
+			PermissionCheckerInterface::class,
+			AdminServiceInterface::class,
 			InvitationProviderInterface::class,
 			ProjectProviderInterface::class,
 			WorkflowProviderInterface::class,
@@ -62,6 +68,8 @@ final class DomainServiceProvider extends AbstractServiceProvider
 		$c->add(RequestServiceInterface::class, RequestService::class);
 		$c->add(UserProviderInterface::class, UserProvider::class);
 		$c->add(WorkspaceProviderInterface::class, WorkspaceProvider::class);
+		$c->add(PermissionCheckerInterface::class, PermissionChecker::class);
+		$c->add(AdminServiceInterface::class, AdminService::class);
 		$c->add(TranslatorServiceInterface::class, static fn (): TranslatorService => new TranslatorService(
 			translationsDir: __DIR__ . '/../../../translations',
 		));

@@ -6,6 +6,7 @@ namespace Migrations;
 
 use MarekSkopal\ORM\Enum\Type;
 use MarekSkopal\ORM\Migrations\Migration\Migration;
+use const PASSWORD_BCRYPT;
 
 final class InitMigration extends Migration
 {
@@ -18,6 +19,7 @@ final class InitMigration extends Migration
 			->addColumn('name', Type::String)
 			->addColumn('locale', Type::Enum, enum: ['en', 'cs'], default: 'en')
 			->addColumn('current_workspace_id', Type::Int, size: 11, nullable: true)
+			->addColumn('system_role', Type::Enum, enum: ['User', 'SystemAdmin'], default: 'User')
 			->addColumn('created_at', Type::Timestamp)
 			->addColumn('updated_at', Type::Timestamp)
 			->addIndex(['email'], 'users_email_unique', true)
@@ -37,7 +39,7 @@ final class InitMigration extends Migration
 			->addColumn('id', Type::Int, autoincrement: true, primary: true)
 			->addColumn('workspace_id', Type::Int, size: 11)
 			->addColumn('user_id', Type::Int, size: 11)
-			->addColumn('role', Type::Enum, enum: ['Owner', 'Member'])
+			->addColumn('role', Type::Enum, enum: ['Owner', 'Admin', 'Member'])
 			->addColumn('created_at', Type::Timestamp)
 			->addColumn('updated_at', Type::Timestamp)
 			->addIndex(['workspace_id', 'user_id'], 'workspace_users_unique', true)
@@ -52,7 +54,7 @@ final class InitMigration extends Migration
 			->addColumn('inviter_id', Type::Int, size: 11)
 			->addColumn('email', Type::String)
 			->addColumn('token_hash', Type::String, size: 64)
-			->addColumn('role', Type::Enum, enum: ['Owner', 'Member'])
+			->addColumn('role', Type::Enum, enum: ['Owner', 'Admin', 'Member'])
 			->addColumn('expires_at', Type::Timestamp)
 			->addColumn('accepted_at', Type::Timestamp, nullable: true)
 			->addColumn('created_at', Type::Timestamp)
@@ -118,7 +120,8 @@ final class InitMigration extends Migration
 		$this->table('events')
 			->addColumn('id', Type::Int, autoincrement: true, primary: true)
 			->addColumn('author_id', Type::Int, size: 11)
-			->addColumn('project_id', Type::Int, size: 11)
+			->addColumn('project_id', Type::Int, size: 11, nullable: true)
+			->addColumn('workspace_id', Type::Int, size: 11, nullable: true)
 			->addColumn('task_id', Type::Int, size: 11, nullable: true)
 			->addColumn(
 				'type',
@@ -136,15 +139,22 @@ final class InitMigration extends Migration
 					'TaskUpdated',
 					'TaskDeleted',
 					'TaskMoved',
+					'MemberRoleChanged',
+					'OwnershipTransferred',
+					'AdminDeletedWorkspace',
+					'AdminDeletedUser',
+					'AdminChangedSystemRole',
 				],
 			)
 			->addColumn('metadata', Type::Text)
 			->addColumn('created_at', Type::Timestamp)
 			->addColumn('updated_at', Type::Timestamp)
 			->addIndex(['project_id'], 'events_project_id_index', false)
+			->addIndex(['workspace_id'], 'events_workspace_id_index', false)
 			->addIndex(['author_id'], 'events_author_id_index', false)
 			->addForeignKey('author_id', 'users', 'id', 'events_author_id_users_id_fk')
 			->addForeignKey('project_id', 'projects', 'id', 'events_project_id_projects_id_fk')
+			->addForeignKey('workspace_id', 'workspaces', 'id', 'events_workspace_id_workspaces_id_fk')
 			->create();
 
 		$this->table('oauth_clients')
@@ -180,6 +190,24 @@ final class InitMigration extends Migration
 			->addIndex(['access_token_hash'], 'oauth_access_token_hash_idx', false)
 			->addIndex(['refresh_token_hash'], 'oauth_refresh_token_hash_idx', false)
 			->create();
+
+		$this->seedSystemAdmin();
+	}
+
+	private function seedSystemAdmin(): void
+	{
+		$pdo = $this->databaseProvider->getDatabase()->getPdo();
+		$stmt = $pdo->prepare(
+			'INSERT INTO users (email, password, name, locale, current_workspace_id, system_role, created_at, updated_at) '
+			. 'VALUES (:email, :password, :name, :locale, NULL, :system_role, NOW(), NOW())',
+		);
+		$stmt->execute([
+			'email' => 'admin@ukolio.com',
+			'password' => password_hash('admin', PASSWORD_BCRYPT),
+			'name' => 'System Administrator',
+			'locale' => 'en',
+			'system_role' => 'SystemAdmin',
+		]);
 	}
 
 	public function down(): void

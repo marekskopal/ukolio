@@ -15,7 +15,9 @@
             "remove": "Odebrat",
             "rename": "Přejmenovat",
             "continue": "Pokračovat",
-            "goHome": "Domů"
+            "goHome": "Domů",
+            "view": "Zobrazit",
+            "close": "Zavřít"
         },
         "priority": {
             "Low": "Nízká",
@@ -36,6 +38,7 @@
         },
         "nav": {
             "projects": "Projekty",
+            "admin": "Správa",
             "signOut": "Odhlásit se",
             "newWorkspace": "+ Nový pracovní prostor",
             "manageWorkspaces": "Spravovat pracovní prostory"
@@ -159,9 +162,51 @@
             "memberRemoved": "Člen odebrán.",
             "selectWorkspace": "Vyberte pracovní prostor.",
             "accepted": "Přijato",
+            "transferOwnership": "Předat vlastnictví",
+            "transferOwnershipConfirm": "Předat vlastnictví „{workspace}\" uživateli {name}? Z vás se stane Admin.",
+            "ownershipTransferred": "Vlastnictví předáno.",
+            "roleChanged": "Role aktualizována.",
             "role": {
                 "Owner": "Vlastník",
+                "Admin": "Admin",
                 "Member": "Člen"
+            }
+        },
+        "admin": {
+            "title": "Správa",
+            "users": {
+                "title": "Uživatelé",
+                "email": "E-mail",
+                "name": "Jméno",
+                "systemRole": "Systémová role",
+                "workspaces": "Pracovní prostory",
+                "owned": "Vlastněné",
+                "searchPlaceholder": "Hledat podle jména nebo e-mailu",
+                "promote": "Povýšit na admina",
+                "demote": "Snížit na uživatele",
+                "roleUpdated": "Systémová role aktualizována.",
+                "deleteConfirm": "Smazat uživatele {email}? Tato akce je nevratná.",
+                "deleted": "Uživatel smazán.",
+                "cannotDeleteSelf": "Nemůžete zde smazat vlastní účet.",
+                "empty": "Žádní uživatelé.",
+                "systemRole.SystemAdmin": "Systémový admin",
+                "systemRole.User": "Uživatel"
+            },
+            "workspaces": {
+                "title": "Pracovní prostory",
+                "name": "Název",
+                "owner": "Vlastník",
+                "ownerLabel": "Vlastník",
+                "members": "Členů",
+                "searchPlaceholder": "Hledat podle názvu nebo vlastníka",
+                "renamePrompt": "Nový název pracovního prostoru:",
+                "renamed": "Pracovní prostor přejmenován.",
+                "deleteConfirm": "Smazat pracovní prostor „{name}\"? Všechny projekty a úkoly budou ztraceny.",
+                "deleted": "Pracovní prostor smazán.",
+                "transferOwnershipConfirm": "Učinit uživatele {name} vlastníkem „{workspace}\"?",
+                "ownershipTransferred": "Vlastnictví předáno.",
+                "removeMemberConfirm": "Odebrat {name} z „{workspace}\"?",
+                "empty": "Žádné pracovní prostory."
             }
         },
         "invitation": {

@@ -20,6 +20,7 @@ use Ukolio\Response\NotAuthorizedResponse;
 use Ukolio\Response\NotFoundResponse;
 use Ukolio\Response\OkResponse;
 use Ukolio\Route\Routes;
+use Ukolio\Service\Auth\PermissionCheckerInterface;
 use Ukolio\Service\Provider\InvitationProviderInterface;
 use Ukolio\Service\Provider\WorkspaceProviderInterface;
 use Ukolio\Service\Request\RequestServiceInterface;
@@ -29,6 +30,7 @@ final readonly class InvitationController
 	public function __construct(
 		private InvitationProviderInterface $invitationProvider,
 		private WorkspaceProviderInterface $workspaceProvider,
+		private PermissionCheckerInterface $permissionChecker,
 		private RequestServiceInterface $requestService,
 	) {
 	}
@@ -42,9 +44,8 @@ final readonly class InvitationController
 			return new NotFoundResponse('Workspace not found.');
 		}
 
-		$membership = $this->workspaceProvider->findMembership($user, $workspace);
-		if ($membership === null) {
-			return new NotAuthorizedResponse('You are not a member of this workspace.');
+		if (!$this->permissionChecker->canManageMembers($user, $workspace)) {
+			return new NotAuthorizedResponse('You do not have permission to view invitations.');
 		}
 
 		$invitations = [];
@@ -64,13 +65,16 @@ final readonly class InvitationController
 			return new NotFoundResponse('Workspace not found.');
 		}
 
-		$membership = $this->workspaceProvider->findMembership($user, $workspace);
-		if ($membership === null || $membership->role !== WorkspaceRoleEnum::Owner) {
-			return new NotAuthorizedResponse('Only the owner can invite members.');
+		if (!$this->permissionChecker->canManageMembers($user, $workspace)) {
+			return new NotAuthorizedResponse('You do not have permission to invite members.');
 		}
 
 		$dto = $this->requestService->getRequestBodyDto($request, InvitationCreateDto::class);
 		$role = WorkspaceRoleEnum::tryFrom($dto->role) ?? WorkspaceRoleEnum::Member;
+
+		if (!$this->permissionChecker->canInviteAs($user, $workspace, $role)) {
+			return new NotAuthorizedResponse('You cannot invite a member with this role.');
+		}
 
 		try {
 			$invitation = $this->invitationProvider->createInvitation($user, $workspace, $dto->email, $role);
@@ -87,7 +91,7 @@ final readonly class InvitationController
 		$user = $this->requestService->getUser($request);
 
 		foreach ($this->workspaceProvider->getMemberships($user) as $membership) {
-			if ($membership->role !== WorkspaceRoleEnum::Owner) {
+			if (!$this->permissionChecker->canManageMembers($user, $membership->workspace)) {
 				continue;
 			}
 			foreach ($this->invitationProvider->getInvitations($membership->workspace) as $invitation) {

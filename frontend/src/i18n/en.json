@@ -15,7 +15,9 @@
             "remove": "Remove",
             "rename": "Rename",
             "continue": "Continue",
-            "goHome": "Go home"
+            "goHome": "Go home",
+            "view": "View",
+            "close": "Close"
         },
         "priority": {
             "Low": "Low",
@@ -36,6 +38,7 @@
         },
         "nav": {
             "projects": "Projects",
+            "admin": "Admin",
             "signOut": "Sign out",
             "newWorkspace": "+ New workspace",
             "manageWorkspaces": "Manage workspaces"
@@ -159,9 +162,51 @@
             "memberRemoved": "Member removed.",
             "selectWorkspace": "Select a workspace.",
             "accepted": "Accepted",
+            "transferOwnership": "Transfer ownership",
+            "transferOwnershipConfirm": "Transfer ownership of \"{workspace}\" to {name}? You will become an Admin.",
+            "ownershipTransferred": "Ownership transferred.",
+            "roleChanged": "Role updated.",
             "role": {
                 "Owner": "Owner",
+                "Admin": "Admin",
                 "Member": "Member"
+            }
+        },
+        "admin": {
+            "title": "Administration",
+            "users": {
+                "title": "Users",
+                "email": "Email",
+                "name": "Name",
+                "systemRole": "System role",
+                "workspaces": "Workspaces",
+                "owned": "Owned",
+                "searchPlaceholder": "Search by name or email",
+                "promote": "Promote to admin",
+                "demote": "Demote to user",
+                "roleUpdated": "System role updated.",
+                "deleteConfirm": "Delete user {email}? This is irreversible.",
+                "deleted": "User deleted.",
+                "cannotDeleteSelf": "You cannot delete your own account here.",
+                "empty": "No users.",
+                "systemRole.SystemAdmin": "System admin",
+                "systemRole.User": "User"
+            },
+            "workspaces": {
+                "title": "Workspaces",
+                "name": "Name",
+                "owner": "Owner",
+                "ownerLabel": "Owner",
+                "members": "Members",
+                "searchPlaceholder": "Search by name or owner",
+                "renamePrompt": "New workspace name:",
+                "renamed": "Workspace renamed.",
+                "deleteConfirm": "Delete workspace \"{name}\"? All projects and tasks will be lost.",
+                "deleted": "Workspace deleted.",
+                "transferOwnershipConfirm": "Make {name} the owner of \"{workspace}\"?",
+                "ownershipTransferred": "Ownership transferred.",
+                "removeMemberConfirm": "Remove {name} from \"{workspace}\"?",
+                "empty": "No workspaces."
             }
         },
         "invitation": {

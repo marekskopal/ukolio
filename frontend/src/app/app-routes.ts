@@ -1,5 +1,6 @@
 import {Routes} from '@angular/router';
 import {AuthGuard} from '@app/core/guards/auth.guard';
+import {SystemAdminGuard} from '@app/core/guards/system-admin.guard';
 
 export const appRoutes: Routes = [
     {
@@ -47,6 +48,21 @@ export const appRoutes: Routes = [
             {
                 path: 'workspaces',
                 loadComponent: () => import('@app/workspaces/workspaces.component').then((m) => m.WorkspacesComponent),
+            },
+            {
+                path: 'admin',
+                canActivate: [SystemAdminGuard],
+                children: [
+                    {path: '', redirectTo: 'users', pathMatch: 'full'},
+                    {
+                        path: 'users',
+                        loadComponent: () => import('@app/admin/admin-users.component').then((m) => m.AdminUsersComponent),
+                    },
+                    {
+                        path: 'workspaces',
+                        loadComponent: () => import('@app/admin/admin-workspaces.component').then((m) => m.AdminWorkspacesComponent),
+                    },
+                ],
             },
         ],
     },

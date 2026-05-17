@@ -9,6 +9,7 @@ use MarekSkopal\ORM\Attribute\ColumnEnum;
 use MarekSkopal\ORM\Attribute\Entity;
 use MarekSkopal\ORM\Enum\Type;
 use Ukolio\Model\Entity\Enum\LocaleEnum;
+use Ukolio\Model\Entity\Enum\SystemRoleEnum;
 use Ukolio\Model\Repository\UserRepository;
 
 #[Entity(repositoryClass: UserRepository::class)]
@@ -25,6 +26,8 @@ class User extends AEntity
 		public LocaleEnum $locale = LocaleEnum::En,
 		#[Column(type: Type::Int, nullable: true)]
 		public ?int $currentWorkspaceId = null,
+		#[ColumnEnum(enum: SystemRoleEnum::class, default: SystemRoleEnum::User)]
+		public SystemRoleEnum $systemRole = SystemRoleEnum::User,
 	) {
 	}
 }

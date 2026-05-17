@@ -34,6 +34,10 @@ interface WorkspaceProviderInterface
 
 	public function removeMember(WorkspaceUser $membership): void;
 
+	public function changeMemberRole(User $actor, WorkspaceUser $membership, WorkspaceRoleEnum $newRole): WorkspaceUser;
+
+	public function transferOwnership(User $actor, Workspace $workspace, WorkspaceUser $newOwnerMembership): void;
+
 	public function switchCurrentWorkspace(User $user, Workspace $workspace): void;
 
 	public function getCurrentWorkspace(User $user): ?Workspace;

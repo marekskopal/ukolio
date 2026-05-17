@@ -9,11 +9,15 @@ use Ukolio\Model\Entity\Enum\EventTypeEnum;
 use Ukolio\Model\Entity\Event;
 use Ukolio\Model\Entity\Project;
 use Ukolio\Model\Entity\User;
+use Ukolio\Model\Entity\Workspace;
 
 interface EventProviderInterface
 {
 	/** @param array<string,mixed> $metadata */
 	public function recordEvent(User $author, Project $project, EventTypeEnum $type, array $metadata, ?int $taskId = null): Event;
+
+	/** @param array<string,mixed> $metadata */
+	public function recordWorkspaceEvent(User $author, ?Workspace $workspace, EventTypeEnum $type, array $metadata): Event;
 
 	/** @return Iterator<Event> */
 	public function getEvents(Project $project, int $limit = 100, int $offset = 0): Iterator;
