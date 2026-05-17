@@ -12,6 +12,9 @@ use Ukolio\Model\Entity\Project;
 use Ukolio\Model\Entity\Status;
 use Ukolio\Model\Entity\Task;
 use Ukolio\Model\Entity\User;
+use Ukolio\Model\Entity\Workspace;
+use Ukolio\Model\Repository\Enum\OrderDirectionEnum;
+use Ukolio\Model\Repository\Enum\TaskOrderByEnum;
 use Ukolio\Model\Repository\TaskRepository;
 
 final readonly class TaskProvider implements TaskProviderInterface
@@ -32,6 +35,38 @@ final readonly class TaskProvider implements TaskProviderInterface
 	public function getTasksByProject(Project $project): Iterator
 	{
 		return $this->taskRepository->findByProject($project->id);
+	}
+
+	/**
+	 * @param list<int>|null $statusIds
+	 * @return Iterator<Task>
+	 */
+	public function getTasksInWorkspace(
+		Workspace $workspace,
+		int $limit,
+		int $offset,
+		TaskOrderByEnum $orderBy,
+		OrderDirectionEnum $direction,
+		?string $search,
+		?array $statusIds,
+		bool $onlyActive,
+	): Iterator {
+		return $this->taskRepository->findInWorkspace(
+			$workspace->id,
+			$limit,
+			$offset,
+			$orderBy,
+			$direction,
+			$search,
+			$statusIds,
+			$onlyActive,
+		);
+	}
+
+	/** @param list<int>|null $statusIds */
+	public function countTasksInWorkspace(Workspace $workspace, ?string $search, ?array $statusIds, bool $onlyActive,): int
+	{
+		return $this->taskRepository->countInWorkspace($workspace->id, $search, $statusIds, $onlyActive);
 	}
 
 	/** @param array<int, ?string>|null $fieldValues */

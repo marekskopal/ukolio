@@ -1,0 +1,81 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $space-3;
+    padding: $space-3 0;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+}
+
+.pagination-summary {
+    flex: 1 1 auto;
+    min-width: 160px;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: $space-1;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 $space-2;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: $color-surface;
+    color: $color-text;
+    font-size: $font-size-sm;
+    line-height: 1;
+    transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+    @include focus-ring;
+
+    &:hover:not(:disabled):not(.page-btn--active) {
+        background: $color-surface-muted;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    &--active {
+        background: $color-accent;
+        border-color: $color-accent;
+        color: $color-text-inverse;
+        cursor: default;
+    }
+}
+
+.page-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    color: $color-text-subtle;
+}
+
+.pagination-size {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    flex: 0 0 auto;
+}
+
+.pagination-size-label {
+    color: $color-text-muted;
+}
+
+.pagination-size .select {
+    width: auto;
+    padding: $space-1 $space-6 $space-1 $space-2;
+    height: 32px;
+    font-size: $font-size-sm;
+}

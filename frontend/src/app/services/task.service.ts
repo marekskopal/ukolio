@@ -1,7 +1,7 @@
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
 import {TaskFieldValue} from '@app/models/field';
-import {Task, TaskPriority} from '@app/models/task';
+import {OrderDirection, Task, TaskList, TaskOrderBy, TaskPriority} from '@app/models/task';
 import {environment} from '@environments/environment';
 import {firstValueFrom} from 'rxjs';
 
@@ -14,9 +14,41 @@ export interface TaskWritePayload {
     fieldValues?: TaskFieldValue[];
 }
 
+export interface TaskListParams {
+    limit: number;
+    offset: number;
+    orderBy: TaskOrderBy;
+    orderDirection: OrderDirection;
+    search?: string;
+    statusIds?: number[];
+    onlyActive?: boolean;
+}
+
 @Injectable({providedIn: 'root'})
 export class TaskService {
     private readonly http = inject(HttpClient);
+
+    public getTasks(params: TaskListParams): Promise<TaskList> {
+        let httpParams = new HttpParams()
+            .set('limit', params.limit)
+            .set('offset', params.offset)
+            .set('orderBy', params.orderBy)
+            .set('orderDirection', params.orderDirection);
+        if (params.search) {
+            httpParams = httpParams.set('search', params.search);
+        }
+        if (params.statusIds && params.statusIds.length > 0) {
+            httpParams = httpParams.set('statusIds', params.statusIds.join('|'));
+        }
+        if (params.onlyActive) {
+            httpParams = httpParams.set('onlyActive', '1');
+        }
+        return firstValueFrom(this.http.get<TaskList>(`${environment.apiUrl}/tasks`, {params: httpParams}));
+    }
+
+    public getTask(taskId: number): Promise<Task> {
+        return firstValueFrom(this.http.get<Task>(`${environment.apiUrl}/tasks/${taskId}`));
+    }
 
     public createTask(projectId: number, payload: TaskWritePayload): Promise<Task> {
         return firstValueFrom(this.http.post<Task>(`${environment.apiUrl}/projects/${projectId}/tasks`, payload));

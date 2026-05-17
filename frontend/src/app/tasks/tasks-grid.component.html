@@ -1,0 +1,122 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">{{ 'app.tasks.title' | translate }}</h1>
+        <p class="page-subtitle">{{ 'app.tasks.subtitle' | translate: {count: count()} }}</p>
+    </div>
+</div>
+
+<div class="filters">
+    <input
+        type="search"
+        class="input filter-search"
+        [formControl]="searchControl"
+        [placeholder]="'app.tasks.search' | translate"
+        autocomplete="off"
+    />
+
+    <details class="filter-statuses" #statusDetails>
+        <summary class="filter-summary">
+            <span>{{ 'app.tasks.filterStatus' | translate }}</span>
+            @if (selectedStatusIds().length > 0) {
+                <span class="filter-summary-count">{{ selectedStatusIds().length }}</span>
+            }
+        </summary>
+        <div class="filter-popover">
+            @if (workflows().length === 0) {
+                <p class="text-muted filter-empty">{{ 'app.tasks.noWorkflows' | translate }}</p>
+            } @else {
+                @for (wf of workflows(); track wf.id) {
+                    <div class="filter-group">
+                        <div class="filter-group-label">{{ wf.projectName }}</div>
+                        @for (status of wf.statuses; track status.id) {
+                            <label class="filter-option">
+                                <input
+                                    type="checkbox"
+                                    [checked]="isStatusSelected(status.id)"
+                                    (change)="onStatusToggle(status.id, $event)"
+                                />
+                                <span class="filter-option-dot" [style.background]="status.color"></span>
+                                <span class="filter-option-name">{{ status.name }}</span>
+                            </label>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </details>
+
+    <label class="filter-toggle">
+        <input type="checkbox" [checked]="onlyActive()" (change)="onOnlyActiveToggle($event)" />
+        <span>{{ 'app.tasks.onlyActive' | translate }}</span>
+    </label>
+
+    @if (search() || selectedStatusIds().length > 0 || onlyActive()) {
+        <button type="button" class="btn-link filter-clear" (click)="clearFilters()">
+            {{ 'app.tasks.clearFilters' | translate }}
+        </button>
+    }
+</div>
+
+<div class="table-wrapper">
+    <table class="task-table">
+        <thead>
+            <tr>
+                <th class="sortable th-created" (click)="onSortClick('created_at')">
+                    {{ 'app.tasks.col.created' | translate }}
+                    <span class="sort-arrow">{{ sortArrow('created_at') }}</span>
+                </th>
+                <th class="sortable th-name" (click)="onSortClick('name')">
+                    {{ 'app.tasks.col.name' | translate }}
+                    <span class="sort-arrow">{{ sortArrow('name') }}</span>
+                </th>
+                <th class="sortable th-status" (click)="onSortClick('status_id')">
+                    {{ 'app.tasks.col.status' | translate }}
+                    <span class="sort-arrow">{{ sortArrow('status_id') }}</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (loading() && tasks().length === 0) {
+                <tr><td colspan="3" class="text-muted">{{ 'app.actions.loading' | translate }}</td></tr>
+            } @else if (tasks().length === 0) {
+                <tr><td colspan="3" class="text-muted">{{ 'app.tasks.empty' | translate }}</td></tr>
+            } @else {
+                @for (task of tasks(); track task.id) {
+                    <tr class="task-row" role="button" tabindex="0"
+                        (click)="onRowClick(task)"
+                        (keydown.enter)="onRowClick(task)"
+                        (keydown.space)="onRowClick(task)">
+                        <td class="td-created">{{ formatCreated(task.createdAt) }}</td>
+                        <td class="td-name">
+                            <span class="task-name">{{ task.name }}</span>
+                            <span class="task-project">{{ task.projectName }}</span>
+                        </td>
+                        <td class="td-status">
+                            <span class="status-pill" [style.background]="task.status.color">{{ task.status.name }}</span>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<uk-pagination
+    [totalItems]="count()"
+    [currentPage]="page()"
+    [pageSize]="pageSize()"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+/>
+
+@if (drawer(); as ctx) {
+    <uk-task-detail-drawer
+        [task]="ctx.task"
+        [statuses]="ctx.statuses"
+        [projectId]="ctx.projectId"
+        [projectFields]="ctx.projectFields"
+        (saved)="onTaskSaved()"
+        (deleted)="onTaskDeleted()"
+        (cancelled)="closeDrawer()"
+    />
+}

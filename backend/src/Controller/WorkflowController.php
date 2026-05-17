@@ -11,11 +11,14 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ukolio\Dto\WorkflowDto;
 use Ukolio\Dto\WorkflowUpdateDto;
+use Ukolio\Dto\WorkflowWithStatusesDto;
+use Ukolio\Response\ErrorResponse;
 use Ukolio\Response\NotAuthorizedResponse;
 use Ukolio\Response\NotFoundResponse;
 use Ukolio\Route\Routes;
 use Ukolio\Service\Auth\PermissionCheckerInterface;
 use Ukolio\Service\Provider\ProjectProviderInterface;
+use Ukolio\Service\Provider\StatusProviderInterface;
 use Ukolio\Service\Provider\WorkflowProviderInterface;
 use Ukolio\Service\Provider\WorkspaceProviderInterface;
 use Ukolio\Service\Request\RequestServiceInterface;
@@ -25,10 +28,31 @@ final readonly class WorkflowController
 	public function __construct(
 		private ProjectProviderInterface $projectProvider,
 		private WorkflowProviderInterface $workflowProvider,
+		private StatusProviderInterface $statusProvider,
 		private WorkspaceProviderInterface $workspaceProvider,
 		private PermissionCheckerInterface $permissionChecker,
 		private RequestServiceInterface $requestService,
 	) {
+	}
+
+	#[RouteGet(Routes::Workflows->value)]
+	public function actionGetWorkflows(ServerRequestInterface $request): ResponseInterface
+	{
+		$user = $this->requestService->getUser($request);
+		$workspace = $this->workspaceProvider->getCurrentWorkspace($user);
+		if ($workspace === null) {
+			return new ErrorResponse('No active workspace.', 422);
+		}
+
+		$workflows = [];
+		foreach ($this->workflowProvider->getWorkflowsInWorkspace($workspace) as $workflow) {
+			$workflows[] = WorkflowWithStatusesDto::fromEntity(
+				$workflow,
+				$this->statusProvider->getStatuses($workflow),
+			);
+		}
+
+		return new JsonResponse($workflows);
 	}
 
 	#[RouteGet(Routes::ProjectWorkflow->value)]

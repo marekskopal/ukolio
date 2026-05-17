@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Ukolio\Service\Provider;
 
 use DateTimeImmutable;
+use Iterator;
 use Ukolio\Model\Entity\Enum\StatusTypeEnum;
 use Ukolio\Model\Entity\Project;
 use Ukolio\Model\Entity\Workflow;
+use Ukolio\Model\Entity\Workspace;
 use Ukolio\Model\Repository\WorkflowRepository;
 
 final readonly class WorkflowProvider implements WorkflowProviderInterface
@@ -24,6 +26,12 @@ final readonly class WorkflowProvider implements WorkflowProviderInterface
 	public function getWorkflowByProject(Project $project): ?Workflow
 	{
 		return $this->workflowRepository->findByProject($project->id);
+	}
+
+	/** @return Iterator<Workflow> */
+	public function getWorkflowsInWorkspace(Workspace $workspace): Iterator
+	{
+		return $this->workflowRepository->findByWorkspace($workspace->id);
 	}
 
 	public function createDefaultWorkflow(Project $project): Workflow

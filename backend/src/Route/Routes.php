@@ -35,10 +35,12 @@ enum Routes: string
 	case ProjectTasks = '/api/projects/{projectId:number}/tasks';
 	case ProjectFields = '/api/projects/{projectId:number}/fields';
 
+	case Workflows = '/api/workflows';
 	case WorkflowStatuses = '/api/workflows/{workflowId:number}/statuses';
 	case Status = '/api/statuses/{statusId:number}';
 	case StatusMove = '/api/statuses/{statusId:number}/move';
 
+	case Tasks = '/api/tasks';
 	case Task = '/api/tasks/{taskId:number}';
 	case TaskMove = '/api/tasks/{taskId:number}/move';
 

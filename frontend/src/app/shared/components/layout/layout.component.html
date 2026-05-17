@@ -36,6 +36,9 @@
                 <a routerLink="/projects" routerLinkActive="nav-link--active" [routerLinkActiveOptions]="{exact: false}" class="nav-link">
                     {{ 'app.nav.projects' | translate }}
                 </a>
+                <a routerLink="/tasks" routerLinkActive="nav-link--active" [routerLinkActiveOptions]="{exact: false}" class="nav-link">
+                    {{ 'app.nav.tasks' | translate }}
+                </a>
                 @if (isSystemAdmin()) {
                     <a routerLink="/admin/users" routerLinkActive="nav-link--active" [routerLinkActiveOptions]="{exact: false}" class="nav-link">
                         {{ 'app.nav.admin' | translate }}

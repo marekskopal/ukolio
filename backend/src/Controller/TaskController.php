@@ -14,10 +14,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Ukolio\Dto\TaskCreateDto;
 use Ukolio\Dto\TaskDto;
+use Ukolio\Dto\TaskListDto;
+use Ukolio\Dto\TaskListItemDto;
 use Ukolio\Dto\TaskMoveDto;
 use Ukolio\Dto\TaskUpdateDto;
 use Ukolio\Model\Entity\Task;
 use Ukolio\Model\Entity\User;
+use Ukolio\Model\Repository\Enum\OrderDirectionEnum;
+use Ukolio\Model\Repository\Enum\TaskOrderByEnum;
 use Ukolio\Response\ErrorResponse;
 use Ukolio\Response\NotFoundResponse;
 use Ukolio\Response\OkResponse;
@@ -28,6 +32,7 @@ use Ukolio\Service\Provider\TaskFieldValueProviderInterface;
 use Ukolio\Service\Provider\TaskProviderInterface;
 use Ukolio\Service\Provider\WorkspaceProviderInterface;
 use Ukolio\Service\Request\RequestServiceInterface;
+use const PHP_INT_MAX;
 
 final readonly class TaskController
 {
@@ -39,6 +44,116 @@ final readonly class TaskController
 		private TaskFieldValueProviderInterface $taskFieldValueProvider,
 		private RequestServiceInterface $requestService,
 	) {
+	}
+
+	#[RouteGet(Routes::Tasks->value)]
+	public function actionGetWorkspaceTasks(ServerRequestInterface $request): ResponseInterface
+	{
+		$user = $this->requestService->getUser($request);
+		$workspace = $this->workspaceProvider->getCurrentWorkspace($user);
+		if ($workspace === null) {
+			return new ErrorResponse('No active workspace.', 422);
+		}
+
+		$query = $request->getQueryParams();
+
+		$orderBy = $this->resolveOrderBy($query);
+		if ($orderBy === null) {
+			return new ErrorResponse('Invalid orderBy value.', 400);
+		}
+
+		$direction = $this->resolveDirection($query);
+		if ($direction === null) {
+			return new ErrorResponse('Invalid orderDirection value.', 400);
+		}
+
+		$limit = $this->intParam($query, 'limit', 50, 1, 200);
+		$offset = $this->intParam($query, 'offset', 0, 0, PHP_INT_MAX);
+		$search = $this->stringParam($query, 'search');
+		$statusIds = $this->statusIdsParam($query);
+		$onlyActive = $this->boolParam($query, 'onlyActive');
+
+		$tasks = iterator_to_array(
+			$this->taskProvider->getTasksInWorkspace(
+				$workspace,
+				$limit,
+				$offset,
+				$orderBy,
+				$direction,
+				$search,
+				$statusIds,
+				$onlyActive,
+			),
+			false,
+		);
+
+		$count = $this->taskProvider->countTasksInWorkspace($workspace, $search, $statusIds, $onlyActive);
+
+		return new JsonResponse(new TaskListDto(
+			tasks: array_map(static fn (Task $t): TaskListItemDto => TaskListItemDto::fromEntity($t), $tasks),
+			count: $count,
+		));
+	}
+
+	/** @param array<array-key, mixed> $query */
+	private function resolveOrderBy(array $query): ?TaskOrderByEnum
+	{
+		if (!isset($query['orderBy']) || !is_string($query['orderBy'])) {
+			return TaskOrderByEnum::CreatedAt;
+		}
+		return TaskOrderByEnum::tryFrom($query['orderBy']);
+	}
+
+	/** @param array<array-key, mixed> $query */
+	private function resolveDirection(array $query): ?OrderDirectionEnum
+	{
+		if (!isset($query['orderDirection']) || !is_string($query['orderDirection'])) {
+			return OrderDirectionEnum::Desc;
+		}
+		return OrderDirectionEnum::tryFrom(strtoupper($query['orderDirection']));
+	}
+
+	/** @param array<array-key, mixed> $query */
+	private function intParam(array $query, string $key, int $default, int $min, int $max): int
+	{
+		if (!isset($query[$key]) || !is_string($query[$key])) {
+			return $default;
+		}
+		return max($min, min($max, (int) $query[$key]));
+	}
+
+	/** @param array<array-key, mixed> $query */
+	private function stringParam(array $query, string $key): ?string
+	{
+		if (!isset($query[$key]) || !is_string($query[$key]) || $query[$key] === '') {
+			return null;
+		}
+		return $query[$key];
+	}
+
+	/** @param array<array-key, mixed> $query */
+	private function boolParam(array $query, string $key): bool
+	{
+		if (!isset($query[$key]) || !is_string($query[$key])) {
+			return false;
+		}
+		return $query[$key] === '1' || $query[$key] === 'true';
+	}
+
+	/**
+	 * @param array<array-key, mixed> $query
+	 * @return list<int>|null
+	 */
+	private function statusIdsParam(array $query): ?array
+	{
+		if (!isset($query['statusIds']) || !is_string($query['statusIds']) || $query['statusIds'] === '') {
+			return null;
+		}
+		$parsed = array_values(array_filter(
+			array_map('intval', explode('|', $query['statusIds'])),
+			static fn (int $id): bool => $id > 0,
+		));
+		return $parsed === [] ? null : $parsed;
 	}
 
 	#[RouteGet(Routes::ProjectTasks->value)]

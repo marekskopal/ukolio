@@ -38,10 +38,33 @@
         },
         "nav": {
             "projects": "Projekty",
+            "tasks": "Úkoly",
             "admin": "Správa",
             "signOut": "Odhlásit se",
             "newWorkspace": "+ Nový pracovní prostor",
             "manageWorkspaces": "Spravovat pracovní prostory"
+        },
+        "tasks": {
+            "title": "Úkoly",
+            "subtitle": "{count} úkolů napříč všemi projekty",
+            "search": "Hledat podle názvu…",
+            "filterStatus": "Stav",
+            "onlyActive": "Pouze aktivní",
+            "clearFilters": "Vymazat filtry",
+            "noWorkflows": "Zatím žádné pracovní postupy.",
+            "empty": "Žádné úkoly neodpovídají filtrům.",
+            "col": {
+                "created": "Vytvořeno",
+                "name": "Název",
+                "status": "Stav"
+            }
+        },
+        "pagination": {
+            "showing": "Zobrazeno {from}–{to} z {total}",
+            "none": "Nic k zobrazení",
+            "prev": "Předchozí stránka",
+            "next": "Další stránka",
+            "perPage": "Na stránku"
         },
         "auth": {
             "login": {

@@ -38,10 +38,33 @@
         },
         "nav": {
             "projects": "Projects",
+            "tasks": "Tasks",
             "admin": "Admin",
             "signOut": "Sign out",
             "newWorkspace": "+ New workspace",
             "manageWorkspaces": "Manage workspaces"
+        },
+        "tasks": {
+            "title": "Tasks",
+            "subtitle": "{count} task(s) across all projects",
+            "search": "Search by name…",
+            "filterStatus": "Status",
+            "onlyActive": "Only active",
+            "clearFilters": "Clear filters",
+            "noWorkflows": "No workflows yet.",
+            "empty": "No tasks match the current filters.",
+            "col": {
+                "created": "Created",
+                "name": "Name",
+                "status": "Status"
+            }
+        },
+        "pagination": {
+            "showing": "Showing {from}–{to} of {total}",
+            "none": "Nothing to show",
+            "prev": "Previous page",
+            "next": "Next page",
+            "perPage": "Per page"
         },
         "auth": {
             "login": {
