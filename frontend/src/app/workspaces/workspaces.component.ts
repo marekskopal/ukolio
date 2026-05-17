@@ -1,12 +1,25 @@
 import {ChangeDetectionStrategy, Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
+import {Field, FieldType} from '@app/models/field';
 import {User} from '@app/models/user';
 import {Invitation, Workspace, WorkspaceMember, WorkspaceRole} from '@app/models/workspace';
 import {AlertService} from '@app/services/alert.service';
 import {CurrentUserService} from '@app/services/current-user.service';
+import {FieldService} from '@app/services/field.service';
 import {PermissionsService} from '@app/services/permissions.service';
 import {WorkspaceService} from '@app/services/workspace.service';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+
+interface FieldEditorState {
+    id: number | null;
+    name: string;
+    type: FieldType;
+    required: boolean;
+    defaultValue: string;
+    options: string[];
+}
+
+const FIELD_TYPES: FieldType[] = ['Text', 'Textarea', 'Select', 'Version'];
 
 @Component({
     selector: 'uk-workspaces',
@@ -22,6 +35,7 @@ export class WorkspacesComponent implements OnInit {
     private readonly permissionsService = inject(PermissionsService);
     private readonly alertService = inject(AlertService);
     private readonly translate = inject(TranslateService);
+    private readonly fieldService = inject(FieldService);
 
     protected readonly loading = signal(true);
     protected readonly workspaces = this.workspaceService.workspaces;
@@ -31,12 +45,21 @@ export class WorkspacesComponent implements OnInit {
     protected readonly invitations = signal<Invitation[]>([]);
     protected readonly inviteEmail = signal('');
     protected readonly inviteRole = signal<WorkspaceRole>('Member');
+    protected readonly fields = signal<Field[]>([]);
+    protected readonly fieldEditor = signal<FieldEditorState | null>(null);
+    protected readonly fieldSaving = signal(false);
+    protected readonly fieldTypes = FIELD_TYPES;
 
     protected readonly isSystemAdmin = this.permissionsService.isSystemAdmin;
     protected readonly canManageWorkspace = computed<boolean>(() => this.permissionsService.canManageWorkspace(this.members()));
     protected readonly canManageMembers = computed<boolean>(() => this.permissionsService.canManageMembers(this.members()));
+    protected readonly canManageFields = computed<boolean>(() => this.permissionsService.canManageFields(this.members()));
     protected readonly canTransferOwnership = computed<boolean>(() => this.permissionsService.canTransferOwnership(this.members()));
     protected readonly invitableRoles = computed<WorkspaceRole[]>(() => this.permissionsService.invitableRoles(this.members()));
+    protected readonly editorHasOptions = computed<boolean>(() => {
+        const ed = this.fieldEditor();
+        return ed !== null && (ed.type === 'Select' || ed.type === 'Version');
+    });
 
     public async ngOnInit(): Promise<void> {
         this.loading.set(true);
@@ -62,12 +85,15 @@ export class WorkspacesComponent implements OnInit {
 
     protected async select(ws: Workspace): Promise<void> {
         this.selected.set(ws);
-        const [members, invitations] = await Promise.all([
+        this.fieldEditor.set(null);
+        const [members, invitations, fields] = await Promise.all([
             this.workspaceService.getMembers(ws.id),
             this.workspaceService.getInvitations(ws.id).catch(() => []),
+            this.fieldService.listWorkspaceFields(ws.id).catch(() => [] as Field[]),
         ]);
         this.members.set(members);
         this.invitations.set(invitations);
+        this.fields.set(fields);
         const allowed = this.permissionsService.invitableRoles(members);
         if (!allowed.includes(this.inviteRole())) {
             this.inviteRole.set(allowed[0] ?? 'Member');
@@ -211,6 +237,134 @@ export class WorkspacesComponent implements OnInit {
     protected updateInviteRole(value: string): void {
         if (value === 'Admin' || value === 'Member') {
             this.inviteRole.set(value);
+        }
+    }
+
+    protected openCreateField(): void {
+        this.fieldEditor.set({
+            id: null,
+            name: '',
+            type: 'Text',
+            required: false,
+            defaultValue: '',
+            options: [],
+        });
+    }
+
+    protected openEditField(field: Field): void {
+        this.fieldEditor.set({
+            id: field.id,
+            name: field.name,
+            type: field.type,
+            required: field.required,
+            defaultValue: field.defaultValue ?? '',
+            options: field.options ? [...field.options] : [],
+        });
+    }
+
+    protected closeFieldEditor(): void {
+        this.fieldEditor.set(null);
+    }
+
+    protected updateEditor<K extends keyof FieldEditorState>(key: K, value: FieldEditorState[K]): void {
+        this.fieldEditor.update((ed) => (ed === null ? ed : {...ed, [key]: value}));
+    }
+
+    protected updateEditorType(value: string): void {
+        if (FIELD_TYPES.includes(value as FieldType)) {
+            this.fieldEditor.update((ed) => {
+                if (ed === null) return ed;
+                const type = value as FieldType;
+                const options = type === 'Select' || type === 'Version' ? ed.options : [];
+                return {...ed, type, options};
+            });
+        }
+    }
+
+    protected addOption(): void {
+        this.fieldEditor.update((ed) => (ed === null ? ed : {...ed, options: [...ed.options, '']}));
+    }
+
+    protected updateOption(index: number, value: string): void {
+        this.fieldEditor.update((ed) => {
+            if (ed === null) return ed;
+            const next = [...ed.options];
+            next[index] = value;
+            return {...ed, options: next};
+        });
+    }
+
+    protected removeOption(index: number): void {
+        this.fieldEditor.update((ed) => {
+            if (ed === null) return ed;
+            return {...ed, options: ed.options.filter((_, i) => i !== index)};
+        });
+    }
+
+    protected async saveField(): Promise<void> {
+        const ws = this.selected();
+        const ed = this.fieldEditor();
+        if (ws === null || ed === null || !this.canManageFields()) {
+            return;
+        }
+        const name = ed.name.trim();
+        if (name === '') {
+            return;
+        }
+        const hasOptions = ed.type === 'Select' || ed.type === 'Version';
+        const options = hasOptions ? ed.options.map((o) => o.trim()).filter((o) => o !== '') : null;
+        if (hasOptions && (options === null || options.length === 0)) {
+            this.alertService.error(await this.translate.instant('app.fields.optionsRequired') as string);
+            return;
+        }
+        if (ed.type === 'Version' && options !== null) {
+            for (const opt of options) {
+                if (!this.fieldService.isValidSemver(opt)) {
+                    this.alertService.error(await this.translate.instant('app.fields.invalidSemver', {value: opt}) as string);
+                    return;
+                }
+            }
+        }
+        const defaultValue = ed.defaultValue.trim() === '' ? null : ed.defaultValue.trim();
+        const payload = {name, type: ed.type, required: ed.required, defaultValue, options};
+
+        this.fieldSaving.set(true);
+        try {
+            const saved = ed.id === null
+                ? await this.fieldService.createField(ws.id, payload)
+                : await this.fieldService.updateField(ws.id, ed.id, payload);
+            this.fields.update((all) => {
+                const filtered = all.filter((f) => f.id !== saved.id);
+                return [...filtered, saved].sort((a, b) => a.name.localeCompare(b.name));
+            });
+            const messageKey = ed.id === null ? 'app.fields.fieldCreated' : 'app.fields.fieldUpdated';
+            this.alertService.success(await this.translate.instant(messageKey) as string);
+            this.fieldEditor.set(null);
+        } catch {
+            // error interceptor
+        } finally {
+            this.fieldSaving.set(false);
+        }
+    }
+
+    protected async deleteField(field: Field): Promise<void> {
+        const ws = this.selected();
+        if (ws === null || !this.canManageFields()) {
+            return;
+        }
+        const confirmMessage = await this.translate.instant('app.fields.deleteConfirm', {name: field.name}) as string;
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+        try {
+            await this.fieldService.deleteField(ws.id, field.id);
+            this.fields.update((all) => all.filter((f) => f.id !== field.id));
+            if (this.fieldEditor()?.id === field.id) {
+                this.fieldEditor.set(null);
+            }
+            this.alertService.success(await this.translate.instant('app.fields.fieldDeleted') as string);
+        } catch {
+            // error interceptor
         }
     }
 }

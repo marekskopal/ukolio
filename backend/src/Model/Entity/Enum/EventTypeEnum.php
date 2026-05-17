@@ -27,4 +27,9 @@ enum EventTypeEnum: string
 	case AdminDeletedWorkspace = 'AdminDeletedWorkspace';
 	case AdminDeletedUser = 'AdminDeletedUser';
 	case AdminChangedSystemRole = 'AdminChangedSystemRole';
+
+	case FieldCreated = 'FieldCreated';
+	case FieldUpdated = 'FieldUpdated';
+	case FieldDeleted = 'FieldDeleted';
+	case ProjectFieldsUpdated = 'ProjectFieldsUpdated';
 }

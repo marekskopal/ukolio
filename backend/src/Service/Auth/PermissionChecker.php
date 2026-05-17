@@ -125,6 +125,21 @@ final readonly class PermissionChecker implements PermissionCheckerInterface
 		return $this->workspaceProvider->isMember($user, $workspace);
 	}
 
+	public function canManageFields(User $user, Workspace $workspace): bool
+	{
+		if ($this->isSystemAdmin($user)) {
+			return true;
+		}
+
+		$membership = $this->workspaceProvider->findMembership($user, $workspace);
+		if ($membership === null) {
+			return false;
+		}
+
+		return $membership->role === WorkspaceRoleEnum::Owner
+			|| $membership->role === WorkspaceRoleEnum::Admin;
+	}
+
 	public function canInviteAs(User $actor, Workspace $workspace, WorkspaceRoleEnum $role): bool
 	{
 		if ($role === WorkspaceRoleEnum::Owner) {

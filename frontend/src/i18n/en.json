@@ -133,7 +133,11 @@
                 "TaskCreated": "created task \"{name}\"",
                 "TaskUpdated": "updated task \"{name}\"",
                 "TaskDeleted": "deleted task \"{name}\"",
-                "TaskMoved": "moved \"{name}\" from {from} → {to}"
+                "TaskMoved": "moved \"{name}\" from {from} → {to}",
+                "FieldCreated": "added custom field \"{name}\"",
+                "FieldUpdated": "updated custom field \"{name}\"",
+                "FieldDeleted": "deleted custom field \"{name}\"",
+                "ProjectFieldsUpdated": "updated project custom fields"
             },
             "timeAgo": {
                 "seconds": "{n}s ago",
@@ -225,6 +229,56 @@
             "languageEn": "English",
             "languageCs": "Čeština",
             "languageUpdated": "Language updated."
+        },
+        "fields": {
+            "title": "Custom fields",
+            "description": "Define a workspace catalog of custom fields. Each project can attach individual fields; their values appear in the task detail.",
+            "addField": "Add field",
+            "editField": "Edit field",
+            "name": "Field name",
+            "namePlaceholder": "e.g. Severity",
+            "type": "Type",
+            "types": {
+                "Text": "Text",
+                "Textarea": "Textarea",
+                "Select": "Select",
+                "Version": "Version (semver)"
+            },
+            "required": "Required",
+            "defaultValue": "Default value",
+            "defaultValuePlaceholder": "Optional default",
+            "options": "Options",
+            "addOption": "+ Add option",
+            "removeOption": "Remove",
+            "optionPlaceholder": "Option value",
+            "fieldCreated": "Field created.",
+            "fieldUpdated": "Field updated.",
+            "fieldDeleted": "Field deleted.",
+            "deleteConfirm": "Delete field \"{name}\"? It will be removed from every project and all its task values will be cleared.",
+            "empty": "No custom fields yet.",
+            "noPermission": "Only Owners and Admins can manage workspace fields.",
+            "invalidSemver": "\"{value}\" is not a valid semver string.",
+            "optionsRequired": "Select and Version fields need at least one option."
+        },
+        "projectFields": {
+            "title": "Custom fields",
+            "description": "Attach workspace fields to this project. The order here is the order shown in the task drawer.",
+            "attached": "Attached fields",
+            "available": "Available fields",
+            "attach": "Attach",
+            "detach": "Detach",
+            "moveUp": "Move up",
+            "moveDown": "Move down",
+            "save": "Save fields",
+            "saved": "Project fields updated.",
+            "emptyAttached": "No fields attached yet.",
+            "emptyAvailable": "No more fields to attach. Add fields in the workspace settings.",
+            "requiredBadge": "Required",
+            "noPermission": "Only Owners and Admins can change attached fields."
+        },
+        "taskFields": {
+            "heading": "Custom fields",
+            "fieldRequired": "{name} is required."
         }
     }
 }

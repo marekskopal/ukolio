@@ -11,17 +11,20 @@ use MarekSkopal\Router\Attribute\RoutePost;
 use MarekSkopal\Router\Attribute\RoutePut;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 use Ukolio\Dto\TaskCreateDto;
 use Ukolio\Dto\TaskDto;
 use Ukolio\Dto\TaskMoveDto;
 use Ukolio\Dto\TaskUpdateDto;
 use Ukolio\Model\Entity\Task;
 use Ukolio\Model\Entity\User;
+use Ukolio\Response\ErrorResponse;
 use Ukolio\Response\NotFoundResponse;
 use Ukolio\Response\OkResponse;
 use Ukolio\Route\Routes;
 use Ukolio\Service\Provider\ProjectProviderInterface;
 use Ukolio\Service\Provider\StatusProviderInterface;
+use Ukolio\Service\Provider\TaskFieldValueProviderInterface;
 use Ukolio\Service\Provider\TaskProviderInterface;
 use Ukolio\Service\Provider\WorkspaceProviderInterface;
 use Ukolio\Service\Request\RequestServiceInterface;
@@ -33,6 +36,7 @@ final readonly class TaskController
 		private TaskProviderInterface $taskProvider,
 		private StatusProviderInterface $statusProvider,
 		private WorkspaceProviderInterface $workspaceProvider,
+		private TaskFieldValueProviderInterface $taskFieldValueProvider,
 		private RequestServiceInterface $requestService,
 	) {
 	}
@@ -52,7 +56,7 @@ final readonly class TaskController
 		}
 
 		$tasks = array_map(
-			fn (Task $t): TaskDto => TaskDto::fromEntity($t),
+			fn (Task $t): TaskDto => TaskDto::fromEntity($t, $this->taskFieldValueProvider->findByTask($t)),
 			iterator_to_array($this->taskProvider->getTasksByProject($project), false),
 		);
 
@@ -80,17 +84,22 @@ final readonly class TaskController
 			return new NotFoundResponse('Status not found in this project.');
 		}
 
-		$task = $this->taskProvider->createTask(
-			author: $user,
-			project: $project,
-			status: $status,
-			name: $dto->name,
-			description: $dto->description,
-			priority: $dto->priority,
-			dueDate: $dto->dueDate,
-		);
+		try {
+			$task = $this->taskProvider->createTask(
+				author: $user,
+				project: $project,
+				status: $status,
+				name: $dto->name,
+				description: $dto->description,
+				priority: $dto->priority,
+				dueDate: $dto->dueDate,
+				fieldValues: $dto->fieldValues,
+			);
+		} catch (RuntimeException $e) {
+			return new ErrorResponse($e->getMessage(), 422);
+		}
 
-		return new JsonResponse(TaskDto::fromEntity($task));
+		return new JsonResponse(TaskDto::fromEntity($task, $this->taskFieldValueProvider->findByTask($task)));
 	}
 
 	#[RouteGet(Routes::Task->value)]
@@ -102,7 +111,7 @@ final readonly class TaskController
 			return new NotFoundResponse('Task not found.');
 		}
 
-		return new JsonResponse(TaskDto::fromEntity($task));
+		return new JsonResponse(TaskDto::fromEntity($task, $this->taskFieldValueProvider->findByTask($task)));
 	}
 
 	#[RoutePut(Routes::Task->value)]
@@ -121,17 +130,22 @@ final readonly class TaskController
 			return new NotFoundResponse('Status not found in this project.');
 		}
 
-		$task = $this->taskProvider->updateTask(
-			author: $user,
-			task: $task,
-			name: $dto->name,
-			description: $dto->description,
-			priority: $dto->priority,
-			dueDate: $dto->dueDate,
-			status: $status,
-		);
+		try {
+			$task = $this->taskProvider->updateTask(
+				author: $user,
+				task: $task,
+				name: $dto->name,
+				description: $dto->description,
+				priority: $dto->priority,
+				dueDate: $dto->dueDate,
+				status: $status,
+				fieldValues: $dto->fieldValues,
+			);
+		} catch (RuntimeException $e) {
+			return new ErrorResponse($e->getMessage(), 422);
+		}
 
-		return new JsonResponse(TaskDto::fromEntity($task));
+		return new JsonResponse(TaskDto::fromEntity($task, $this->taskFieldValueProvider->findByTask($task)));
 	}
 
 	#[RoutePut(Routes::TaskMove->value)]
@@ -152,7 +166,7 @@ final readonly class TaskController
 
 		$task = $this->taskProvider->moveTask($user, $task, $newStatus, $dto->position);
 
-		return new JsonResponse(TaskDto::fromEntity($task));
+		return new JsonResponse(TaskDto::fromEntity($task, $this->taskFieldValueProvider->findByTask($task)));
 	}
 
 	#[RouteDelete(Routes::Task->value)]

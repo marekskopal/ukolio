@@ -1,5 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {inject, Injectable} from '@angular/core';
+import {TaskFieldValue} from '@app/models/field';
 import {Task, TaskPriority} from '@app/models/task';
 import {environment} from '@environments/environment';
 import {firstValueFrom} from 'rxjs';
@@ -10,6 +11,7 @@ export interface TaskWritePayload {
     description: string | null;
     priority: TaskPriority;
     dueDate: string | null;
+    fieldValues?: TaskFieldValue[];
 }
 
 @Injectable({providedIn: 'root'})

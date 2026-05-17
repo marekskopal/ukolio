@@ -208,3 +208,122 @@
         }
     }
 }
+
+.ws-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $space-3;
+
+    h3 {
+        margin: 0;
+        font-size: $font-size-md;
+    }
+}
+
+.field-editor {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    padding: $space-4;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    background: $color-bg;
+    margin-bottom: $space-4;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-3;
+}
+
+.field-label {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+
+    span {
+        font-weight: 500;
+    }
+}
+
+.field-label-text {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    font-weight: 500;
+}
+
+.field-checkbox {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    align-self: end;
+    padding-bottom: $space-2;
+}
+
+.field-options {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+}
+
+.option-row {
+    display: flex;
+    gap: $space-2;
+    align-items: center;
+}
+
+.field-actions {
+    display: flex;
+    gap: $space-2;
+    justify-content: flex-end;
+}
+
+.field-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+}
+
+.field-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    gap: $space-3;
+}
+
+.field-meta {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.field-chip {
+    font-size: $font-size-xs;
+    padding: 2px $space-2;
+    border-radius: $radius-pill;
+    background: $color-surface-muted;
+    color: $color-text-muted;
+
+    &--required {
+        background: $color-error-bg;
+        color: $color-error;
+    }
+}
+
+.field-actions-inline {
+    display: flex;
+    gap: $space-2;
+    flex-shrink: 0;
+}

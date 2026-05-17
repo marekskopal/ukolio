@@ -55,6 +55,44 @@
             <label class="field-label">{{ 'app.board.drawer.dueDate' | translate }}</label>
             <input type="date" formControlName="dueDate" class="input input--narrow" />
         </div>
+
+        @if (customControls().length > 0) {
+            <h3 class="custom-fields-heading">{{ 'app.taskFields.heading' | translate }}</h3>
+            @for (desc of customControls(); track desc.controlName) {
+                <div class="field">
+                    <label class="field-label">
+                        {{ desc.pf.field.name }}
+                        @if (desc.pf.field.required) {
+                            <span class="required-mark">*</span>
+                        }
+                    </label>
+                    @switch (desc.pf.field.type) {
+                        @case ('Text') {
+                            <input type="text" [formControlName]="desc.controlName" class="input" />
+                        }
+                        @case ('Textarea') {
+                            <textarea [formControlName]="desc.controlName" rows="3" class="textarea"></textarea>
+                        }
+                        @case ('Select') {
+                            <select [formControlName]="desc.controlName" class="select">
+                                <option value=""></option>
+                                @for (opt of desc.options; track opt) {
+                                    <option [value]="opt">{{ opt }}</option>
+                                }
+                            </select>
+                        }
+                        @case ('Version') {
+                            <select [formControlName]="desc.controlName" class="select">
+                                <option value=""></option>
+                                @for (opt of desc.options; track opt) {
+                                    <option [value]="opt">{{ opt }}</option>
+                                }
+                            </select>
+                        }
+                    }
+                </div>
+            }
+        }
     </form>
 
     <footer class="drawer-footer">

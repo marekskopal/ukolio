@@ -133,7 +133,11 @@
                 "TaskCreated": "vytvořil(a) úkol „{name}\"",
                 "TaskUpdated": "upravil(a) úkol „{name}\"",
                 "TaskDeleted": "smazal(a) úkol „{name}\"",
-                "TaskMoved": "přesunul(a) „{name}\" z {from} → {to}"
+                "TaskMoved": "přesunul(a) „{name}\" z {from} → {to}",
+                "FieldCreated": "přidal(a) vlastní pole „{name}\"",
+                "FieldUpdated": "upravil(a) vlastní pole „{name}\"",
+                "FieldDeleted": "smazal(a) vlastní pole „{name}\"",
+                "ProjectFieldsUpdated": "upravil(a) vlastní pole projektu"
             },
             "timeAgo": {
                 "seconds": "před {n}s",
@@ -225,6 +229,56 @@
             "languageEn": "English",
             "languageCs": "Čeština",
             "languageUpdated": "Jazyk byl změněn."
+        },
+        "fields": {
+            "title": "Vlastní pole",
+            "description": "Definujte katalog vlastních polí pracovního prostoru. Každý projekt může přiřadit jednotlivá pole; jejich hodnoty se objeví v detailu úkolu.",
+            "addField": "Přidat pole",
+            "editField": "Upravit pole",
+            "name": "Název pole",
+            "namePlaceholder": "např. Závažnost",
+            "type": "Typ",
+            "types": {
+                "Text": "Text",
+                "Textarea": "Víceřádkový text",
+                "Select": "Výběr",
+                "Version": "Verze (semver)"
+            },
+            "required": "Povinné",
+            "defaultValue": "Výchozí hodnota",
+            "defaultValuePlaceholder": "Volitelně",
+            "options": "Možnosti",
+            "addOption": "+ Přidat možnost",
+            "removeOption": "Odebrat",
+            "optionPlaceholder": "Hodnota možnosti",
+            "fieldCreated": "Pole vytvořeno.",
+            "fieldUpdated": "Pole upraveno.",
+            "fieldDeleted": "Pole smazáno.",
+            "deleteConfirm": "Smazat pole „{name}\"? Bude odebráno ze všech projektů a všechny hodnoty v úkolech budou vymazány.",
+            "empty": "Zatím žádná vlastní pole.",
+            "noPermission": "Pouze Vlastník a Admin mohou spravovat pole pracovního prostoru.",
+            "invalidSemver": "„{value}\" není platná semver hodnota.",
+            "optionsRequired": "Pole typu Výběr a Verze potřebují alespoň jednu možnost."
+        },
+        "projectFields": {
+            "title": "Vlastní pole",
+            "description": "Přiřaďte pole z pracovního prostoru k tomuto projektu. Pořadí zde určuje pořadí v detailu úkolu.",
+            "attached": "Přiřazená pole",
+            "available": "Dostupná pole",
+            "attach": "Přiřadit",
+            "detach": "Odebrat",
+            "moveUp": "Posunout nahoru",
+            "moveDown": "Posunout dolů",
+            "save": "Uložit pole",
+            "saved": "Pole projektu aktualizována.",
+            "emptyAttached": "Zatím nepřiřazená žádná pole.",
+            "emptyAvailable": "Žádná další pole k přiřazení. Přidejte pole v nastavení pracovního prostoru.",
+            "requiredBadge": "Povinné",
+            "noPermission": "Pouze Vlastník a Admin mohou upravovat přiřazená pole."
+        },
+        "taskFields": {
+            "heading": "Vlastní pole",
+            "fieldRequired": "{name} je povinné."
         }
     }
 }

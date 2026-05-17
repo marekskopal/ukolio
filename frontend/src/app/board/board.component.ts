@@ -2,11 +2,13 @@ import {CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup, moveItemInArray, tr
 import {ChangeDetectionStrategy, Component, computed, inject, OnInit, signal} from '@angular/core';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {Board} from '@app/models/board';
+import {ProjectField} from '@app/models/field';
 import {Status} from '@app/models/status';
 import {Task} from '@app/models/task';
 import {TaskCardComponent} from '@app/board/task-card.component';
 import {TaskDetailDrawerComponent} from '@app/board/task-detail-drawer.component';
 import {BoardService} from '@app/services/board.service';
+import {FieldService} from '@app/services/field.service';
 import {TaskService} from '@app/services/task.service';
 import {TranslatePipe} from '@ngx-translate/core';
 
@@ -27,10 +29,12 @@ export class BoardComponent implements OnInit {
     private readonly route = inject(ActivatedRoute);
     private readonly boardService = inject(BoardService);
     private readonly taskService = inject(TaskService);
+    private readonly fieldService = inject(FieldService);
 
     protected readonly loading = signal(true);
     protected readonly board = signal<Board | null>(null);
     protected readonly projectId = signal<number | null>(null);
+    protected readonly projectFields = signal<ProjectField[]>([]);
 
     protected readonly drawerOpen = signal(false);
     protected readonly editingTask = signal<Task | null>(null);
@@ -54,7 +58,7 @@ export class BoardComponent implements OnInit {
     public async ngOnInit(): Promise<void> {
         const id = Number(this.route.snapshot.paramMap.get('id'));
         this.projectId.set(id);
-        await this.loadBoard();
+        await Promise.all([this.loadBoard(), this.loadProjectFields()]);
     }
 
     private async loadBoard(): Promise<void> {
@@ -63,6 +67,16 @@ export class BoardComponent implements OnInit {
             this.board.set(await this.boardService.getBoard(this.projectId()!));
         } finally {
             this.loading.set(false);
+        }
+    }
+
+    private async loadProjectFields(): Promise<void> {
+        const id = this.projectId();
+        if (id === null) return;
+        try {
+            this.projectFields.set(await this.fieldService.listProjectFields(id));
+        } catch {
+            this.projectFields.set([]);
         }
     }
 

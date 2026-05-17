@@ -16,8 +16,11 @@ use Ukolio\Model\Repository\TaskRepository;
 
 final readonly class TaskProvider implements TaskProviderInterface
 {
-	public function __construct(private TaskRepository $taskRepository, private EventProviderInterface $eventProvider,)
-	{
+	public function __construct(
+		private TaskRepository $taskRepository,
+		private EventProviderInterface $eventProvider,
+		private TaskFieldValueProviderInterface $taskFieldValueProvider,
+	) {
 	}
 
 	public function getTask(int $taskId): ?Task
@@ -31,6 +34,7 @@ final readonly class TaskProvider implements TaskProviderInterface
 		return $this->taskRepository->findByProject($project->id);
 	}
 
+	/** @param array<int, ?string>|null $fieldValues */
 	public function createTask(
 		User $author,
 		Project $project,
@@ -39,7 +43,12 @@ final readonly class TaskProvider implements TaskProviderInterface
 		?string $description,
 		TaskPriorityEnum $priority,
 		?DateTimeImmutable $dueDate,
+		?array $fieldValues = null,
 	): Task {
+		if ($fieldValues !== null) {
+			$this->taskFieldValueProvider->validateForProject($project, $fieldValues);
+		}
+
 		$position = $this->nextPosition($status);
 
 		$now = new DateTimeImmutable();
@@ -57,6 +66,10 @@ final readonly class TaskProvider implements TaskProviderInterface
 
 		$this->taskRepository->persist($task);
 
+		if ($fieldValues !== null) {
+			$this->taskFieldValueProvider->persistForTask($task, $fieldValues);
+		}
+
 		$this->eventProvider->recordEvent(
 			$author,
 			$project,
@@ -68,6 +81,7 @@ final readonly class TaskProvider implements TaskProviderInterface
 		return $task;
 	}
 
+	/** @param array<int, ?string>|null $fieldValues */
 	public function updateTask(
 		User $author,
 		Task $task,
@@ -76,7 +90,12 @@ final readonly class TaskProvider implements TaskProviderInterface
 		TaskPriorityEnum $priority,
 		?DateTimeImmutable $dueDate,
 		Status $status,
+		?array $fieldValues = null,
 	): Task {
+		if ($fieldValues !== null) {
+			$this->taskFieldValueProvider->validateForProject($task->project, $fieldValues);
+		}
+
 		$oldName = $task->name;
 		$statusChanged = $task->status->id !== $status->id;
 
@@ -91,13 +110,16 @@ final readonly class TaskProvider implements TaskProviderInterface
 		$task->updatedAt = new DateTimeImmutable();
 		$this->taskRepository->persist($task);
 
-		$this->eventProvider->recordEvent(
-			$author,
-			$task->project,
-			EventTypeEnum::TaskUpdated,
-			['name' => $name, 'oldName' => $oldName],
-			$task->id,
-		);
+		$fieldChanges = $fieldValues !== null
+			? $this->taskFieldValueProvider->persistForTask($task, $fieldValues)
+			: [];
+
+		$metadata = ['name' => $name, 'oldName' => $oldName];
+		if ($fieldChanges !== []) {
+			$metadata['fieldChanges'] = $fieldChanges;
+		}
+
+		$this->eventProvider->recordEvent($author, $task->project, EventTypeEnum::TaskUpdated, $metadata, $task->id);
 
 		return $task;
 	}
@@ -148,6 +170,7 @@ final readonly class TaskProvider implements TaskProviderInterface
 			$task->id,
 		);
 
+		$this->taskFieldValueProvider->deleteAllForTask($task);
 		$this->taskRepository->delete($task);
 	}
 

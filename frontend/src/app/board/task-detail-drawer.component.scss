@@ -143,3 +143,17 @@
     align-items: center;
     gap: $space-3;
 }
+
+.custom-fields-heading {
+    margin: $space-3 0 $space-1;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.required-mark {
+    color: $color-error;
+    margin-left: 2px;
+}

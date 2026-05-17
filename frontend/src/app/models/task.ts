@@ -1,3 +1,5 @@
+import {TaskFieldValue} from '@app/models/field';
+
 export type TaskPriority = 'Low' | 'Medium' | 'High';
 
 export interface Task {
@@ -11,4 +13,5 @@ export interface Task {
     position: number;
     createdAt: string;
     updatedAt: string;
+    fieldValues: TaskFieldValue[];
 }

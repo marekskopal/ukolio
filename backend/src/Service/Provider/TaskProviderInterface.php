@@ -19,6 +19,7 @@ interface TaskProviderInterface
 	/** @return Iterator<Task> */
 	public function getTasksByProject(Project $project): Iterator;
 
+	/** @param array<int, ?string>|null $fieldValues */
 	public function createTask(
 		User $author,
 		Project $project,
@@ -27,8 +28,10 @@ interface TaskProviderInterface
 		?string $description,
 		TaskPriorityEnum $priority,
 		?DateTimeImmutable $dueDate,
+		?array $fieldValues = null,
 	): Task;
 
+	/** @param array<int, ?string>|null $fieldValues */
 	public function updateTask(
 		User $author,
 		Task $task,
@@ -37,6 +40,7 @@ interface TaskProviderInterface
 		TaskPriorityEnum $priority,
 		?DateTimeImmutable $dueDate,
 		Status $status,
+		?array $fieldValues = null,
 	): Task;
 
 	public function moveTask(User $author, Task $task, Status $newStatus, int $newPosition): Task;

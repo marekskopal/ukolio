@@ -48,6 +48,7 @@
         [statuses]="board()?.statuses ?? []"
         [projectId]="projectId()!"
         [defaultStatusId]="defaultStatusId()"
+        [projectFields]="projectFields()"
         (saved)="onTaskSaved($event)"
         (deleted)="onTaskDeleted($event)"
         (cancelled)="closeDrawer()"

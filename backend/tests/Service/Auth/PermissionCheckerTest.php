@@ -129,6 +129,28 @@ final class PermissionCheckerTest extends TestCase
 		self::assertFalse($checker->canChangeRole($admin, $ws, $ownerM, WorkspaceRoleEnum::Admin));
 	}
 
+	public function testCanManageFieldsRequiresOwnerOrAdmin(): void
+	{
+		$owner = $this->makeUser(1);
+		$admin = $this->makeUser(2);
+		$member = $this->makeUser(3);
+		$outsider = $this->makeUser(4);
+		$ws = $this->makeWorkspace($owner);
+
+		$ownerM = $this->makeMembership($ws, $owner, WorkspaceRoleEnum::Owner);
+		$adminM = $this->makeMembership($ws, $admin, WorkspaceRoleEnum::Admin);
+		$memberM = $this->makeMembership($ws, $member, WorkspaceRoleEnum::Member);
+
+		$checker = new PermissionChecker($this->fakeProvider([
+			$ws->id => [1 => $ownerM, 2 => $adminM, 3 => $memberM],
+		]));
+
+		self::assertTrue($checker->canManageFields($owner, $ws));
+		self::assertTrue($checker->canManageFields($admin, $ws));
+		self::assertFalse($checker->canManageFields($member, $ws));
+		self::assertFalse($checker->canManageFields($outsider, $ws));
+	}
+
 	public function testInvitableRoleConstraints(): void
 	{
 		$owner = $this->makeUser(1);

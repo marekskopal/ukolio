@@ -1,7 +1,7 @@
 @use 'variables' as *;
 
 .form-page {
-    max-width: 560px;
+    max-width: 760px;
 }
 
 .page-title {
@@ -19,4 +19,74 @@
     align-items: center;
     gap: $space-3;
     margin-top: $space-2;
+}
+
+.pf-section {
+    margin-top: $space-8;
+    padding-top: $space-6;
+    border-top: 1px solid $color-border;
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+}
+
+.pf-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-5;
+}
+
+.pf-column h3 {
+    margin: 0 0 $space-3;
+    font-size: $font-size-md;
+}
+
+.pf-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+}
+
+.pf-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    gap: $space-2;
+}
+
+.pf-meta {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.pf-chip {
+    font-size: $font-size-xs;
+    padding: 2px $space-2;
+    border-radius: $radius-pill;
+    background: $color-surface-muted;
+    color: $color-text-muted;
+
+    &--required {
+        background: $color-error-bg;
+        color: $color-error;
+    }
+}
+
+.pf-actions {
+    display: flex;
+    gap: $space-1;
+    flex-shrink: 0;
+}
+
+.muted {
+    color: $color-text-subtle;
 }
