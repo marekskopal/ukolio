@@ -1,41 +1,105 @@
 # Ukolio
 
-Minimalistic Kanban task manager. Multi-user JWT auth. Architecture clones FinGather (`/Users/marek/web/www/fingather/`).
+Minimalistic, multi-tenant Kanban task manager. Designed for AI agents (MCP)
+as the primary actor; the web UI is for human overview. Architecture clones
+FinGather (`/Users/marek/web/www/fingather/`).
 
 ## Services
 
 - `proxy/` — nginx reverse proxy (`/api/*` → backend, `/` → frontend)
-- `backend/` — FrankenPHP + PHP 8.5 + `marekskopal/orm` + MariaDB
-- `frontend/` — Angular 21 (standalone, signals) + Tailwind v4
+- `backend/` — FrankenPHP + PHP 8.5 + `marekskopal/orm` +
+  `marekskopal/router` + MariaDB
+- `frontend/` — Angular 21 (standalone components + signals), SCSS design
+  tokens (`frontend/src/styles/_variables.scss` + `_mixins.scss`). No Tailwind.
 
 ## Domain
 
-- `Workspace` (owner, name) — top-level container; users belong to one or more workspaces
-- `WorkspaceUser` (workspace, user, role ∈ Owner/Admin/Member) — membership
-- `Invitation` (workspace, inviter, email, tokenHash, role, expiresAt, acceptedAt?) — pending invites
-- `User` (email, password, name, currentWorkspaceId?, systemRole ∈ User/SystemAdmin) — `currentWorkspaceId` is the active workspace used to scope data; `systemRole = SystemAdmin` grants global admin access
-- `Project` (workspace, name, description) → has one `Workflow`, many `Tasks`
-- `Workflow` (project, name) → has many `Status`
-- `Status` (workflow, name, color, position, type ∈ start/normal/finish)
-- `Task` (project, status, name, description [markdown], priority, dueDate, position)
-- `Event` (author, type, metadata JSON, project?, workspaceId?, taskId?) — append-only audit log; `project`/`workspaceId` are nullable to allow workspace-level and admin events alongside project events
+- `Workspace` (owner, name) — top-level tenant; users belong to one or more workspaces.
+- `WorkspaceUser` (workspace, user, role ∈ Owner/Admin/Member) — membership.
+- `Invitation` (workspace, inviter, email, tokenHash, role, expiresAt, acceptedAt?) — pending invites.
+- `User` (email, password, name, currentWorkspaceId?, systemRole ∈ User/SystemAdmin, locale) — `currentWorkspaceId` scopes data; `systemRole = SystemAdmin` grants global admin.
+- `Project` (workspace, name, description) → has one `Workflow`, many `Tasks`, many `ProjectField` attachments.
+- `Workflow` (project, name) → has many `Status`.
+- `Status` (workflow, name, color, position, type ∈ Start/Normal/Finish).
+- `Task` (project, status, name, description [markdown], priority, dueDate, position) → has many `TaskFieldValue`.
+- `Field` (workspace, name, type ∈ Text/Textarea/Select/Version, required, defaultValue, options) — per-workspace custom-field catalog.
+- `ProjectField` (project, field, position, required) — attaches a workspace field to a project and orders it in the task drawer.
+- `TaskFieldValue` (task, field, value) — concrete value per task.
+- `Event` (author, type, metadata JSON, project?, workspaceId?, taskId?) — append-only audit log; `project`/`workspaceId` nullable so workspace- and admin-level events fit alongside project events.
 
-On sign-up a personal `Workspace` is auto-created and the user becomes its owner. New `Project` auto-seeds workflow `To Do → In Progress → Done`. Inviting a member sends an email via Symfony Mailer (SMTP env: `SMTP_HOST/PORT/USER/PASSWORD`, `EMAIL_FROM`); `mailpit` is wired in `docker-compose.yml` for local capture.
+On sign-up a personal `Workspace` is auto-created and the user becomes its
+owner. New `Project` auto-seeds workflow `To Do → In Progress → Done`.
+Inviting a member sends an email via Symfony Mailer (SMTP env:
+`SMTP_HOST/PORT/USER/PASSWORD`, `EMAIL_FROM`); `mailpit` is wired in
+`docker-compose.yml` for local capture.
 
 ## Roles & permissions
 
-Authorization is centralized in `Ukolio\Service\Auth\PermissionChecker` (interface + impl). Every mutating controller and the SystemAdmin endpoints route their decisions through it.
+Authorization is centralized in `Ukolio\Service\Auth\PermissionChecker`
+(interface + impl). Every mutating controller and the SystemAdmin endpoints
+route their decisions through it.
 
 - **SystemAdmin** (`User.systemRole`): global; passes every `can*` check. Operates on workspaces they don't belong to via dedicated `/api/admin/*` endpoints (see `Ukolio\Controller\Admin\`) with a separate frontend at `/admin/users` and `/admin/workspaces`. Inside their own workspaces they act as a normal member of whatever role they hold.
-- **Owner** (workspace‑scoped): one per workspace. Rename/delete workspace, manage all members, transfer ownership (sole way to assign a new Owner).
-- **Admin** (workspace‑scoped): manage members (Member ↔ Admin), invite Members (cannot invite Admins or Owners), full CRUD on projects, statuses, and tasks. Cannot remove or demote the Owner.
-- **Member** (workspace‑scoped): full CRUD on tasks; read‑only on projects, workflows, and statuses.
+- **Owner** (workspace-scoped): one per workspace. Rename/delete workspace, manage all members, transfer ownership (sole way to assign a new Owner).
+- **Admin** (workspace-scoped): manage members (Member ↔ Admin), invite Members (cannot invite Admins or Owners), full CRUD on projects, workflows, statuses, custom fields, and tasks. Cannot remove or demote the Owner.
+- **Member** (workspace-scoped): full CRUD on tasks; read-only on projects, workflows, statuses, and fields.
 
-Ownership transfer (`POST /api/workspaces/{id}/transfer-ownership`) atomically updates `Workspace.owner` and both `WorkspaceUser` rows (old Owner becomes Admin). Workspace owner removal is blocked — transfer first.
+Ownership transfer (`POST /api/workspaces/{id}/transfer-ownership`)
+atomically updates `Workspace.owner` and both `WorkspaceUser` rows (old Owner
+becomes Admin). Workspace owner removal is blocked — transfer first.
 
-The first SystemAdmin is seeded by the init migration as `admin@ukolio.com` / `admin`. **Rotate this password immediately in any non-dev environment.**
+The first SystemAdmin is seeded by the init migration as `admin@ukolio.com` /
+`admin`. **Rotate this password immediately in any non-dev environment.**
 
-MCP tools remain scoped to `currentWorkspace` — sysadmins must use the web admin UI for cross-workspace management.
+MCP tools remain scoped to `currentWorkspace` — sysadmins must use the web
+admin UI for cross-workspace management.
+
+## HTTP API surface
+
+All routes live in `Ukolio\Route\Routes` (single enum). Highlights:
+
+- `POST /api/authentication/{login,sign-up,refresh-token}`
+- `GET/PATCH /api/current-user`
+- `GET/POST /api/workspaces`, `PUT/DELETE /api/workspaces/{id}`, plus `/switch`, `/members`, `/transfer-ownership`, `/invitations`, `/fields`.
+- `GET/POST/PUT/DELETE /api/invitations/...`
+- `GET/POST/PUT/DELETE /api/projects[/{id}]`, plus `/board`, `/events`, `/workflow`, `/tasks`, `/fields`.
+- `GET /api/workflows` — workspace-wide list of workflows with nested statuses + `projectName` (used by the Tasks grid's status filter).
+- `GET/POST/PUT/DELETE /api/workflows/{id}/statuses`, `/api/statuses/{id}`, `/api/statuses/{id}/move`.
+- `GET /api/tasks` — workspace-wide paginated list. Query params: `limit` (default 50, max 200), `offset`, `orderBy` (`created_at|name|status_id`), `orderDirection` (`ASC|DESC`), `search`, `statusIds` (pipe-delimited), `onlyActive` (status type ≠ Finish). Response mirrors fingather's `TransactionListDto` shape: `{ tasks: TaskListItemDto[], count: int }`.
+- `GET/PUT/DELETE /api/tasks/{id}`, `PUT /api/tasks/{id}/move`, `POST /api/projects/{id}/tasks`.
+- Admin: `GET/PUT/DELETE /api/admin/users[/{id}]`, `GET/PUT/DELETE /api/admin/workspaces[/{id}]`, plus `/members`, `/transfer-ownership`.
+- MCP: `POST/GET/DELETE /api/mcp`, OAuth discovery + flow endpoints (see below).
+
+Query enums live under `backend/src/Model/Repository/Enum/`
+(`OrderDirectionEnum`, `TaskOrderByEnum`).
+
+## Frontend routes
+
+Public:
+
+- `/login`, `/sign-up`, `/invitations/accept`
+
+Inside `LayoutComponent` (AuthGuard-protected):
+
+- `/projects`, `/projects/new`, `/projects/:id/edit`, `/projects/:id/board`, `/projects/:id/workflow`, `/projects/:id/events`
+- `/tasks` — workspace-wide grid (see below)
+- `/workspaces` — membership management
+- `/admin/users`, `/admin/workspaces` — SystemAdmin only
+
+Shared components live under `frontend/src/app/shared/components/`
+(`layout`, `alert`, `pagination`).
+
+### Tasks grid (`/tasks`)
+
+Workspace-scoped paginated table that mirrors fingather's Transactions view.
+State is held as signals in `TasksGridComponent` — no URL or localStorage
+persistence (yet). Filter / sort / page-size changes reset to page 1. Row
+click opens the existing `TaskDetailDrawerComponent` in place — the drawer is
+already cleanly parameterized (`task`, `statuses`, `projectId`,
+`projectFields` inputs; `saved`/`deleted`/`cancelled` outputs) and is reused
+without refactor. Reusable `PaginationComponent` lives in
+`frontend/src/app/shared/components/pagination/` with options
+`[25, 50, 100, 200]` (default 50).
 
 ## i18n
 
@@ -47,14 +111,18 @@ MCP tools remain scoped to `currentWorkspace` — sysadmins must use the web adm
 ```bash
 docker compose up -d --build              # Full stack
 docker compose --profile dev up -d        # +Adminer
-make migrate                               # Apply migrations
+make migrate                              # Apply migrations
 ```
 
 ## MCP server
 
-Exposed at `POST/GET/DELETE /api/mcp` (Streamable HTTP transport, `mcp/sdk`). Mirrors `fingather/backend/src/Mcp/`. Sessions persisted to `MCP_SESSION_DIR` (defaults to `<tmp>/ukolio-mcp-sessions`).
+Exposed at `POST/GET/DELETE /api/mcp` (Streamable HTTP transport, `mcp/sdk`).
+Mirrors `fingather/backend/src/Mcp/`. Sessions persisted to
+`MCP_SESSION_DIR` (defaults to `<tmp>/ukolio-mcp-sessions`).
 
-Auth is **OAuth 2.1 with PKCE** (mirrors fingather/backend/src/OAuth/). Discovery endpoints:
+Auth is **OAuth 2.1 with PKCE** (mirrors `fingather/backend/src/OAuth/`).
+Discovery endpoints:
+
 - `GET /.well-known/oauth-authorization-server/api/mcp` — issuer/authz/token/registration URLs
 - `GET /.well-known/oauth-protected-resource/api/mcp` — resource metadata
 - `POST /api/mcp/oauth/register` — dynamic client registration (open)
@@ -62,12 +130,17 @@ Auth is **OAuth 2.1 with PKCE** (mirrors fingather/backend/src/OAuth/). Discover
 - `POST /api/mcp/oauth/token` — code/refresh-token exchange (open)
 - `GET /api/mcp/oauth/client-info` — display name lookup (open)
 
-401 responses include `WWW-Authenticate: Bearer resource_metadata="…"` per RFC 9728 so MCP clients can auto-discover. PKCE `S256` only; no client secret. Access token lifetime 1h, refresh 30d. Storage: `oauth_clients` and `oauth_authorizations` tables (tokens stored as SHA-256 hashes).
+401 responses include `WWW-Authenticate: Bearer resource_metadata="…"` per
+RFC 9728 so MCP clients can auto-discover. PKCE `S256` only; no client
+secret. Access token lifetime 1 h, refresh 30 d. Storage: `oauth_clients` and
+`oauth_authorizations` tables (tokens stored as SHA-256 hashes).
 
 Tools live in `backend/src/Mcp/Tool/` (auto-discovered by basePath/scanDirs):
+
 - `ProjectTools` — list/find/get/create/delete projects
 - `WorkflowTools` — list/find statuses for a project's workflow
 - `TaskTools` — list/find/get/create/update/move/delete tasks (move accepts `statusId` or `statusName`)
+- `FieldTools` — manage the workspace's custom-field catalog and per-project attachments
 
 Designed for AI-agent-driven flows; the frontend stays for human overview.
 
@@ -76,12 +149,22 @@ Designed for AI-agent-driven flows; the frontend stays for human overview.
 ```bash
 make test           # All tests (backend + frontend)
 make test-backend   # PHPUnit
-make test-frontend  # Vitest
+make test-frontend  # Vitest (no specs yet at time of writing)
 ```
 
 ## Linting
 
-Backend uses PHPStan at `max` level (with `bleedingEdge.neon` + strict/deprecation/phpunit/shipmonk rules + cognitive-complexity + unused-public) and PHPCS with the slevomat ruleset (ported from fingather; tabs, single-line method signatures ≤140 chars). Custom PHPStan extension `Ukolio\PhpStan\OrmReadWritePropertiesExtension` marks `Column`/`ManyToOne`/`ColumnEnum`-attributed properties as ORM-managed (always read, always written, always initialized).
+Backend uses PHPStan at `max` level (with `bleedingEdge.neon` +
+strict/deprecation/phpunit/shipmonk rules + cognitive-complexity +
+unused-public) and PHPCS with the slevomat ruleset (ported from fingather;
+tabs, single-line method signatures ≤140 chars). Custom PHPStan extension
+`Ukolio\PhpStan\OrmReadWritePropertiesExtension` marks
+`Column`/`ManyToOne`/`ColumnEnum`-attributed properties as ORM-managed
+(always read, always written, always initialized).
+
+Frontend uses angular-eslint + `@typescript-eslint`, with
+`simple-import-sort` and `unused-imports`. `pnpm run lint` runs with
+`--max-warnings=0`.
 
 ```bash
 make lint           # PHPStan + PHPCS
