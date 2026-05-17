@@ -149,6 +149,19 @@
             "errors": {
                 "invalidCredentials": "Email or password is invalid.",
                 "passwordPolicy": "Password must be at least 8 characters and contain uppercase, lowercase, and a digit."
+            },
+            "oauth": {
+                "loginTitle": "Sign in to authorize",
+                "loginSubtitle": "{{clientName}} wants to connect to your workspace.",
+                "loginAndAuthorize": "Sign in and authorize",
+                "signingIn": "Signing in…",
+                "consentTitle": "Authorize access",
+                "consentSubtitle": "Allow {{clientName}} to connect to your workspace?",
+                "authorize": "Authorize",
+                "authorizing": "Authorizing…",
+                "errorTitle": "Cannot authorize",
+                "invalidRequest": "Invalid OAuth request parameters.",
+                "unknownClient": "Unknown application."
             }
         },
         "projects": {

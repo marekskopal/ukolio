@@ -16,6 +16,10 @@ export const appRoutes: Routes = [
         loadComponent: () => import('@app/invitations/accept-invitation.component').then((m) => m.AcceptInvitationComponent),
     },
     {
+        path: 'oauth/authorize',
+        loadComponent: () => import('@app/oauth/oauth-authorize.component').then((m) => m.OAuthAuthorizeComponent),
+    },
+    {
         path: '',
         canActivate: [AuthGuard],
         loadComponent: () => import('@app/shared/components/layout/layout.component').then((m) => m.LayoutComponent),

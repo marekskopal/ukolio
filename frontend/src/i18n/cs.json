@@ -149,6 +149,19 @@
             "errors": {
                 "invalidCredentials": "Neplatný e-mail nebo heslo.",
                 "passwordPolicy": "Heslo musí mít alespoň 8 znaků a obsahovat velké písmeno, malé písmeno a číslici."
+            },
+            "oauth": {
+                "loginTitle": "Přihlaste se a autorizujte",
+                "loginSubtitle": "{{clientName}} se chce připojit k vašemu pracovnímu prostoru.",
+                "loginAndAuthorize": "Přihlásit a autorizovat",
+                "signingIn": "Přihlašuji…",
+                "consentTitle": "Povolit přístup",
+                "consentSubtitle": "Povolit aplikaci {{clientName}} připojení k vašemu pracovnímu prostoru?",
+                "authorize": "Autorizovat",
+                "authorizing": "Autorizuji…",
+                "errorTitle": "Nelze autorizovat",
+                "invalidRequest": "Neplatné parametry OAuth požadavku.",
+                "unknownClient": "Neznámá aplikace."
             }
         },
         "projects": {
