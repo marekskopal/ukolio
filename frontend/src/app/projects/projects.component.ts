@@ -5,7 +5,7 @@ import {AlertService} from '@app/services/alert.service';
 import {ProjectService} from '@app/services/project.service';
 
 @Component({
-    selector: 'tm-projects',
+    selector: 'uk-projects',
     standalone: true,
     imports: [RouterLink],
     changeDetection: ChangeDetectionStrategy.OnPush,

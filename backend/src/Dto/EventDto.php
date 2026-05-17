@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Dto;
+namespace Ukolio\Dto;
 
-use TaskManager\Model\Entity\Event;
+use Ukolio\Model\Entity\Event;
 use const DATE_ATOM;
 
 final readonly class EventDto

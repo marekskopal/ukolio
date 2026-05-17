@@ -5,7 +5,7 @@ import {AuthenticationService} from '@app/services/authentication.service';
 import {CurrentUserService} from '@app/services/current-user.service';
 
 @Component({
-    selector: 'tm-layout',
+    selector: 'uk-layout',
     standalone: true,
     imports: [RouterOutlet, RouterLink, RouterLinkActive],
     changeDetection: ChangeDetectionStrategy.OnPush,

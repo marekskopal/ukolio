@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace TaskManager;
+namespace Ukolio;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Psr\Log\LoggerInterface;
-use TaskManager\App\ApplicationFactory;
-use TaskManager\Response\ErrorResponse;
+use Ukolio\App\ApplicationFactory;
+use Ukolio\Response\ErrorResponse;
 
 $application = ApplicationFactory::create();
 

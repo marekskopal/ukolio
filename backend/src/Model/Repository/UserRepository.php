@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Model\Repository;
+namespace Ukolio\Model\Repository;
 
 use MarekSkopal\ORM\Repository\AbstractRepository;
-use TaskManager\Model\Entity\User;
+use Ukolio\Model\Entity\User;
 
 /** @extends AbstractRepository<User> */
 final class UserRepository extends AbstractRepository

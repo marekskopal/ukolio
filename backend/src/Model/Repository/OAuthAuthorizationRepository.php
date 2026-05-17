@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Model\Repository;
+namespace Ukolio\Model\Repository;
 
 use MarekSkopal\ORM\Repository\AbstractRepository;
-use TaskManager\Model\Entity\OAuthAuthorization;
+use Ukolio\Model\Entity\OAuthAuthorization;
 
 /** @extends AbstractRepository<OAuthAuthorization> */
 final class OAuthAuthorizationRepository extends AbstractRepository

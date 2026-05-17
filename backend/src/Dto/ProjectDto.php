@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Dto;
+namespace Ukolio\Dto;
 
-use TaskManager\Model\Entity\Project;
+use Ukolio\Model\Entity\Project;
 use const DATE_ATOM;
 
 final readonly class ProjectDto

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Middleware\Exception;
+namespace Ukolio\Middleware\Exception;
 
 use Psr\Http\Message\RequestInterface;
 

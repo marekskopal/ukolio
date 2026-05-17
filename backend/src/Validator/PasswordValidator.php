@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Validator;
+namespace Ukolio\Validator;
 
 final readonly class PasswordValidator
 {

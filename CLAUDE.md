@@ -1,4 +1,4 @@
-# Task Manager
+# Ukolio
 
 Minimalistic Kanban task manager. Multi-user JWT auth. Architecture clones FinGather (`/Users/marek/web/www/fingather/`).
 
@@ -28,7 +28,7 @@ make migrate                               # Apply migrations
 
 ## MCP server
 
-Exposed at `POST/GET/DELETE /api/mcp` (Streamable HTTP transport, `mcp/sdk`). Mirrors `fingather/backend/src/Mcp/`. Sessions persisted to `MCP_SESSION_DIR` (defaults to `<tmp>/task-manager-mcp-sessions`).
+Exposed at `POST/GET/DELETE /api/mcp` (Streamable HTTP transport, `mcp/sdk`). Mirrors `fingather/backend/src/Mcp/`. Sessions persisted to `MCP_SESSION_DIR` (defaults to `<tmp>/ukolio-mcp-sessions`).
 
 Auth is **OAuth 2.1 with PKCE** (mirrors fingather/backend/src/OAuth/). Discovery endpoints:
 - `GET /.well-known/oauth-authorization-server/api/mcp` — issuer/authz/token/registration URLs
@@ -57,7 +57,7 @@ make test-frontend  # Vitest
 
 ## Linting
 
-Backend uses PHPStan at `max` level (with `bleedingEdge.neon` + strict/deprecation/phpunit/shipmonk rules + cognitive-complexity + unused-public) and PHPCS with the slevomat ruleset (ported from fingather; tabs, single-line method signatures ≤140 chars). Custom PHPStan extension `TaskManager\PhpStan\OrmReadWritePropertiesExtension` marks `Column`/`ManyToOne`/`ColumnEnum`-attributed properties as ORM-managed (always read, always written, always initialized).
+Backend uses PHPStan at `max` level (with `bleedingEdge.neon` + strict/deprecation/phpunit/shipmonk rules + cognitive-complexity + unused-public) and PHPCS with the slevomat ruleset (ported from fingather; tabs, single-line method signatures ≤140 chars). Custom PHPStan extension `Ukolio\PhpStan\OrmReadWritePropertiesExtension` marks `Column`/`ManyToOne`/`ColumnEnum`-attributed properties as ORM-managed (always read, always written, always initialized).
 
 ```bash
 make lint           # PHPStan + PHPCS

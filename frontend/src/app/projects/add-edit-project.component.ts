@@ -5,7 +5,7 @@ import {AlertService} from '@app/services/alert.service';
 import {ProjectService} from '@app/services/project.service';
 
 @Component({
-    selector: 'tm-add-edit-project',
+    selector: 'uk-add-edit-project',
     standalone: true,
     imports: [ReactiveFormsModule, RouterLink],
     changeDetection: ChangeDetectionStrategy.OnPush,

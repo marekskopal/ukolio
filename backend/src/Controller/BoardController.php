@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Controller;
+namespace Ukolio\Controller;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use MarekSkopal\Router\Attribute\RouteGet;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TaskManager\Dto\BoardDto;
-use TaskManager\Dto\ProjectDto;
-use TaskManager\Dto\StatusDto;
-use TaskManager\Dto\TaskDto;
-use TaskManager\Dto\WorkflowDto;
-use TaskManager\Model\Entity\Status;
-use TaskManager\Model\Entity\Task;
-use TaskManager\Response\NotFoundResponse;
-use TaskManager\Route\Routes;
-use TaskManager\Service\Provider\ProjectProviderInterface;
-use TaskManager\Service\Provider\StatusProviderInterface;
-use TaskManager\Service\Provider\TaskProviderInterface;
-use TaskManager\Service\Provider\WorkflowProviderInterface;
-use TaskManager\Service\Request\RequestServiceInterface;
+use Ukolio\Dto\BoardDto;
+use Ukolio\Dto\ProjectDto;
+use Ukolio\Dto\StatusDto;
+use Ukolio\Dto\TaskDto;
+use Ukolio\Dto\WorkflowDto;
+use Ukolio\Model\Entity\Status;
+use Ukolio\Model\Entity\Task;
+use Ukolio\Response\NotFoundResponse;
+use Ukolio\Route\Routes;
+use Ukolio\Service\Provider\ProjectProviderInterface;
+use Ukolio\Service\Provider\StatusProviderInterface;
+use Ukolio\Service\Provider\TaskProviderInterface;
+use Ukolio\Service\Provider\WorkflowProviderInterface;
+use Ukolio\Service\Request\RequestServiceInterface;
 
 final readonly class BoardController
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Controller;
+namespace Ukolio\Controller;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use MarekSkopal\Router\Attribute\RouteDelete;
@@ -10,17 +10,17 @@ use MarekSkopal\Router\Attribute\RoutePost;
 use MarekSkopal\Router\Attribute\RoutePut;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TaskManager\Dto\StatusCreateDto;
-use TaskManager\Dto\StatusDto;
-use TaskManager\Dto\StatusMoveDto;
-use TaskManager\Dto\StatusUpdateDto;
-use TaskManager\Response\ErrorResponse;
-use TaskManager\Response\NotFoundResponse;
-use TaskManager\Response\OkResponse;
-use TaskManager\Route\Routes;
-use TaskManager\Service\Provider\StatusProviderInterface;
-use TaskManager\Service\Provider\WorkflowProviderInterface;
-use TaskManager\Service\Request\RequestServiceInterface;
+use Ukolio\Dto\StatusCreateDto;
+use Ukolio\Dto\StatusDto;
+use Ukolio\Dto\StatusMoveDto;
+use Ukolio\Dto\StatusUpdateDto;
+use Ukolio\Response\ErrorResponse;
+use Ukolio\Response\NotFoundResponse;
+use Ukolio\Response\OkResponse;
+use Ukolio\Route\Routes;
+use Ukolio\Service\Provider\StatusProviderInterface;
+use Ukolio\Service\Provider\WorkflowProviderInterface;
+use Ukolio\Service\Request\RequestServiceInterface;
 
 final readonly class StatusController
 {

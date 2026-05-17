@@ -3,7 +3,7 @@ import {RouterOutlet} from '@angular/router';
 import {AlertComponent} from '@app/shared/components/alert/alert.component';
 
 @Component({
-    selector: 'tm-app',
+    selector: 'uk-app',
     standalone: true,
     imports: [RouterOutlet, AlertComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,

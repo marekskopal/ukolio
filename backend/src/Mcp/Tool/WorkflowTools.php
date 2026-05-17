@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Mcp\Tool;
+namespace Ukolio\Mcp\Tool;
 
 use Mcp\Capability\Attribute\McpTool;
 use RuntimeException;
-use TaskManager\Mcp\Dto\McpStatusDto;
-use TaskManager\Mcp\Dto\McpStatusListDto;
-use TaskManager\Mcp\McpUserContextInterface;
-use TaskManager\Model\Entity\Workflow;
-use TaskManager\Service\Provider\ProjectProviderInterface;
-use TaskManager\Service\Provider\StatusProviderInterface;
-use TaskManager\Service\Provider\WorkflowProviderInterface;
+use Ukolio\Mcp\Dto\McpStatusDto;
+use Ukolio\Mcp\Dto\McpStatusListDto;
+use Ukolio\Mcp\McpUserContextInterface;
+use Ukolio\Model\Entity\Workflow;
+use Ukolio\Service\Provider\ProjectProviderInterface;
+use Ukolio\Service\Provider\StatusProviderInterface;
+use Ukolio\Service\Provider\WorkflowProviderInterface;
 
 final readonly class WorkflowTools
 {

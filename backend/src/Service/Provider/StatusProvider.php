@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Provider;
+namespace Ukolio\Service\Provider;
 
 use DateTimeImmutable;
 use Iterator;
-use TaskManager\Model\Entity\Enum\StatusTypeEnum;
-use TaskManager\Model\Entity\Status;
-use TaskManager\Model\Entity\Workflow;
-use TaskManager\Model\Repository\StatusRepository;
+use Ukolio\Model\Entity\Enum\StatusTypeEnum;
+use Ukolio\Model\Entity\Status;
+use Ukolio\Model\Entity\Workflow;
+use Ukolio\Model\Repository\StatusRepository;
 
 final readonly class StatusProvider implements StatusProviderInterface
 {

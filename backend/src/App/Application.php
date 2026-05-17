@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\App;
+namespace Ukolio\App;
 
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use TaskManager\Service\Dbal\DbContext;
+use Ukolio\Service\Dbal\DbContext;
 
 final readonly class Application
 {

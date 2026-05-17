@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Dbal;
+namespace Ukolio\Service\Dbal;
 
 use MarekSkopal\ORM\Database\DatabaseInterface;
 use MarekSkopal\ORM\Database\MySqlDatabase;

@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Mcp\Tool;
+namespace Ukolio\Mcp\Tool;
 
 use DateTimeImmutable;
 use Mcp\Capability\Attribute\McpTool;
 use RuntimeException;
-use TaskManager\Mcp\Dto\McpTaskDto;
-use TaskManager\Mcp\Dto\McpTaskListDto;
-use TaskManager\Mcp\McpUserContextInterface;
-use TaskManager\Model\Entity\Enum\StatusTypeEnum;
-use TaskManager\Model\Entity\Enum\TaskPriorityEnum;
-use TaskManager\Model\Entity\Project;
-use TaskManager\Model\Entity\Status;
-use TaskManager\Model\Entity\Task;
-use TaskManager\Service\Provider\ProjectProviderInterface;
-use TaskManager\Service\Provider\StatusProviderInterface;
-use TaskManager\Service\Provider\TaskProviderInterface;
-use TaskManager\Service\Provider\WorkflowProviderInterface;
+use Ukolio\Mcp\Dto\McpTaskDto;
+use Ukolio\Mcp\Dto\McpTaskListDto;
+use Ukolio\Mcp\McpUserContextInterface;
+use Ukolio\Model\Entity\Enum\StatusTypeEnum;
+use Ukolio\Model\Entity\Enum\TaskPriorityEnum;
+use Ukolio\Model\Entity\Project;
+use Ukolio\Model\Entity\Status;
+use Ukolio\Model\Entity\Task;
+use Ukolio\Service\Provider\ProjectProviderInterface;
+use Ukolio\Service\Provider\StatusProviderInterface;
+use Ukolio\Service\Provider\TaskProviderInterface;
+use Ukolio\Service\Provider\WorkflowProviderInterface;
 
 final readonly class TaskTools
 {

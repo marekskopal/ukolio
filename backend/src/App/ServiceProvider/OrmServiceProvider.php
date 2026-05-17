@@ -2,30 +2,30 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\App\ServiceProvider;
+namespace Ukolio\App\ServiceProvider;
 
 use League\Container\Container;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use MarekSkopal\ORM\Database\DatabaseInterface;
 use MarekSkopal\ORM\ORM;
 use MarekSkopal\ORM\Repository\RepositoryInterface;
-use TaskManager\Model\Entity\Event;
-use TaskManager\Model\Entity\OAuthAuthorization;
-use TaskManager\Model\Entity\OAuthClient;
-use TaskManager\Model\Entity\Project;
-use TaskManager\Model\Entity\Status;
-use TaskManager\Model\Entity\Task;
-use TaskManager\Model\Entity\User;
-use TaskManager\Model\Entity\Workflow;
-use TaskManager\Model\Repository\EventRepository;
-use TaskManager\Model\Repository\OAuthAuthorizationRepository;
-use TaskManager\Model\Repository\OAuthClientRepository;
-use TaskManager\Model\Repository\ProjectRepository;
-use TaskManager\Model\Repository\StatusRepository;
-use TaskManager\Model\Repository\TaskRepository;
-use TaskManager\Model\Repository\UserRepository;
-use TaskManager\Model\Repository\WorkflowRepository;
-use TaskManager\Service\Dbal\DbContext;
+use Ukolio\Model\Entity\Event;
+use Ukolio\Model\Entity\OAuthAuthorization;
+use Ukolio\Model\Entity\OAuthClient;
+use Ukolio\Model\Entity\Project;
+use Ukolio\Model\Entity\Status;
+use Ukolio\Model\Entity\Task;
+use Ukolio\Model\Entity\User;
+use Ukolio\Model\Entity\Workflow;
+use Ukolio\Model\Repository\EventRepository;
+use Ukolio\Model\Repository\OAuthAuthorizationRepository;
+use Ukolio\Model\Repository\OAuthClientRepository;
+use Ukolio\Model\Repository\ProjectRepository;
+use Ukolio\Model\Repository\StatusRepository;
+use Ukolio\Model\Repository\TaskRepository;
+use Ukolio\Model\Repository\UserRepository;
+use Ukolio\Model\Repository\WorkflowRepository;
+use Ukolio\Service\Dbal\DbContext;
 
 final class OrmServiceProvider extends AbstractServiceProvider
 {

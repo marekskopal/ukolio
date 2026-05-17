@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Mcp\Dto;
+namespace Ukolio\Mcp\Dto;
 
 final readonly class McpProjectListDto
 {

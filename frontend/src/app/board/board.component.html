@@ -33,7 +33,7 @@
                      class="column-tasks">
                     @for (task of col.tasks; track task.id) {
                         <div cdkDrag (click)="openEdit(task)">
-                            <tm-task-card [task]="task" />
+                            <uk-task-card [task]="task" />
                         </div>
                     }
                 </div>
@@ -43,7 +43,7 @@
 }
 
 @if (drawerOpen()) {
-    <tm-task-detail-drawer
+    <uk-task-detail-drawer
         [task]="editingTask()"
         [statuses]="board()?.statuses ?? []"
         [projectId]="projectId()!"

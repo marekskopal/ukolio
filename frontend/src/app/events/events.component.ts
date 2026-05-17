@@ -4,7 +4,7 @@ import {AuditEvent} from '@app/models/event';
 import {EventService} from '@app/services/event.service';
 
 @Component({
-    selector: 'tm-events',
+    selector: 'uk-events',
     standalone: true,
     imports: [RouterLink],
     changeDetection: ChangeDetectionStrategy.OnPush,

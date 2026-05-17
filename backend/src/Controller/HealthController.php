@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Controller;
+namespace Ukolio\Controller;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use MarekSkopal\Router\Attribute\RouteGet;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TaskManager\Route\Routes;
+use Ukolio\Route\Routes;
 
 final readonly class HealthController
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Authentication;
+namespace Ukolio\Service\Authentication;
 
-use TaskManager\Dto\AuthenticationDto;
-use TaskManager\Dto\CredentialsDto;
-use TaskManager\Model\Entity\User;
+use Ukolio\Dto\AuthenticationDto;
+use Ukolio\Dto\CredentialsDto;
+use Ukolio\Model\Entity\User;
 
 interface AuthenticationServiceInterface
 {

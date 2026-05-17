@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Dto;
+namespace Ukolio\Dto;
 
-use TaskManager\Model\Entity\Status;
+use Ukolio\Model\Entity\Status;
 
 final readonly class StatusDto
 {

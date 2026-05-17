@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Mcp\Dto;
+namespace Ukolio\Mcp\Dto;
 
-use TaskManager\Model\Entity\Project;
+use Ukolio\Model\Entity\Project;
 
 final readonly class McpProjectDto
 {

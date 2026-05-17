@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Mcp;
+namespace Ukolio\Mcp;
 
 use RuntimeException;
-use TaskManager\Model\Entity\User;
+use Ukolio\Model\Entity\User;
 
 final class McpUserContext implements McpUserContextInterface
 {

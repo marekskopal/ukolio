@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Logger;
+namespace Ukolio\Service\Logger;
 
 use Psr\Log\AbstractLogger;
 use Stringable;

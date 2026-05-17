@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Route;
+namespace Ukolio\Route;
 
 enum Routes: string
 {

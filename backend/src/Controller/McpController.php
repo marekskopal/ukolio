@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Controller;
+namespace Ukolio\Controller;
 
 use MarekSkopal\Router\Attribute\RouteDelete;
 use MarekSkopal\Router\Attribute\RouteGet;
@@ -12,18 +12,18 @@ use Mcp\Server\Transport\StreamableHttpTransport;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-use TaskManager\Mcp\McpUserContextInterface;
-use TaskManager\Mcp\Server\TaskManagerServer;
-use TaskManager\OAuth\AuthorizationServiceInterface;
-use TaskManager\Response\ErrorResponse;
-use TaskManager\Route\Routes;
+use Ukolio\Mcp\McpUserContextInterface;
+use Ukolio\Mcp\Server\UkolioServer;
+use Ukolio\OAuth\AuthorizationServiceInterface;
+use Ukolio\Response\ErrorResponse;
+use Ukolio\Route\Routes;
 
 final readonly class McpController
 {
 	public function __construct(
 		private AuthorizationServiceInterface $authorizationService,
 		private McpUserContextInterface $userContext,
-		private TaskManagerServer $server,
+		private UkolioServer $server,
 	) {
 	}
 
@@ -103,7 +103,7 @@ final readonly class McpController
 	{
 		$dir = (string) getenv('MCP_SESSION_DIR');
 		if ($dir === '') {
-			$dir = sys_get_temp_dir() . '/task-manager-mcp-sessions';
+			$dir = sys_get_temp_dir() . '/ukolio-mcp-sessions';
 		}
 
 		return $dir;

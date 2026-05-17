@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Provider;
+namespace Ukolio\Service\Provider;
 
-use TaskManager\Model\Entity\Project;
-use TaskManager\Model\Entity\Workflow;
+use Ukolio\Model\Entity\Project;
+use Ukolio\Model\Entity\Workflow;
 
 interface WorkflowProviderInterface
 {

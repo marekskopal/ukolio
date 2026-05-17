@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Model\Entity;
+namespace Ukolio\Model\Entity;
 
 use DateTimeImmutable;
 use MarekSkopal\ORM\Attribute\Column;

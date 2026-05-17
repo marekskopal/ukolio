@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Model\Entity;
+namespace Ukolio\Model\Entity;
 
 use MarekSkopal\ORM\Attribute\Column;
 use MarekSkopal\ORM\Attribute\Entity;
 use MarekSkopal\ORM\Attribute\ManyToOne;
 use MarekSkopal\ORM\Enum\Type;
-use TaskManager\Model\Repository\OAuthClientRepository;
+use Ukolio\Model\Repository\OAuthClientRepository;
 
 #[Entity(repositoryClass: OAuthClientRepository::class, table: 'oauth_clients')]
 class OAuthClient extends AEntity

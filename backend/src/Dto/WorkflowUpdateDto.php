@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Dto;
+namespace Ukolio\Dto;
 
 /** @implements ArrayFactoryInterface<array{name: string}> */
 final readonly class WorkflowUpdateDto implements ArrayFactoryInterface

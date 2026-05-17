@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Tests\Validator;
+namespace Ukolio\Tests\Validator;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
-use TaskManager\Validator\PasswordValidator;
+use Ukolio\Validator\PasswordValidator;
 
 #[CoversClass(PasswordValidator::class)]
 final class PasswordValidatorTest extends TestCase

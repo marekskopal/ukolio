@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\App;
+namespace Ukolio\App;
 
 use League\Container\Container;
 use League\Container\ReflectionContainer;
 use MarekSkopal\Router\Builder\RouterBuilder;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use TaskManager\App\ServiceProvider\AuthenticationServiceProvider;
-use TaskManager\App\ServiceProvider\DomainServiceProvider;
-use TaskManager\App\ServiceProvider\InfrastructureServiceProvider;
-use TaskManager\App\ServiceProvider\OrmServiceProvider;
-use TaskManager\Middleware\AuthorizationMiddleware;
-use TaskManager\Route\Strategy\JsonStrategy;
-use TaskManager\Service\Dbal\DbContext;
+use Ukolio\App\ServiceProvider\AuthenticationServiceProvider;
+use Ukolio\App\ServiceProvider\DomainServiceProvider;
+use Ukolio\App\ServiceProvider\InfrastructureServiceProvider;
+use Ukolio\App\ServiceProvider\OrmServiceProvider;
+use Ukolio\Middleware\AuthorizationMiddleware;
+use Ukolio\Route\Strategy\JsonStrategy;
+use Ukolio\Service\Dbal\DbContext;
 
 final readonly class ApplicationFactory
 {

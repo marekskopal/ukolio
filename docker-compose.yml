@@ -1,3 +1,5 @@
+name: ukolio
+
 services:
     proxy:
         build:
@@ -53,7 +55,7 @@ services:
         networks:
             - backend
         volumes:
-            - task_manager_data:/var/lib/mysql
+            - ukolio_data:/var/lib/mysql
 
     adminer:
         image: adminer:5.4.2
@@ -66,10 +68,10 @@ services:
 
 networks:
     frontend:
-        name: task_manager_frontend
+        name: ukolio_frontend
     backend:
-        name: task_manager_backend
+        name: ukolio_backend
 
 volumes:
-    task_manager_data:
-        name: task_manager_data
+    ukolio_data:
+        name: ukolio_data

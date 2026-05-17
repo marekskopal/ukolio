@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Authentication\Exception;
+namespace Ukolio\Service\Authentication\Exception;
 
 final class AuthenticationException extends \RuntimeException
 {

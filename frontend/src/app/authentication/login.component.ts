@@ -4,7 +4,7 @@ import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AuthenticationService} from '@app/services/authentication.service';
 
 @Component({
-    selector: 'tm-login',
+    selector: 'uk-login',
     standalone: true,
     imports: [ReactiveFormsModule, RouterLink],
     changeDetection: ChangeDetectionStrategy.OnPush,

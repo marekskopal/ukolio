@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Dto;
+namespace Ukolio\Dto;
 
 /** @implements ArrayFactoryInterface<array{statusId: int, position: int}> */
 final readonly class TaskMoveDto implements ArrayFactoryInterface

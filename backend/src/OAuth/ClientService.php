@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\OAuth;
+namespace Ukolio\OAuth;
 
 use DateTimeImmutable;
-use TaskManager\Model\Entity\OAuthClient;
-use TaskManager\Model\Repository\OAuthClientRepository;
+use Ukolio\Model\Entity\OAuthClient;
+use Ukolio\Model\Repository\OAuthClientRepository;
 use const JSON_THROW_ON_ERROR;
 
 final readonly class ClientService implements ClientServiceInterface

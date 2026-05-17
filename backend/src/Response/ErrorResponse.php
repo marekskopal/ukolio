@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Response;
+namespace Ukolio\Response;
 
 use Laminas\Diactoros\Response\JsonResponse;
 

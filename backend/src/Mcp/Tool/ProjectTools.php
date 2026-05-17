@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Mcp\Tool;
+namespace Ukolio\Mcp\Tool;
 
 use Mcp\Capability\Attribute\McpTool;
 use RuntimeException;
-use TaskManager\Mcp\Dto\McpProjectDto;
-use TaskManager\Mcp\Dto\McpProjectListDto;
-use TaskManager\Mcp\McpUserContextInterface;
-use TaskManager\Service\Provider\ProjectProviderInterface;
+use Ukolio\Mcp\Dto\McpProjectDto;
+use Ukolio\Mcp\Dto\McpProjectListDto;
+use Ukolio\Mcp\McpUserContextInterface;
+use Ukolio\Service\Provider\ProjectProviderInterface;
 
 final readonly class ProjectTools
 {

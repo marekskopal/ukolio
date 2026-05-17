@@ -1,4 +1,4 @@
-# Task Manager
+# Ukolio
 
 A minimalistic Kanban-style task manager. Architecture cloned from FinGather.
 

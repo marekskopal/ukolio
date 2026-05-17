@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\App\ServiceProvider;
+namespace Ukolio\App\ServiceProvider;
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Log\LoggerInterface;
-use TaskManager\Service\Logger\StderrLogger;
+use Ukolio\Service\Logger\StderrLogger;
 
 final class InfrastructureServiceProvider extends AbstractServiceProvider
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Dto;
+namespace Ukolio\Dto;
 
-use TaskManager\Model\Entity\User;
+use Ukolio\Model\Entity\User;
 
 final readonly class UserDto
 {

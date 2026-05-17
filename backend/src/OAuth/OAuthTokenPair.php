@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\OAuth;
+namespace Ukolio\OAuth;
 
 final readonly class OAuthTokenPair
 {

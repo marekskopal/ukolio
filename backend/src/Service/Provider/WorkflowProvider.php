@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Provider;
+namespace Ukolio\Service\Provider;
 
 use DateTimeImmutable;
-use TaskManager\Model\Entity\Enum\StatusTypeEnum;
-use TaskManager\Model\Entity\Project;
-use TaskManager\Model\Entity\Workflow;
-use TaskManager\Model\Repository\WorkflowRepository;
+use Ukolio\Model\Entity\Enum\StatusTypeEnum;
+use Ukolio\Model\Entity\Project;
+use Ukolio\Model\Entity\Workflow;
+use Ukolio\Model\Repository\WorkflowRepository;
 
 final readonly class WorkflowProvider implements WorkflowProviderInterface
 {

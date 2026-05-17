@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Provider;
+namespace Ukolio\Service\Provider;
 
 use DateTimeImmutable;
 use Iterator;
-use TaskManager\Model\Entity\Enum\EventTypeEnum;
-use TaskManager\Model\Entity\Enum\TaskPriorityEnum;
-use TaskManager\Model\Entity\Project;
-use TaskManager\Model\Entity\Status;
-use TaskManager\Model\Entity\Task;
-use TaskManager\Model\Entity\User;
-use TaskManager\Model\Repository\TaskRepository;
+use Ukolio\Model\Entity\Enum\EventTypeEnum;
+use Ukolio\Model\Entity\Enum\TaskPriorityEnum;
+use Ukolio\Model\Entity\Project;
+use Ukolio\Model\Entity\Status;
+use Ukolio\Model\Entity\Task;
+use Ukolio\Model\Entity\User;
+use Ukolio\Model\Repository\TaskRepository;
 
 final readonly class TaskProvider implements TaskProviderInterface
 {

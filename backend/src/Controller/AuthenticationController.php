@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Controller;
+namespace Ukolio\Controller;
 
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
@@ -11,18 +11,18 @@ use Laminas\Diactoros\Response\JsonResponse;
 use MarekSkopal\Router\Attribute\RoutePost;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TaskManager\Dto\CredentialsDto;
-use TaskManager\Dto\RefreshTokenDto;
-use TaskManager\Dto\SignUpDto;
-use TaskManager\Response\ConflictResponse;
-use TaskManager\Response\ErrorResponse;
-use TaskManager\Response\NotAuthorizedResponse;
-use TaskManager\Route\Routes;
-use TaskManager\Service\Authentication\AuthenticationServiceInterface;
-use TaskManager\Service\Authentication\Exception\AuthenticationException;
-use TaskManager\Service\Provider\UserProviderInterface;
-use TaskManager\Service\Request\RequestServiceInterface;
-use TaskManager\Validator\PasswordValidator;
+use Ukolio\Dto\CredentialsDto;
+use Ukolio\Dto\RefreshTokenDto;
+use Ukolio\Dto\SignUpDto;
+use Ukolio\Response\ConflictResponse;
+use Ukolio\Response\ErrorResponse;
+use Ukolio\Response\NotAuthorizedResponse;
+use Ukolio\Route\Routes;
+use Ukolio\Service\Authentication\AuthenticationServiceInterface;
+use Ukolio\Service\Authentication\Exception\AuthenticationException;
+use Ukolio\Service\Provider\UserProviderInterface;
+use Ukolio\Service\Request\RequestServiceInterface;
+use Ukolio\Validator\PasswordValidator;
 
 final readonly class AuthenticationController
 {

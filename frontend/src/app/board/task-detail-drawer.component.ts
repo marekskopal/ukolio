@@ -7,7 +7,7 @@ import {TaskService} from '@app/services/task.service';
 import {MarkdownComponent} from 'ngx-markdown';
 
 @Component({
-    selector: 'tm-task-detail-drawer',
+    selector: 'uk-task-detail-drawer',
     standalone: true,
     imports: [ReactiveFormsModule, MarkdownComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,

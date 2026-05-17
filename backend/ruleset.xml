@@ -319,8 +319,8 @@
     <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
         <properties>
             <property name="rootNamespaces" type="array">
-                <element key="src" value="TaskManager"/>
-                <element key="tests" value="TaskManager\Tests"/>
+                <element key="src" value="Ukolio"/>
+                <element key="tests" value="Ukolio\Tests"/>
             </property>
         </properties>
         <exclude-pattern>migrations/</exclude-pattern>

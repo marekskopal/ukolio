@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\App\ServiceProvider;
+namespace Ukolio\App\ServiceProvider;
 
 use League\Container\ServiceProvider\AbstractServiceProvider;
-use TaskManager\Service\Authentication\AuthenticationService;
-use TaskManager\Service\Authentication\AuthenticationServiceInterface;
+use Ukolio\Service\Authentication\AuthenticationService;
+use Ukolio\Service\Authentication\AuthenticationServiceInterface;
 
 final class AuthenticationServiceProvider extends AbstractServiceProvider
 {

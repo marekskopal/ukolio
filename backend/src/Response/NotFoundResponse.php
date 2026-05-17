@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Response;
+namespace Ukolio\Response;
 
 final class NotFoundResponse extends ErrorResponse
 {

@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "task-manager": {
+        "ukolio": {
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:component": {
@@ -14,12 +14,12 @@
             },
             "root": "",
             "sourceRoot": "src",
-            "prefix": "tm",
+            "prefix": "uk",
             "architect": {
                 "build": {
                     "builder": "@angular/build:application",
                     "options": {
-                        "outputPath": "dist/task-manager",
+                        "outputPath": "dist/ukolio",
                         "index": "src/index.html",
                         "browser": "src/main.ts",
                         "polyfills": ["zone.js"],
@@ -54,8 +54,8 @@
                 "serve": {
                     "builder": "@angular/build:dev-server",
                     "configurations": {
-                        "production": {"buildTarget": "task-manager:build:production"},
-                        "development": {"buildTarget": "task-manager:build:development"}
+                        "production": {"buildTarget": "ukolio:build:production"},
+                        "development": {"buildTarget": "ukolio:build:development"}
                     },
                     "defaultConfiguration": "development"
                 }

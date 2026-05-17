@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\OAuth;
+namespace Ukolio\OAuth;
 
 use DateTimeImmutable;
 use RuntimeException;
-use TaskManager\Model\Entity\OAuthAuthorization;
-use TaskManager\Model\Entity\User;
-use TaskManager\Model\Repository\OAuthAuthorizationRepository;
-use TaskManager\Service\Provider\UserProviderInterface;
+use Ukolio\Model\Entity\OAuthAuthorization;
+use Ukolio\Model\Entity\User;
+use Ukolio\Model\Repository\OAuthAuthorizationRepository;
+use Ukolio\Service\Provider\UserProviderInterface;
 
 final readonly class AuthorizationService implements AuthorizationServiceInterface
 {

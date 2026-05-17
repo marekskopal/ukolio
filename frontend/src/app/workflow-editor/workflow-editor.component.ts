@@ -11,7 +11,7 @@ import {StatusService} from '@app/services/status.service';
 const DEFAULT_COLORS = ['#94a3b8', '#60a5fa', '#fbbf24', '#f87171', '#a78bfa', '#4ade80', '#34d399'];
 
 @Component({
-    selector: 'tm-workflow-editor',
+    selector: 'uk-workflow-editor',
     standalone: true,
     imports: [CdkDropList, CdkDrag, FormsModule, RouterLink],
     changeDetection: ChangeDetectionStrategy.OnPush,

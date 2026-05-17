@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Controller;
+namespace Ukolio\Controller;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use MarekSkopal\Router\Attribute\RouteGet;
 use MarekSkopal\Router\Attribute\RoutePut;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TaskManager\Dto\WorkflowDto;
-use TaskManager\Dto\WorkflowUpdateDto;
-use TaskManager\Response\NotFoundResponse;
-use TaskManager\Route\Routes;
-use TaskManager\Service\Provider\ProjectProviderInterface;
-use TaskManager\Service\Provider\WorkflowProviderInterface;
-use TaskManager\Service\Request\RequestServiceInterface;
+use Ukolio\Dto\WorkflowDto;
+use Ukolio\Dto\WorkflowUpdateDto;
+use Ukolio\Response\NotFoundResponse;
+use Ukolio\Route\Routes;
+use Ukolio\Service\Provider\ProjectProviderInterface;
+use Ukolio\Service\Provider\WorkflowProviderInterface;
+use Ukolio\Service\Request\RequestServiceInterface;
 
 final readonly class WorkflowController
 {

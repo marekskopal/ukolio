@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {AlertService} from '@app/services/alert.service';
 
 @Component({
-    selector: 'tm-alert',
+    selector: 'uk-alert',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './alert.component.html',

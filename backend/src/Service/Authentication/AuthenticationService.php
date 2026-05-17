@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Authentication;
+namespace Ukolio\Service\Authentication;
 
 use Firebase\JWT\JWT;
-use TaskManager\Dto\AuthenticationDto;
-use TaskManager\Dto\CredentialsDto;
-use TaskManager\Model\Entity\User;
-use TaskManager\Service\Authentication\Exception\AuthenticationException;
-use TaskManager\Service\Provider\UserProviderInterface;
+use Ukolio\Dto\AuthenticationDto;
+use Ukolio\Dto\CredentialsDto;
+use Ukolio\Model\Entity\User;
+use Ukolio\Service\Authentication\Exception\AuthenticationException;
+use Ukolio\Service\Provider\UserProviderInterface;
 
 final readonly class AuthenticationService implements AuthenticationServiceInterface
 {

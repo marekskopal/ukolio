@@ -2,31 +2,31 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\App\ServiceProvider;
+namespace Ukolio\App\ServiceProvider;
 
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use Psr\Log\LoggerInterface;
-use TaskManager\Mcp\McpUserContext;
-use TaskManager\Mcp\McpUserContextInterface;
-use TaskManager\Mcp\Server\TaskManagerServer;
-use TaskManager\OAuth\AuthorizationService;
-use TaskManager\OAuth\AuthorizationServiceInterface;
-use TaskManager\OAuth\ClientService;
-use TaskManager\OAuth\ClientServiceInterface;
-use TaskManager\Service\Provider\EventProvider;
-use TaskManager\Service\Provider\EventProviderInterface;
-use TaskManager\Service\Provider\ProjectProvider;
-use TaskManager\Service\Provider\ProjectProviderInterface;
-use TaskManager\Service\Provider\StatusProvider;
-use TaskManager\Service\Provider\StatusProviderInterface;
-use TaskManager\Service\Provider\TaskProvider;
-use TaskManager\Service\Provider\TaskProviderInterface;
-use TaskManager\Service\Provider\UserProvider;
-use TaskManager\Service\Provider\UserProviderInterface;
-use TaskManager\Service\Provider\WorkflowProvider;
-use TaskManager\Service\Provider\WorkflowProviderInterface;
-use TaskManager\Service\Request\RequestService;
-use TaskManager\Service\Request\RequestServiceInterface;
+use Ukolio\Mcp\McpUserContext;
+use Ukolio\Mcp\McpUserContextInterface;
+use Ukolio\Mcp\Server\UkolioServer;
+use Ukolio\OAuth\AuthorizationService;
+use Ukolio\OAuth\AuthorizationServiceInterface;
+use Ukolio\OAuth\ClientService;
+use Ukolio\OAuth\ClientServiceInterface;
+use Ukolio\Service\Provider\EventProvider;
+use Ukolio\Service\Provider\EventProviderInterface;
+use Ukolio\Service\Provider\ProjectProvider;
+use Ukolio\Service\Provider\ProjectProviderInterface;
+use Ukolio\Service\Provider\StatusProvider;
+use Ukolio\Service\Provider\StatusProviderInterface;
+use Ukolio\Service\Provider\TaskProvider;
+use Ukolio\Service\Provider\TaskProviderInterface;
+use Ukolio\Service\Provider\UserProvider;
+use Ukolio\Service\Provider\UserProviderInterface;
+use Ukolio\Service\Provider\WorkflowProvider;
+use Ukolio\Service\Provider\WorkflowProviderInterface;
+use Ukolio\Service\Request\RequestService;
+use Ukolio\Service\Request\RequestServiceInterface;
 
 final class DomainServiceProvider extends AbstractServiceProvider
 {
@@ -41,7 +41,7 @@ final class DomainServiceProvider extends AbstractServiceProvider
 			TaskProviderInterface::class,
 			EventProviderInterface::class,
 			McpUserContextInterface::class,
-			TaskManagerServer::class,
+			UkolioServer::class,
 			ClientServiceInterface::class,
 			AuthorizationServiceInterface::class,
 		], true);
@@ -58,10 +58,10 @@ final class DomainServiceProvider extends AbstractServiceProvider
 		$c->add(ProjectProviderInterface::class, ProjectProvider::class);
 		$c->add(TaskProviderInterface::class, TaskProvider::class);
 		$c->add(McpUserContextInterface::class, McpUserContext::class);
-		$c->add(TaskManagerServer::class, function () use ($c): TaskManagerServer {
+		$c->add(UkolioServer::class, function () use ($c): UkolioServer {
 			$logger = $c->get(LoggerInterface::class);
 			assert($logger instanceof LoggerInterface);
-			return new TaskManagerServer($c, $logger);
+			return new UkolioServer($c, $logger);
 		});
 		$c->add(ClientServiceInterface::class, ClientService::class);
 		$c->add(AuthorizationServiceInterface::class, AuthorizationService::class);

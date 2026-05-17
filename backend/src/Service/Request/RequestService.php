@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Request;
+namespace Ukolio\Service\Request;
 
 use Nette\Utils\Json;
 use Psr\Http\Message\ServerRequestInterface;
-use TaskManager\Dto\ArrayFactoryInterface;
-use TaskManager\Middleware\AuthorizationMiddleware;
-use TaskManager\Model\Entity\User;
+use Ukolio\Dto\ArrayFactoryInterface;
+use Ukolio\Middleware\AuthorizationMiddleware;
+use Ukolio\Model\Entity\User;
 
 final readonly class RequestService implements RequestServiceInterface
 {

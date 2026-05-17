@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Controller;
+namespace Ukolio\Controller;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use MarekSkopal\Router\Attribute\RouteGet;
@@ -10,11 +10,11 @@ use MarekSkopal\Router\Attribute\RoutePost;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-use TaskManager\OAuth\AuthorizationServiceInterface;
-use TaskManager\OAuth\ClientServiceInterface;
-use TaskManager\Response\ErrorResponse;
-use TaskManager\Route\Routes;
-use TaskManager\Service\Request\RequestServiceInterface;
+use Ukolio\OAuth\AuthorizationServiceInterface;
+use Ukolio\OAuth\ClientServiceInterface;
+use Ukolio\Response\ErrorResponse;
+use Ukolio\Route\Routes;
+use Ukolio\Service\Request\RequestServiceInterface;
 use const JSON_THROW_ON_ERROR;
 
 final readonly class OAuthController

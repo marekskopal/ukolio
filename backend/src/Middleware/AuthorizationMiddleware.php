@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Middleware;
+namespace Ukolio\Middleware;
 
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
@@ -12,10 +12,10 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use stdClass;
-use TaskManager\Middleware\Exception\NotAuthorizedException;
-use TaskManager\Route\Routes;
-use TaskManager\Service\Authentication\AuthenticationServiceInterface;
-use TaskManager\Service\Provider\UserProviderInterface;
+use Ukolio\Middleware\Exception\NotAuthorizedException;
+use Ukolio\Route\Routes;
+use Ukolio\Service\Authentication\AuthenticationServiceInterface;
+use Ukolio\Service\Provider\UserProviderInterface;
 
 final readonly class AuthorizationMiddleware implements MiddlewareInterface
 {

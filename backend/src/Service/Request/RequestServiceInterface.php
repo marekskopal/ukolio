@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Request;
+namespace Ukolio\Service\Request;
 
 use Psr\Http\Message\ServerRequestInterface;
-use TaskManager\Dto\ArrayFactoryInterface;
-use TaskManager\Model\Entity\User;
+use Ukolio\Dto\ArrayFactoryInterface;
+use Ukolio\Model\Entity\User;
 
 interface RequestServiceInterface
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Model\Repository;
+namespace Ukolio\Model\Repository;
 
 use Iterator;
 use MarekSkopal\ORM\Repository\AbstractRepository;
-use TaskManager\Model\Entity\Status;
+use Ukolio\Model\Entity\Status;
 
 /** @extends AbstractRepository<Status> */
 final class StatusRepository extends AbstractRepository

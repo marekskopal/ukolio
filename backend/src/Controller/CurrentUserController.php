@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Controller;
+namespace Ukolio\Controller;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use MarekSkopal\Router\Attribute\RouteGet;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TaskManager\Dto\UserDto;
-use TaskManager\Route\Routes;
-use TaskManager\Service\Request\RequestServiceInterface;
+use Ukolio\Dto\UserDto;
+use Ukolio\Route\Routes;
+use Ukolio\Service\Request\RequestServiceInterface;
 
 final readonly class CurrentUserController
 {

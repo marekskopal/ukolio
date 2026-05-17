@@ -15,7 +15,7 @@ interface Column {
 }
 
 @Component({
-    selector: 'tm-board',
+    selector: 'uk-board',
     standalone: true,
     imports: [CdkDropListGroup, CdkDropList, CdkDrag, RouterLink, TaskCardComponent, TaskDetailDrawerComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,

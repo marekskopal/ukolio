@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Provider;
+namespace Ukolio\Service\Provider;
 
 use Iterator;
-use TaskManager\Model\Entity\Project;
-use TaskManager\Model\Entity\User;
+use Ukolio\Model\Entity\Project;
+use Ukolio\Model\Entity\User;
 
 interface ProjectProviderInterface
 {

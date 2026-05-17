@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Controller;
+namespace Ukolio\Controller;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use MarekSkopal\Router\Attribute\RouteDelete;
@@ -11,15 +11,15 @@ use MarekSkopal\Router\Attribute\RoutePost;
 use MarekSkopal\Router\Attribute\RoutePut;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TaskManager\Dto\ProjectCreateDto;
-use TaskManager\Dto\ProjectDto;
-use TaskManager\Dto\ProjectUpdateDto;
-use TaskManager\Model\Entity\Project;
-use TaskManager\Response\NotFoundResponse;
-use TaskManager\Response\OkResponse;
-use TaskManager\Route\Routes;
-use TaskManager\Service\Provider\ProjectProviderInterface;
-use TaskManager\Service\Request\RequestServiceInterface;
+use Ukolio\Dto\ProjectCreateDto;
+use Ukolio\Dto\ProjectDto;
+use Ukolio\Dto\ProjectUpdateDto;
+use Ukolio\Model\Entity\Project;
+use Ukolio\Response\NotFoundResponse;
+use Ukolio\Response\OkResponse;
+use Ukolio\Route\Routes;
+use Ukolio\Service\Provider\ProjectProviderInterface;
+use Ukolio\Service\Request\RequestServiceInterface;
 
 final readonly class ProjectController
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\OAuth;
+namespace Ukolio\OAuth;
 
-use TaskManager\Model\Entity\User;
+use Ukolio\Model\Entity\User;
 
 interface AuthorizationServiceInterface
 {

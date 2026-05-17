@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Model\Repository;
+namespace Ukolio\Model\Repository;
 
 use Iterator;
 use MarekSkopal\ORM\Repository\AbstractRepository;
-use TaskManager\Model\Entity\Event;
+use Ukolio\Model\Entity\Event;
 
 /** @extends AbstractRepository<Event> */
 final class EventRepository extends AbstractRepository

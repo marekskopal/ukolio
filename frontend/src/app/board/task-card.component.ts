@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, input} from '@angular/core';
 import {Task} from '@app/models/task';
 
 @Component({
-    selector: 'tm-task-card',
+    selector: 'uk-task-card',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './task-card.component.html',

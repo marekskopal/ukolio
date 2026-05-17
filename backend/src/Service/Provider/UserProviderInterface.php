@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Provider;
+namespace Ukolio\Service\Provider;
 
-use TaskManager\Model\Entity\User;
+use Ukolio\Model\Entity\User;
 
 interface UserProviderInterface
 {

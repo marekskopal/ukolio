@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\OAuth;
+namespace Ukolio\OAuth;
 
-use TaskManager\Model\Entity\OAuthClient;
+use Ukolio\Model\Entity\OAuthClient;
 
 interface ClientServiceInterface
 {

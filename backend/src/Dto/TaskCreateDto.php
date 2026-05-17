@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Dto;
+namespace Ukolio\Dto;
 
 use DateTimeImmutable;
-use TaskManager\Model\Entity\Enum\TaskPriorityEnum;
+use Ukolio\Model\Entity\Enum\TaskPriorityEnum;
 
 /** @implements ArrayFactoryInterface<array{statusId: int, name: string, description?: ?string, priority?: string, dueDate?: ?string}> */
 final readonly class TaskCreateDto implements ArrayFactoryInterface

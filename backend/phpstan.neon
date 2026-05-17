@@ -38,6 +38,6 @@ parameters:
 
 services:
 	-
-		class: TaskManager\PhpStan\OrmReadWritePropertiesExtension
+		class: Ukolio\PhpStan\OrmReadWritePropertiesExtension
 		tags:
 			- phpstan.properties.readWriteExtension

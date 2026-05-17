@@ -6,8 +6,8 @@ declare(strict_types=1);
 require __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use TaskManager\Command\MigrationGenerateCommand;
-use TaskManager\Command\MigrationRunCommand;
+use Ukolio\Command\MigrationGenerateCommand;
+use Ukolio\Command\MigrationRunCommand;
 
 $application = new Application();
 

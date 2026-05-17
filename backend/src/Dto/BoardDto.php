@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Dto;
+namespace Ukolio\Dto;
 
 final readonly class BoardDto
 {

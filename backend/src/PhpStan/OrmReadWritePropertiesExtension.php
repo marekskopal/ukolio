@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\PhpStan;
+namespace Ukolio\PhpStan;
 
 use MarekSkopal\ORM\Attribute\Column;
 use MarekSkopal\ORM\Attribute\ColumnEnum;

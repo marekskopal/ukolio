@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Model\Entity;
+namespace Ukolio\Model\Entity;
 
 use MarekSkopal\ORM\Attribute\Column;
 use MarekSkopal\ORM\Attribute\ColumnEnum;
 use MarekSkopal\ORM\Attribute\Entity;
 use MarekSkopal\ORM\Attribute\ManyToOne;
 use MarekSkopal\ORM\Enum\Type;
-use TaskManager\Model\Entity\Enum\StatusTypeEnum;
-use TaskManager\Model\Repository\StatusRepository;
+use Ukolio\Model\Entity\Enum\StatusTypeEnum;
+use Ukolio\Model\Repository\StatusRepository;
 
 #[Entity(repositoryClass: StatusRepository::class)]
 class Status extends AEntity

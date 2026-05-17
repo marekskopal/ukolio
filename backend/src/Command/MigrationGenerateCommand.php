@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Command;
+namespace Ukolio\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TaskManager\App\ApplicationFactory;
+use Ukolio\App\ApplicationFactory;
 
 final class MigrationGenerateCommand extends AbstractCommand
 {

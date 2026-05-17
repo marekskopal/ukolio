@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Dto;
+namespace Ukolio\Dto;
 
-use TaskManager\Model\Entity\Enum\StatusTypeEnum;
+use Ukolio\Model\Entity\Enum\StatusTypeEnum;
 
 /** @implements ArrayFactoryInterface<array{name: string, color: string, type: string}> */
 final readonly class StatusUpdateDto implements ArrayFactoryInterface

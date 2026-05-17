@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Model\Entity\Enum;
+namespace Ukolio\Model\Entity\Enum;
 
 enum EventTypeEnum: string
 {

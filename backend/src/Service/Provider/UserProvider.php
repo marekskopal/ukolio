@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Service\Provider;
+namespace Ukolio\Service\Provider;
 
 use DateTimeImmutable;
 use SensitiveParameter;
-use TaskManager\Model\Entity\User;
-use TaskManager\Model\Repository\UserRepository;
+use Ukolio\Model\Entity\User;
+use Ukolio\Model\Repository\UserRepository;
 use const PASSWORD_BCRYPT;
 
 final readonly class UserProvider implements UserProviderInterface

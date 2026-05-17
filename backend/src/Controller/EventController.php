@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Controller;
+namespace Ukolio\Controller;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use MarekSkopal\Router\Attribute\RouteGet;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TaskManager\Dto\EventDto;
-use TaskManager\Model\Entity\Event;
-use TaskManager\Response\NotFoundResponse;
-use TaskManager\Route\Routes;
-use TaskManager\Service\Provider\EventProviderInterface;
-use TaskManager\Service\Provider\ProjectProviderInterface;
-use TaskManager\Service\Request\RequestServiceInterface;
+use Ukolio\Dto\EventDto;
+use Ukolio\Model\Entity\Event;
+use Ukolio\Response\NotFoundResponse;
+use Ukolio\Route\Routes;
+use Ukolio\Service\Provider\EventProviderInterface;
+use Ukolio\Service\Provider\ProjectProviderInterface;
+use Ukolio\Service\Request\RequestServiceInterface;
 
 final readonly class EventController
 {

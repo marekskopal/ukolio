@@ -1,7 +1,7 @@
 {
-    "name": "marekskopal/task-manager",
+    "name": "marekskopal/ukolio",
     "type": "project",
-    "description": "Task Manager",
+    "description": "Ukolio",
     "license": "MIT",
     "require": {
         "php": ">=8.5",
@@ -44,12 +44,12 @@
     },
     "autoload": {
         "psr-4": {
-            "TaskManager\\": "src/"
+            "Ukolio\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "TaskManager\\Tests\\": "tests/"
+            "Ukolio\\Tests\\": "tests/"
         }
     },
     "config": {

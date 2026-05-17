@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace TaskManager\Mcp\Server;
+namespace Ukolio\Mcp\Server;
 
 use Mcp\Server;
 use Mcp\Server\Session\SessionStoreInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
-final readonly class TaskManagerServer
+final readonly class UkolioServer
 {
 	public function __construct(private ContainerInterface $container, private LoggerInterface $logger)
 	{
@@ -24,7 +24,7 @@ final readonly class TaskManagerServer
 				basePath: dirname(__DIR__, 2),
 				scanDirs: ['Mcp/Tool'],
 			)
-			->setServerInfo(name: 'task-manager', version: '1.0.0', description: 'Task Manager MCP server — Kanban projects and tasks')
+			->setServerInfo(name: 'ukolio', version: '1.0.0', description: 'Ukolio MCP server — Kanban projects and tasks')
 			->setInstructions(
 				'This server manages Kanban projects and tasks for the authenticated user. '
 				. 'Typical flow when creating tasks from an external source: '
