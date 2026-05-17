@@ -20,4 +20,9 @@ final class McpUserContext implements McpUserContextInterface
 	{
 		return $this->user ?? throw new RuntimeException('MCP user context has not been initialized.');
 	}
+
+	public function clear(): void
+	{
+		$this->user = null;
+	}
 }

@@ -15,14 +15,18 @@ use RuntimeException;
 use Ukolio\Mcp\McpUserContextInterface;
 use Ukolio\Mcp\Server\UkolioServer;
 use Ukolio\OAuth\AuthorizationServiceInterface;
+use Ukolio\OAuth\ClientServiceInterface;
 use Ukolio\Response\ErrorResponse;
 use Ukolio\Route\Routes;
+use Ukolio\Service\Actor\ActorContextInterface;
 
 final readonly class McpController
 {
 	public function __construct(
 		private AuthorizationServiceInterface $authorizationService,
+		private ClientServiceInterface $clientService,
 		private McpUserContextInterface $userContext,
+		private ActorContextInterface $actorContext,
 		private UkolioServer $server,
 	) {
 	}
@@ -53,12 +57,19 @@ final readonly class McpController
 		}
 
 		try {
-			$user = $this->authorizationService->validateAccessToken($token);
+			$authorization = $this->authorizationService->validateAccessToken($token);
 		} catch (RuntimeException) {
 			return $this->unauthorized($request, 'Invalid or expired access token.');
 		}
 
-		$this->userContext->setUser($user);
+		$this->userContext->setUser($authorization->user);
+
+		$clientName = $authorization->clientId;
+		$client = $this->clientService->findByClientId($authorization->clientId);
+		if ($client !== null) {
+			$clientName = $client->clientName;
+		}
+		$this->actorContext->setAgent($authorization->clientId, $clientName);
 
 		$sessionStore = new FileSessionStore($this->sessionDirectory());
 		$mcpServer = $this->server->build($sessionStore);

@@ -16,6 +16,9 @@ final readonly class EventDto
 		public ?int $taskId,
 		public string $type,
 		public array $metadata,
+		public string $actorType,
+		public ?string $mcpClientId,
+		public ?string $mcpClientName,
 		public string $createdAt,
 	) {
 	}
@@ -31,6 +34,9 @@ final readonly class EventDto
 			taskId: $event->taskId,
 			type: $event->type->value,
 			metadata: $metadata,
+			actorType: $event->actorType->value,
+			mcpClientId: $event->mcpClientId,
+			mcpClientName: $event->mcpClientName,
 			createdAt: $event->createdAt->format(DATE_ATOM),
 		);
 	}

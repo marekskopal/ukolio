@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Ukolio\OAuth;
 
-use Ukolio\Model\Entity\User;
+use Ukolio\Model\Entity\OAuthAuthorization;
 
 interface AuthorizationServiceInterface
 {
@@ -20,5 +20,5 @@ interface AuthorizationServiceInterface
 
 	public function refreshToken(string $refreshToken, string $clientId): OAuthTokenPair;
 
-	public function validateAccessToken(string $accessToken): User;
+	public function validateAccessToken(string $accessToken): OAuthAuthorization;
 }

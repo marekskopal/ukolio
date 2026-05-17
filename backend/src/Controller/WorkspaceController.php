@@ -27,6 +27,7 @@ use Ukolio\Response\NotFoundResponse;
 use Ukolio\Response\OkResponse;
 use Ukolio\Route\Routes;
 use Ukolio\Service\Auth\PermissionCheckerInterface;
+use Ukolio\Service\Provider\WorkspaceMcpClientProviderInterface;
 use Ukolio\Service\Provider\WorkspaceProviderInterface;
 use Ukolio\Service\Request\RequestServiceInterface;
 
@@ -34,6 +35,7 @@ final readonly class WorkspaceController
 {
 	public function __construct(
 		private WorkspaceProviderInterface $workspaceProvider,
+		private WorkspaceMcpClientProviderInterface $mcpClientProvider,
 		private PermissionCheckerInterface $permissionChecker,
 		private RequestServiceInterface $requestService,
 	) {
@@ -231,6 +233,22 @@ final readonly class WorkspaceController
 		$this->workspaceProvider->removeMember($target);
 
 		return new OkResponse();
+	}
+
+	#[RouteGet(Routes::WorkspaceMcpClients->value)]
+	public function actionGetMcpClients(ServerRequestInterface $request, int $workspaceId): ResponseInterface
+	{
+		$user = $this->requestService->getUser($request);
+		$workspace = $this->workspaceProvider->getWorkspace($workspaceId);
+		if ($workspace === null) {
+			return new NotFoundResponse('Workspace not found.');
+		}
+
+		if (!$this->permissionChecker->canViewWorkspace($user, $workspace)) {
+			return new NotAuthorizedResponse('You are not a member of this workspace.');
+		}
+
+		return new JsonResponse($this->mcpClientProvider->getClientsForWorkspace($workspace));
 	}
 
 	private function findMembershipByUserId(Workspace $workspace, int $userId): ?WorkspaceUser

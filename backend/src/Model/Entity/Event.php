@@ -9,6 +9,7 @@ use MarekSkopal\ORM\Attribute\ColumnEnum;
 use MarekSkopal\ORM\Attribute\Entity;
 use MarekSkopal\ORM\Attribute\ManyToOne;
 use MarekSkopal\ORM\Enum\Type;
+use Ukolio\Model\Entity\Enum\ActorTypeEnum;
 use Ukolio\Model\Entity\Enum\EventTypeEnum;
 use Ukolio\Model\Repository\EventRepository;
 
@@ -28,6 +29,12 @@ class Event extends AEntity
 		public ?int $workspaceId = null,
 		#[Column(type: Type::Int, nullable: true)]
 		public ?int $taskId = null,
+		#[ColumnEnum(enum: ActorTypeEnum::class, default: ActorTypeEnum::Human)]
+		public ActorTypeEnum $actorType = ActorTypeEnum::Human,
+		#[Column(type: Type::String, size: 128, nullable: true)]
+		public ?string $mcpClientId = null,
+		#[Column(type: Type::String, nullable: true)]
+		public ?string $mcpClientName = null,
 	) {
 	}
 }

@@ -16,6 +16,7 @@ use Ukolio\Model\Entity\Workspace;
 use Ukolio\Model\Repository\Enum\OrderDirectionEnum;
 use Ukolio\Model\Repository\Enum\TaskOrderByEnum;
 use Ukolio\Model\Repository\TaskRepository;
+use Ukolio\Service\Actor\ActorContextInterface;
 
 final readonly class TaskProvider implements TaskProviderInterface
 {
@@ -23,6 +24,7 @@ final readonly class TaskProvider implements TaskProviderInterface
 		private TaskRepository $taskRepository,
 		private EventProviderInterface $eventProvider,
 		private TaskFieldValueProviderInterface $taskFieldValueProvider,
+		private ActorContextInterface $actorContext,
 	) {
 	}
 
@@ -95,6 +97,7 @@ final readonly class TaskProvider implements TaskProviderInterface
 			priority: $priority,
 			dueDate: $dueDate,
 			position: $position,
+			createdByAgent: $this->actorContext->isAgent(),
 		);
 		$task->createdAt = $now;
 		$task->updatedAt = $now;

@@ -31,6 +31,8 @@ class Task extends AEntity
 		public ?DateTimeImmutable $dueDate,
 		#[Column(type: Type::Int)]
 		public int $position,
+		#[Column(type: Type::Boolean, default: false)]
+		public bool $createdByAgent = false,
 	) {
 	}
 }

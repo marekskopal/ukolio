@@ -1,10 +1,13 @@
+import {DatePipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
+import {WorkspaceMcpClient} from '@app/models/event';
 import {Field, FieldType} from '@app/models/field';
 import {User} from '@app/models/user';
 import {Invitation, Workspace, WorkspaceMember, WorkspaceRole} from '@app/models/workspace';
 import {AlertService} from '@app/services/alert.service';
 import {CurrentUserService} from '@app/services/current-user.service';
+import {EventService} from '@app/services/event.service';
 import {FieldService} from '@app/services/field.service';
 import {PermissionsService} from '@app/services/permissions.service';
 import {WorkspaceService} from '@app/services/workspace.service';
@@ -24,7 +27,7 @@ const FIELD_TYPES: FieldType[] = ['Text', 'Textarea', 'Select', 'Version'];
 @Component({
     selector: 'uk-workspaces',
     standalone: true,
-    imports: [FormsModule, TranslatePipe],
+    imports: [DatePipe, FormsModule, TranslatePipe],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './workspaces.component.html',
     styleUrl: './workspaces.component.scss',
@@ -36,6 +39,7 @@ export class WorkspacesComponent implements OnInit {
     private readonly alertService = inject(AlertService);
     private readonly translate = inject(TranslateService);
     private readonly fieldService = inject(FieldService);
+    private readonly eventService = inject(EventService);
 
     protected readonly loading = signal(true);
     protected readonly workspaces = this.workspaceService.workspaces;
@@ -46,6 +50,7 @@ export class WorkspacesComponent implements OnInit {
     protected readonly inviteEmail = signal('');
     protected readonly inviteRole = signal<WorkspaceRole>('Member');
     protected readonly fields = signal<Field[]>([]);
+    protected readonly mcpClients = signal<WorkspaceMcpClient[]>([]);
     protected readonly fieldEditor = signal<FieldEditorState | null>(null);
     protected readonly fieldSaving = signal(false);
     protected readonly fieldTypes = FIELD_TYPES;
@@ -60,6 +65,7 @@ export class WorkspacesComponent implements OnInit {
         const ed = this.fieldEditor();
         return ed !== null && (ed.type === 'Select' || ed.type === 'Version');
     });
+    protected readonly totalAuthorizations = computed<number>(() => this.mcpClients().reduce((sum, c) => sum + c.totalAuthorizations, 0));
 
     public async ngOnInit(): Promise<void> {
         this.loading.set(true);
@@ -86,14 +92,16 @@ export class WorkspacesComponent implements OnInit {
     protected async select(ws: Workspace): Promise<void> {
         this.selected.set(ws);
         this.fieldEditor.set(null);
-        const [members, invitations, fields] = await Promise.all([
+        const [members, invitations, fields, mcpClients] = await Promise.all([
             this.workspaceService.getMembers(ws.id),
             this.workspaceService.getInvitations(ws.id).catch(() => []),
             this.fieldService.listWorkspaceFields(ws.id).catch(() => [] as Field[]),
+            this.eventService.getWorkspaceMcpClients(ws.id).catch(() => [] as WorkspaceMcpClient[]),
         ]);
         this.members.set(members);
         this.invitations.set(invitations);
         this.fields.set(fields);
+        this.mcpClients.set(mcpClients);
         const allowed = this.permissionsService.invitableRoles(members);
         if (!allowed.includes(this.inviteRole())) {
             this.inviteRole.set(allowed[0] ?? 'Member');

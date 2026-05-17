@@ -24,8 +24,15 @@
 .task-card-head {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: $space-2;
+}
+
+.task-card-head .priority-chip {
+    margin-left: auto;
+}
+
+.task-card-agent-badge {
+    gap: 3px;
 }
 
 .task-card-id {

@@ -223,6 +223,18 @@
 .task-name {
     color: $color-text;
     font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+}
+
+.task-name-agent-icon {
+    color: $color-ai;
+    flex-shrink: 0;
+}
+
+.task-row[data-agent='true'] td:first-child {
+    box-shadow: inset 2px 0 0 $color-ai;
 }
 
 .task-project {

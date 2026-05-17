@@ -13,6 +13,8 @@ use Ukolio\OAuth\AuthorizationService;
 use Ukolio\OAuth\AuthorizationServiceInterface;
 use Ukolio\OAuth\ClientService;
 use Ukolio\OAuth\ClientServiceInterface;
+use Ukolio\Service\Actor\ActorContext;
+use Ukolio\Service\Actor\ActorContextInterface;
 use Ukolio\Service\Auth\AdminService;
 use Ukolio\Service\Auth\AdminServiceInterface;
 use Ukolio\Service\Auth\PermissionChecker;
@@ -31,6 +33,8 @@ use Ukolio\Service\Provider\UserProvider;
 use Ukolio\Service\Provider\UserProviderInterface;
 use Ukolio\Service\Provider\WorkflowProvider;
 use Ukolio\Service\Provider\WorkflowProviderInterface;
+use Ukolio\Service\Provider\WorkspaceMcpClientProvider;
+use Ukolio\Service\Provider\WorkspaceMcpClientProviderInterface;
 use Ukolio\Service\Provider\WorkspaceProvider;
 use Ukolio\Service\Provider\WorkspaceProviderInterface;
 use Ukolio\Service\Request\RequestService;
@@ -46,6 +50,7 @@ final class DomainServiceProvider extends AbstractServiceProvider
 			RequestServiceInterface::class,
 			UserProviderInterface::class,
 			WorkspaceProviderInterface::class,
+			WorkspaceMcpClientProviderInterface::class,
 			PermissionCheckerInterface::class,
 			AdminServiceInterface::class,
 			InvitationProviderInterface::class,
@@ -55,6 +60,7 @@ final class DomainServiceProvider extends AbstractServiceProvider
 			TaskProviderInterface::class,
 			EventProviderInterface::class,
 			McpUserContextInterface::class,
+			ActorContextInterface::class,
 			UkolioServer::class,
 			ClientServiceInterface::class,
 			AuthorizationServiceInterface::class,
@@ -68,6 +74,7 @@ final class DomainServiceProvider extends AbstractServiceProvider
 		$c->add(RequestServiceInterface::class, RequestService::class);
 		$c->add(UserProviderInterface::class, UserProvider::class);
 		$c->add(WorkspaceProviderInterface::class, WorkspaceProvider::class);
+		$c->add(WorkspaceMcpClientProviderInterface::class, WorkspaceMcpClientProvider::class);
 		$c->add(PermissionCheckerInterface::class, PermissionChecker::class);
 		$c->add(AdminServiceInterface::class, AdminService::class);
 		$c->add(TranslatorServiceInterface::class, static fn (): TranslatorService => new TranslatorService(
@@ -80,6 +87,7 @@ final class DomainServiceProvider extends AbstractServiceProvider
 		$c->add(ProjectProviderInterface::class, ProjectProvider::class);
 		$c->add(TaskProviderInterface::class, TaskProvider::class);
 		$c->add(McpUserContextInterface::class, McpUserContext::class);
+		$c->add(ActorContextInterface::class, ActorContext::class);
 		$c->add(UkolioServer::class, function () use ($c): UkolioServer {
 			$logger = $c->get(LoggerInterface::class);
 			assert($logger instanceof LoggerInterface);

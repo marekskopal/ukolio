@@ -51,17 +51,26 @@
             "aiPalette": "Otevřít paletu příkazů agenta",
             "openUserMenu": "Otevřít uživatelské menu"
         },
+        "agent": {
+            "agent": "agent",
+            "createdBy": "Vytvořeno agentem",
+            "viaMcp": "přes MCP"
+        },
         "agents": {
             "title": "Aktivita agentů",
             "subtitle": "Živý audit log napříč pracovním prostorem.",
             "show": "Zobrazit:",
-            "empty": "Zatím žádná aktivita agentů. Připojte MCP klienta a akce vašich agentů se zobrazí zde.",
+            "empty": "Zatím žádná aktivita.",
             "placeholder": "Bez dat",
             "kpi": {
                 "events": "Události · 24 h",
+                "eventsSub": "Za posledních 24 hodin",
                 "activeAgents": "Aktivní agenti",
+                "noAgentsConnected": "Žádní agenti připojeni",
                 "tasksCreated": "Vytvořené úkoly",
-                "tasksClosed": "Uzavřené úkoly"
+                "tasksCreatedSub": "Za posledních 24 h",
+                "tasksClosed": "Uzavřené úkoly",
+                "tasksClosedSub": "Sledováno přes TaskMoved"
             },
             "chips": {
                 "all": "Vše",
@@ -69,6 +78,29 @@
                 "agents": "Agenti",
                 "comments": "Komentáře",
                 "statusChanges": "Změny stavu"
+            },
+            "verb": {
+                "ProjectCreated": "vytvořil(a) projekt",
+                "ProjectUpdated": "upravil(a) projekt",
+                "ProjectDeleted": "smazal(a) projekt",
+                "WorkflowUpdated": "upravil(a) workflow",
+                "StatusCreated": "přidal(a) stav",
+                "StatusUpdated": "upravil(a) stav",
+                "StatusDeleted": "smazal(a) stav",
+                "StatusMoved": "přesunul(a) stav",
+                "TaskCreated": "vytvořil(a) úkol",
+                "TaskUpdated": "upravil(a) úkol",
+                "TaskDeleted": "smazal(a) úkol",
+                "TaskMoved": "přesunul(a) úkol",
+                "MemberRoleChanged": "změnil(a) roli člena",
+                "OwnershipTransferred": "převedl(a) vlastnictví",
+                "AdminDeletedWorkspace": "(admin) smazal pracovní prostor",
+                "AdminDeletedUser": "(admin) smazal uživatele",
+                "AdminChangedSystemRole": "(admin) změnil systémovou roli",
+                "FieldCreated": "vytvořil(a) pole",
+                "FieldUpdated": "upravil(a) pole",
+                "FieldDeleted": "smazal(a) pole",
+                "ProjectFieldsUpdated": "upravil(a) pole projektu"
             }
         },
         "tasks": {
@@ -233,6 +265,14 @@
             "transferOwnershipConfirm": "Předat vlastnictví „{workspace}\" uživateli {name}? Z vás se stane Admin.",
             "ownershipTransferred": "Vlastnictví předáno.",
             "roleChanged": "Role aktualizována.",
+            "mcp": {
+                "heading": "MCP klienti",
+                "empty": "Pro tento pracovní prostor zatím není autorizován žádný MCP klient.",
+                "firstSeen": "První přihlášení",
+                "lastUsed": "Naposledy použito",
+                "activeTokens": "aktivních tokenů",
+                "totalAuthorizations": "Celkem autorizací"
+            },
             "role": {
                 "Owner": "Vlastník",
                 "Admin": "Admin",

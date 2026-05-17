@@ -10,16 +10,28 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Psr\Log\LoggerInterface;
 use Ukolio\App\ApplicationFactory;
+use Ukolio\Mcp\McpUserContextInterface;
 use Ukolio\Response\ErrorResponse;
+use Ukolio\Service\Actor\ActorContextInterface;
 
 $application = ApplicationFactory::create();
 
 $logger = $application->container->get(LoggerInterface::class);
 assert($logger instanceof LoggerInterface);
 
+$mcpUserContext = $application->container->get(McpUserContextInterface::class);
+assert($mcpUserContext instanceof McpUserContextInterface);
+
+$actorContext = $application->container->get(ActorContextInterface::class);
+assert($actorContext instanceof ActorContextInterface);
+
 $emitter = new SapiEmitter();
 
-$handler = static function () use ($application, $logger, $emitter): void {
+$handler = static function () use ($application, $logger, $emitter, $mcpUserContext, $actorContext): void {
+	// Per-request reset of mutable, container-shared contexts.
+	$mcpUserContext->clear();
+	$actorContext->setHuman();
+
 	try {
 		$request = ServerRequestFactory::fromGlobals();
 		$response = $application->handler->handle($request);

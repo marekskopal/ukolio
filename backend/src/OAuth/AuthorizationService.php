@@ -131,7 +131,7 @@ final readonly class AuthorizationService implements AuthorizationServiceInterfa
 		return $this->issueTokenPair($clientId, $authorization->user);
 	}
 
-	public function validateAccessToken(string $accessToken): User
+	public function validateAccessToken(string $accessToken): OAuthAuthorization
 	{
 		$accessTokenHash = hash('sha256', $accessToken);
 
@@ -148,7 +148,7 @@ final readonly class AuthorizationService implements AuthorizationServiceInterfa
 			throw new RuntimeException('Access token has expired');
 		}
 
-		return $authorization->user;
+		return $authorization;
 	}
 
 	private function issueTokenPair(string $clientId, User $user): OAuthTokenPair

@@ -21,11 +21,11 @@ FinGather (`/Users/marek/web/www/fingather/`).
 - `Project` (workspace, name, description) → has one `Workflow`, many `Tasks`, many `ProjectField` attachments.
 - `Workflow` (project, name) → has many `Status`.
 - `Status` (workflow, name, color, position, type ∈ Start/Normal/Finish).
-- `Task` (project, status, name, description [markdown], priority, dueDate, position) → has many `TaskFieldValue`.
+- `Task` (project, status, name, description [markdown], priority, dueDate, position, createdByAgent) → has many `TaskFieldValue`. `createdByAgent = true` when the row was created via the MCP transport.
 - `Field` (workspace, name, type ∈ Text/Textarea/Select/Version, required, defaultValue, options) — per-workspace custom-field catalog.
 - `ProjectField` (project, field, position, required) — attaches a workspace field to a project and orders it in the task drawer.
 - `TaskFieldValue` (task, field, value) — concrete value per task.
-- `Event` (author, type, metadata JSON, project?, workspaceId?, taskId?) — append-only audit log; `project`/`workspaceId` nullable so workspace- and admin-level events fit alongside project events.
+- `Event` (author, type, metadata JSON, project?, workspaceId?, taskId?, actorType ∈ Human/Agent, mcpClientId?, mcpClientName?) — append-only audit log; `project`/`workspaceId` nullable so workspace- and admin-level events fit alongside project events. `actorType` + `mcpClient*` are set by `ActorContext`, which `McpController` flips to `Agent` after OAuth-token validation.
 
 On sign-up a personal `Workspace` is auto-created and the user becomes its
 owner. New `Project` auto-seeds workflow `To Do → In Progress → Done`.
@@ -60,7 +60,7 @@ All routes live in `Ukolio\Route\Routes` (single enum). Highlights:
 
 - `POST /api/authentication/{login,sign-up,refresh-token}`
 - `GET/PATCH /api/current-user`
-- `GET/POST /api/workspaces`, `PUT/DELETE /api/workspaces/{id}`, plus `/switch`, `/members`, `/transfer-ownership`, `/invitations`, `/fields`.
+- `GET/POST /api/workspaces`, `PUT/DELETE /api/workspaces/{id}`, plus `/switch`, `/members`, `/transfer-ownership`, `/invitations`, `/fields`, `/mcp-clients`, `/events`, `/agent-stats`.
 - `GET/POST/PUT/DELETE /api/invitations/...`
 - `GET/POST/PUT/DELETE /api/projects[/{id}]`, plus `/board`, `/events`, `/workflow`, `/tasks`, `/fields`.
 - `GET /api/workflows` — workspace-wide list of workflows with nested statuses + `projectName` (used by the Tasks grid's status filter).

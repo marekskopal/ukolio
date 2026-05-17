@@ -11,4 +11,6 @@ interface McpUserContextInterface
 	public function setUser(User $user): void;
 
 	public function getUser(): User;
+
+	public function clear(): void;
 }

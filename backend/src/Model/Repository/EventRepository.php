@@ -6,6 +6,8 @@ namespace Ukolio\Model\Repository;
 
 use Iterator;
 use MarekSkopal\ORM\Repository\AbstractRepository;
+use Ukolio\Model\Entity\Enum\ActorTypeEnum;
+use Ukolio\Model\Entity\Enum\EventTypeEnum;
 use Ukolio\Model\Entity\Event;
 
 /** @extends AbstractRepository<Event> */
@@ -20,5 +22,39 @@ final class EventRepository extends AbstractRepository
 			->limit($limit)
 			->offset($offset)
 			->fetchAll();
+	}
+
+	/** @return Iterator<Event> */
+	public function findByWorkspace(int $workspaceId, ?ActorTypeEnum $actorType, int $limit, int $offset): Iterator
+	{
+		$select = $this->select()
+			->where(['workspace_id' => $workspaceId]);
+
+		if ($actorType !== null) {
+			$select->where(['actor_type' => $actorType->value]);
+		}
+
+		return $select
+			->orderBy('id', 'DESC')
+			->limit($limit)
+			->offset($offset)
+			->fetchAll();
+	}
+
+	public function countByWorkspaceSince(int $workspaceId, int $sinceTimestamp): int
+	{
+		return $this->select()
+			->where(['workspace_id' => $workspaceId])
+			->where(['created_at', '>=', date('Y-m-d H:i:s', $sinceTimestamp)])
+			->count();
+	}
+
+	public function countByWorkspaceTypeSince(int $workspaceId, EventTypeEnum $type, int $sinceTimestamp): int
+	{
+		return $this->select()
+			->where(['workspace_id' => $workspaceId])
+			->where(['type' => $type->value])
+			->where(['created_at', '>=', date('Y-m-d H:i:s', $sinceTimestamp)])
+			->count();
 	}
 }

@@ -20,6 +20,7 @@ final readonly class TaskListItemDto
 		public string $priority,
 		public ?string $dueDate,
 		public int $position,
+		public bool $createdByAgent,
 		public string $createdAt,
 		public string $updatedAt,
 	) {
@@ -38,6 +39,7 @@ final readonly class TaskListItemDto
 			priority: $task->priority->value,
 			dueDate: $task->dueDate?->format('Y-m-d'),
 			position: $task->position,
+			createdByAgent: $task->createdByAgent,
 			createdAt: $task->createdAt->format(DATE_ATOM),
 			updatedAt: $task->updatedAt->format(DATE_ATOM),
 		);

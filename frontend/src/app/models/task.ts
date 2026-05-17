@@ -12,6 +12,7 @@ export interface Task {
     priority: TaskPriority;
     dueDate: string | null;
     position: number;
+    createdByAgent: boolean;
     createdAt: string;
     updatedAt: string;
     fieldValues: TaskFieldValue[];
@@ -31,6 +32,7 @@ export interface TaskListItem {
     priority: TaskPriority;
     dueDate: string | null;
     position: number;
+    createdByAgent: boolean;
     createdAt: string;
     updatedAt: string;
 }

@@ -9,9 +9,14 @@ use MarekSkopal\Router\Attribute\RouteGet;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ukolio\Dto\EventDto;
+use Ukolio\Dto\WorkspaceAgentStatsDto;
+use Ukolio\Model\Entity\Enum\ActorTypeEnum;
+use Ukolio\Model\Entity\Enum\EventTypeEnum;
 use Ukolio\Model\Entity\Event;
+use Ukolio\Response\NotAuthorizedResponse;
 use Ukolio\Response\NotFoundResponse;
 use Ukolio\Route\Routes;
+use Ukolio\Service\Auth\PermissionCheckerInterface;
 use Ukolio\Service\Provider\EventProviderInterface;
 use Ukolio\Service\Provider\ProjectProviderInterface;
 use Ukolio\Service\Provider\WorkspaceProviderInterface;
@@ -23,6 +28,7 @@ final readonly class EventController
 		private ProjectProviderInterface $projectProvider,
 		private EventProviderInterface $eventProvider,
 		private WorkspaceProviderInterface $workspaceProvider,
+		private PermissionCheckerInterface $permissionChecker,
 		private RequestServiceInterface $requestService,
 	) {
 	}
@@ -51,5 +57,79 @@ final readonly class EventController
 		);
 
 		return new JsonResponse($events);
+	}
+
+	#[RouteGet(Routes::WorkspaceEvents->value)]
+	public function actionGetWorkspaceEvents(ServerRequestInterface $request, int $workspaceId): ResponseInterface
+	{
+		$user = $this->requestService->getUser($request);
+		$workspace = $this->workspaceProvider->getWorkspace($workspaceId);
+		if ($workspace === null) {
+			return new NotFoundResponse('Workspace not found.');
+		}
+
+		if (!$this->permissionChecker->canViewWorkspace($user, $workspace)) {
+			return new NotAuthorizedResponse('You are not a member of this workspace.');
+		}
+
+		$query = $request->getQueryParams();
+		$limit = is_numeric($query['limit'] ?? null) ? min(500, max(1, (int) $query['limit'])) : 100;
+		$offset = is_numeric($query['offset'] ?? null) ? max(0, (int) $query['offset']) : 0;
+		$actorType = $this->parseActorType(is_string($query['actorType'] ?? null) ? $query['actorType'] : null);
+
+		$events = array_map(
+			fn (Event $e): EventDto => EventDto::fromEntity($e),
+			iterator_to_array($this->eventProvider->getWorkspaceEvents($workspace, $actorType, $limit, $offset), false),
+		);
+
+		return new JsonResponse($events);
+	}
+
+	#[RouteGet(Routes::WorkspaceAgentStats->value)]
+	public function actionGetWorkspaceAgentStats(ServerRequestInterface $request, int $workspaceId): ResponseInterface
+	{
+		$user = $this->requestService->getUser($request);
+		$workspace = $this->workspaceProvider->getWorkspace($workspaceId);
+		if ($workspace === null) {
+			return new NotFoundResponse('Workspace not found.');
+		}
+
+		if (!$this->permissionChecker->canViewWorkspace($user, $workspace)) {
+			return new NotAuthorizedResponse('You are not a member of this workspace.');
+		}
+
+		$since = time() - 86400;
+
+		$eventsLast24h = $this->eventProvider->countWorkspaceEventsSince($workspace, $since);
+		$tasksCreatedLast24h = $this->eventProvider->countWorkspaceEventsOfTypeSince($workspace, EventTypeEnum::TaskCreated, $since);
+		$tasksClosedLast24h = $this->eventProvider->countWorkspaceEventsOfTypeSince($workspace, EventTypeEnum::TaskMoved, $since);
+
+		$activeAgentNames = [];
+		foreach ($this->eventProvider->getWorkspaceEvents($workspace, ActorTypeEnum::Agent, 500, 0) as $event) {
+			if ($event->createdAt->getTimestamp() < $since) {
+				continue;
+			}
+			$name = $event->mcpClientName ?? $event->mcpClientId;
+			if ($name !== null && !in_array($name, $activeAgentNames, true)) {
+				$activeAgentNames[] = $name;
+			}
+		}
+
+		return new JsonResponse(new WorkspaceAgentStatsDto(
+			eventsLast24h: $eventsLast24h,
+			tasksCreatedLast24h: $tasksCreatedLast24h,
+			tasksClosedLast24h: $tasksClosedLast24h,
+			activeAgents: count($activeAgentNames),
+			activeAgentNames: $activeAgentNames,
+		));
+	}
+
+	private function parseActorType(?string $value): ?ActorTypeEnum
+	{
+		if ($value === null || $value === '') {
+			return null;
+		}
+
+		return ActorTypeEnum::tryFrom($value);
 	}
 }

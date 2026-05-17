@@ -51,17 +51,26 @@
             "aiPalette": "Open agent command palette",
             "openUserMenu": "Open user menu"
         },
+        "agent": {
+            "agent": "agent",
+            "createdBy": "Created by an agent",
+            "viaMcp": "via MCP"
+        },
         "agents": {
             "title": "Agent activity",
             "subtitle": "Live audit log — workspace-wide.",
             "show": "Show:",
-            "empty": "No agent activity yet. Connect an MCP client and your agents' actions will appear here.",
+            "empty": "No activity yet.",
             "placeholder": "Pending data",
             "kpi": {
                 "events": "Events · 24h",
+                "eventsSub": "In the last 24 hours",
                 "activeAgents": "Active agents",
+                "noAgentsConnected": "No agents connected",
                 "tasksCreated": "Tasks created",
-                "tasksClosed": "Tasks closed"
+                "tasksCreatedSub": "Logged in the last 24 h",
+                "tasksClosed": "Tasks closed",
+                "tasksClosedSub": "Tracked via TaskMoved"
             },
             "chips": {
                 "all": "All",
@@ -69,6 +78,29 @@
                 "agents": "Agents",
                 "comments": "Comments",
                 "statusChanges": "Status changes"
+            },
+            "verb": {
+                "ProjectCreated": "created project",
+                "ProjectUpdated": "updated project",
+                "ProjectDeleted": "deleted project",
+                "WorkflowUpdated": "updated workflow",
+                "StatusCreated": "added status",
+                "StatusUpdated": "updated status",
+                "StatusDeleted": "removed status",
+                "StatusMoved": "reordered status",
+                "TaskCreated": "created task",
+                "TaskUpdated": "updated task",
+                "TaskDeleted": "deleted task",
+                "TaskMoved": "moved task",
+                "MemberRoleChanged": "changed member role",
+                "OwnershipTransferred": "transferred ownership",
+                "AdminDeletedWorkspace": "(admin) deleted workspace",
+                "AdminDeletedUser": "(admin) deleted user",
+                "AdminChangedSystemRole": "(admin) changed system role",
+                "FieldCreated": "created field",
+                "FieldUpdated": "updated field",
+                "FieldDeleted": "deleted field",
+                "ProjectFieldsUpdated": "updated project fields"
             }
         },
         "tasks": {
@@ -233,6 +265,14 @@
             "transferOwnershipConfirm": "Transfer ownership of \"{workspace}\" to {name}? You will become an Admin.",
             "ownershipTransferred": "Ownership transferred.",
             "roleChanged": "Role updated.",
+            "mcp": {
+                "heading": "MCP clients",
+                "empty": "No MCP clients have authorized for this workspace yet.",
+                "firstSeen": "First seen",
+                "lastUsed": "Last used",
+                "activeTokens": "active tokens",
+                "totalAuthorizations": "Total authorizations"
+            },
             "role": {
                 "Owner": "Owner",
                 "Admin": "Admin",

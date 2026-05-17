@@ -54,6 +54,8 @@ export class EventsComponent implements OnInit {
                     from: String(md['fromStatusName'] ?? '?'),
                     to: String(md['toStatusName'] ?? '?'),
                 });
+            default:
+                return t(`app.agents.verb.${event.type}`);
         }
     }
 
