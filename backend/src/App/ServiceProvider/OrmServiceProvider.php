@@ -10,22 +10,28 @@ use MarekSkopal\ORM\Database\DatabaseInterface;
 use MarekSkopal\ORM\ORM;
 use MarekSkopal\ORM\Repository\RepositoryInterface;
 use Ukolio\Model\Entity\Event;
+use Ukolio\Model\Entity\Field;
 use Ukolio\Model\Entity\Invitation;
 use Ukolio\Model\Entity\OAuthAuthorization;
 use Ukolio\Model\Entity\OAuthClient;
 use Ukolio\Model\Entity\Project;
+use Ukolio\Model\Entity\ProjectField;
 use Ukolio\Model\Entity\Status;
 use Ukolio\Model\Entity\Task;
+use Ukolio\Model\Entity\TaskFieldValue;
 use Ukolio\Model\Entity\User;
 use Ukolio\Model\Entity\Workflow;
 use Ukolio\Model\Entity\Workspace;
 use Ukolio\Model\Entity\WorkspaceUser;
 use Ukolio\Model\Repository\EventRepository;
+use Ukolio\Model\Repository\FieldRepository;
 use Ukolio\Model\Repository\InvitationRepository;
 use Ukolio\Model\Repository\OAuthAuthorizationRepository;
 use Ukolio\Model\Repository\OAuthClientRepository;
+use Ukolio\Model\Repository\ProjectFieldRepository;
 use Ukolio\Model\Repository\ProjectRepository;
 use Ukolio\Model\Repository\StatusRepository;
+use Ukolio\Model\Repository\TaskFieldValueRepository;
 use Ukolio\Model\Repository\TaskRepository;
 use Ukolio\Model\Repository\UserRepository;
 use Ukolio\Model\Repository\WorkflowRepository;
@@ -52,6 +58,9 @@ final class OrmServiceProvider extends AbstractServiceProvider
 			WorkflowRepository::class,
 			StatusRepository::class,
 			TaskRepository::class,
+			TaskFieldValueRepository::class,
+			FieldRepository::class,
+			ProjectFieldRepository::class,
 			EventRepository::class,
 			OAuthClientRepository::class,
 			OAuthAuthorizationRepository::class,
@@ -76,6 +85,9 @@ final class OrmServiceProvider extends AbstractServiceProvider
 		$this->addRepository($container, $orm, WorkflowRepository::class, Workflow::class);
 		$this->addRepository($container, $orm, StatusRepository::class, Status::class);
 		$this->addRepository($container, $orm, TaskRepository::class, Task::class);
+		$this->addRepository($container, $orm, TaskFieldValueRepository::class, TaskFieldValue::class);
+		$this->addRepository($container, $orm, FieldRepository::class, Field::class);
+		$this->addRepository($container, $orm, ProjectFieldRepository::class, ProjectField::class);
 		$this->addRepository($container, $orm, EventRepository::class, Event::class);
 		$this->addRepository($container, $orm, OAuthClientRepository::class, OAuthClient::class);
 		$this->addRepository($container, $orm, OAuthAuthorizationRepository::class, OAuthAuthorization::class);

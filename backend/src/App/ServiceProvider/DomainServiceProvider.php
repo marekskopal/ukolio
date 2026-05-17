@@ -21,12 +21,18 @@ use Ukolio\Service\Auth\PermissionChecker;
 use Ukolio\Service\Auth\PermissionCheckerInterface;
 use Ukolio\Service\Provider\EventProvider;
 use Ukolio\Service\Provider\EventProviderInterface;
+use Ukolio\Service\Provider\FieldProvider;
+use Ukolio\Service\Provider\FieldProviderInterface;
 use Ukolio\Service\Provider\InvitationProvider;
 use Ukolio\Service\Provider\InvitationProviderInterface;
+use Ukolio\Service\Provider\ProjectFieldProvider;
+use Ukolio\Service\Provider\ProjectFieldProviderInterface;
 use Ukolio\Service\Provider\ProjectProvider;
 use Ukolio\Service\Provider\ProjectProviderInterface;
 use Ukolio\Service\Provider\StatusProvider;
 use Ukolio\Service\Provider\StatusProviderInterface;
+use Ukolio\Service\Provider\TaskFieldValueProvider;
+use Ukolio\Service\Provider\TaskFieldValueProviderInterface;
 use Ukolio\Service\Provider\TaskProvider;
 use Ukolio\Service\Provider\TaskProviderInterface;
 use Ukolio\Service\Provider\UserProvider;
@@ -58,6 +64,9 @@ final class DomainServiceProvider extends AbstractServiceProvider
 			WorkflowProviderInterface::class,
 			StatusProviderInterface::class,
 			TaskProviderInterface::class,
+			TaskFieldValueProviderInterface::class,
+			FieldProviderInterface::class,
+			ProjectFieldProviderInterface::class,
 			EventProviderInterface::class,
 			McpUserContextInterface::class,
 			ActorContextInterface::class,
@@ -86,6 +95,9 @@ final class DomainServiceProvider extends AbstractServiceProvider
 		$c->add(WorkflowProviderInterface::class, WorkflowProvider::class);
 		$c->add(ProjectProviderInterface::class, ProjectProvider::class);
 		$c->add(TaskProviderInterface::class, TaskProvider::class);
+		$c->add(TaskFieldValueProviderInterface::class, TaskFieldValueProvider::class);
+		$c->add(FieldProviderInterface::class, FieldProvider::class);
+		$c->add(ProjectFieldProviderInterface::class, ProjectFieldProvider::class);
 		$c->add(McpUserContextInterface::class, McpUserContext::class);
 		$c->add(ActorContextInterface::class, ActorContext::class);
 		$c->add(UkolioServer::class, function () use ($c): UkolioServer {
