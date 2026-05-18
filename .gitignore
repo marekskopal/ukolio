@@ -19,3 +19,4 @@ frontend/coverage/
 log/
 
 docker-compose.override.yml
+/.playwright-mcp/
