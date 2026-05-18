@@ -14,6 +14,7 @@ final readonly class McpTaskDto
 	 */
 	public function __construct(
 		public int $id,
+		public string $code,
 		public int $projectId,
 		public int $statusId,
 		public string $statusName,
@@ -22,6 +23,7 @@ final readonly class McpTaskDto
 		public string $priority,
 		public ?string $dueDate,
 		public int $position,
+		public int $sequenceNumber,
 		public array $fieldValues,
 		public array $tagIds,
 	) {
@@ -40,6 +42,7 @@ final readonly class McpTaskDto
 
 		return new self(
 			id: $task->id,
+			code: $task->project->prefix . '-' . $task->sequenceNumber,
 			projectId: $task->project->id,
 			statusId: $task->status->id,
 			statusName: $task->status->name,
@@ -48,6 +51,7 @@ final readonly class McpTaskDto
 			priority: $task->priority->value,
 			dueDate: $task->dueDate?->format('Y-m-d'),
 			position: $task->position,
+			sequenceNumber: $task->sequenceNumber,
 			fieldValues: $values,
 			tagIds: $tagIds,
 		);

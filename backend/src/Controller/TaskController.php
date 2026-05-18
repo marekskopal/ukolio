@@ -28,6 +28,7 @@ use Ukolio\Response\OkResponse;
 use Ukolio\Route\Routes;
 use Ukolio\Service\Provider\ProjectProviderInterface;
 use Ukolio\Service\Provider\StatusProviderInterface;
+use Ukolio\Service\Provider\TaskCodeResolverInterface;
 use Ukolio\Service\Provider\TaskFieldValueProviderInterface;
 use Ukolio\Service\Provider\TaskProviderInterface;
 use Ukolio\Service\Provider\TaskTagProviderInterface;
@@ -40,6 +41,7 @@ final readonly class TaskController
 	public function __construct(
 		private ProjectProviderInterface $projectProvider,
 		private TaskProviderInterface $taskProvider,
+		private TaskCodeResolverInterface $taskCodeResolver,
 		private StatusProviderInterface $statusProvider,
 		private WorkspaceProviderInterface $workspaceProvider,
 		private TaskFieldValueProviderInterface $taskFieldValueProvider,
@@ -237,7 +239,7 @@ final readonly class TaskController
 	}
 
 	#[RouteGet(Routes::Task->value)]
-	public function actionGetTask(ServerRequestInterface $request, int $taskId): ResponseInterface
+	public function actionGetTask(ServerRequestInterface $request, string $taskId): ResponseInterface
 	{
 		$user = $this->requestService->getUser($request);
 		$task = $this->loadTaskInScope($user, $taskId);
@@ -251,7 +253,7 @@ final readonly class TaskController
 	}
 
 	#[RoutePut(Routes::Task->value)]
-	public function actionPutTask(ServerRequestInterface $request, int $taskId): ResponseInterface
+	public function actionPutTask(ServerRequestInterface $request, string $taskId): ResponseInterface
 	{
 		$user = $this->requestService->getUser($request);
 		$task = $this->loadTaskInScope($user, $taskId);
@@ -288,7 +290,7 @@ final readonly class TaskController
 	}
 
 	#[RoutePut(Routes::TaskMove->value)]
-	public function actionPutTaskMove(ServerRequestInterface $request, int $taskId): ResponseInterface
+	public function actionPutTaskMove(ServerRequestInterface $request, string $taskId): ResponseInterface
 	{
 		$user = $this->requestService->getUser($request);
 		$task = $this->loadTaskInScope($user, $taskId);
@@ -311,7 +313,7 @@ final readonly class TaskController
 	}
 
 	#[RouteDelete(Routes::Task->value)]
-	public function actionDeleteTask(ServerRequestInterface $request, int $taskId): ResponseInterface
+	public function actionDeleteTask(ServerRequestInterface $request, string $taskId): ResponseInterface
 	{
 		$user = $this->requestService->getUser($request);
 		$task = $this->loadTaskInScope($user, $taskId);
@@ -324,17 +326,8 @@ final readonly class TaskController
 		return new OkResponse();
 	}
 
-	private function loadTaskInScope(User $user, int $taskId): ?Task
+	private function loadTaskInScope(User $user, string $taskId): ?Task
 	{
-		$task = $this->taskProvider->getTask($taskId);
-		if ($task === null) {
-			return null;
-		}
-
-		if (!$this->workspaceProvider->isMember($user, $task->project->workspace)) {
-			return null;
-		}
-
-		return $task;
+		return $this->taskCodeResolver->resolveForUser($user, $taskId);
 	}
 }

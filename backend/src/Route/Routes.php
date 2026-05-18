@@ -51,12 +51,12 @@ enum Routes: string
 	case StatusMove = '/api/statuses/{statusId:number}/move';
 
 	case Tasks = '/api/tasks';
-	case Task = '/api/tasks/{taskId:number}';
-	case TaskMove = '/api/tasks/{taskId:number}/move';
-	case TaskFiles = '/api/tasks/{taskId:number}/files';
-	case TaskFile = '/api/tasks/{taskId:number}/files/{fileId:number}';
-	case TaskFileContent = '/api/tasks/{taskId:number}/files/{fileId:number}/content';
-	case TaskRelations = '/api/tasks/{taskId:number}/relations';
+	case Task = '/api/tasks/{taskId}';
+	case TaskMove = '/api/tasks/{taskId}/move';
+	case TaskFiles = '/api/tasks/{taskId}/files';
+	case TaskFile = '/api/tasks/{taskId}/files/{fileId:number}';
+	case TaskFileContent = '/api/tasks/{taskId}/files/{fileId:number}/content';
+	case TaskRelations = '/api/tasks/{taskId}/relations';
 	case TaskRelation = '/api/task-relations/{relationId:number}';
 
 	case AdminUsers = '/api/admin/users';

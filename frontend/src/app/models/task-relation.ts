@@ -7,6 +7,7 @@ export interface TaskRelation {
     direction: TaskRelationDirection;
     labelKey: string;
     otherTaskId: number;
+    otherTaskCode: string;
     otherTaskName: string;
     otherTaskProjectId: number;
     otherTaskProjectName: string;

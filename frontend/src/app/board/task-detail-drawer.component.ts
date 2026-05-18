@@ -433,6 +433,7 @@ export class TaskDetailDrawerComponent implements OnInit {
             const task = await this.taskService.getTask(relation.otherTaskId);
             const item: TaskListItem = {
                 id: task.id,
+                code: task.code,
                 projectId: task.projectId,
                 projectName: relation.otherTaskProjectName,
                 statusId: task.statusId,
@@ -449,6 +450,7 @@ export class TaskDetailDrawerComponent implements OnInit {
                 priority: task.priority,
                 dueDate: task.dueDate,
                 position: task.position,
+                sequenceNumber: task.sequenceNumber,
                 createdByAgent: task.createdByAgent,
                 createdAt: task.createdAt,
                 updatedAt: task.updatedAt,

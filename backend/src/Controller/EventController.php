@@ -13,6 +13,7 @@ use Ukolio\Dto\WorkspaceAgentStatsDto;
 use Ukolio\Model\Entity\Enum\ActorTypeEnum;
 use Ukolio\Model\Entity\Enum\EventTypeEnum;
 use Ukolio\Model\Entity\Event;
+use Ukolio\Model\Repository\TaskRepository;
 use Ukolio\Response\NotAuthorizedResponse;
 use Ukolio\Response\NotFoundResponse;
 use Ukolio\Route\Routes;
@@ -30,6 +31,7 @@ final readonly class EventController
 		private WorkspaceProviderInterface $workspaceProvider,
 		private PermissionCheckerInterface $permissionChecker,
 		private RequestServiceInterface $requestService,
+		private TaskRepository $taskRepository,
 	) {
 	}
 
@@ -51,9 +53,12 @@ final readonly class EventController
 		$limit = is_numeric($query['limit'] ?? null) ? (int) $query['limit'] : 100;
 		$offset = is_numeric($query['offset'] ?? null) ? (int) $query['offset'] : 0;
 
+		$eventEntities = iterator_to_array($this->eventProvider->getEvents($project, $limit, $offset), false);
+		$codeByTaskId = $this->buildTaskCodeMap($eventEntities);
+
 		$events = array_map(
-			fn (Event $e): EventDto => EventDto::fromEntity($e),
-			iterator_to_array($this->eventProvider->getEvents($project, $limit, $offset), false),
+			static fn (Event $e): EventDto => EventDto::fromEntity($e, $e->taskId !== null ? ($codeByTaskId[$e->taskId] ?? null) : null),
+			$eventEntities,
 		);
 
 		return new JsonResponse($events);
@@ -77,12 +82,38 @@ final readonly class EventController
 		$offset = is_numeric($query['offset'] ?? null) ? max(0, (int) $query['offset']) : 0;
 		$actorType = $this->parseActorType(is_string($query['actorType'] ?? null) ? $query['actorType'] : null);
 
+		$eventEntities = iterator_to_array($this->eventProvider->getWorkspaceEvents($workspace, $actorType, $limit, $offset), false);
+		$codeByTaskId = $this->buildTaskCodeMap($eventEntities);
+
 		$events = array_map(
-			fn (Event $e): EventDto => EventDto::fromEntity($e),
-			iterator_to_array($this->eventProvider->getWorkspaceEvents($workspace, $actorType, $limit, $offset), false),
+			static fn (Event $e): EventDto => EventDto::fromEntity($e, $e->taskId !== null ? ($codeByTaskId[$e->taskId] ?? null) : null),
+			$eventEntities,
 		);
 
 		return new JsonResponse($events);
+	}
+
+	/**
+	 * @param list<Event> $events
+	 * @return array<int, string>
+	 */
+	private function buildTaskCodeMap(array $events): array
+	{
+		$taskIds = [];
+		foreach ($events as $event) {
+			if ($event->taskId !== null) {
+				$taskIds[$event->taskId] = true;
+			}
+		}
+		if ($taskIds === []) {
+			return [];
+		}
+
+		$map = [];
+		foreach ($this->taskRepository->findByIds(array_keys($taskIds)) as $task) {
+			$map[$task->id] = $task->project->prefix . '-' . $task->sequenceNumber;
+		}
+		return $map;
 	}
 
 	#[RouteGet(Routes::WorkspaceAgentStats->value)]

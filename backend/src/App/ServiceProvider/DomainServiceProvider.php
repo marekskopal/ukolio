@@ -31,12 +31,16 @@ use Ukolio\Service\Provider\PasswordResetProvider;
 use Ukolio\Service\Provider\PasswordResetProviderInterface;
 use Ukolio\Service\Provider\ProjectFieldProvider;
 use Ukolio\Service\Provider\ProjectFieldProviderInterface;
+use Ukolio\Service\Provider\ProjectPrefixGenerator;
+use Ukolio\Service\Provider\ProjectPrefixGeneratorInterface;
 use Ukolio\Service\Provider\ProjectProvider;
 use Ukolio\Service\Provider\ProjectProviderInterface;
 use Ukolio\Service\Provider\StatusProvider;
 use Ukolio\Service\Provider\StatusProviderInterface;
 use Ukolio\Service\Provider\TagProvider;
 use Ukolio\Service\Provider\TagProviderInterface;
+use Ukolio\Service\Provider\TaskCodeResolver;
+use Ukolio\Service\Provider\TaskCodeResolverInterface;
 use Ukolio\Service\Provider\TaskFieldValueProvider;
 use Ukolio\Service\Provider\TaskFieldValueProviderInterface;
 use Ukolio\Service\Provider\TaskFileProvider;
@@ -75,9 +79,11 @@ final class DomainServiceProvider extends AbstractServiceProvider
 			PasswordResetProviderInterface::class,
 			EmailVerificationProviderInterface::class,
 			ProjectProviderInterface::class,
+			ProjectPrefixGeneratorInterface::class,
 			WorkflowProviderInterface::class,
 			StatusProviderInterface::class,
 			TaskProviderInterface::class,
+			TaskCodeResolverInterface::class,
 			TaskFieldValueProviderInterface::class,
 			TaskFileProviderInterface::class,
 			TaskRelationProviderInterface::class,
@@ -114,7 +120,9 @@ final class DomainServiceProvider extends AbstractServiceProvider
 		$c->add(StatusProviderInterface::class, StatusProvider::class);
 		$c->add(WorkflowProviderInterface::class, WorkflowProvider::class);
 		$c->add(ProjectProviderInterface::class, ProjectProvider::class);
+		$c->add(ProjectPrefixGeneratorInterface::class, ProjectPrefixGenerator::class);
 		$c->add(TaskProviderInterface::class, TaskProvider::class);
+		$c->add(TaskCodeResolverInterface::class, TaskCodeResolver::class);
 		$c->add(TaskFieldValueProviderInterface::class, TaskFieldValueProvider::class);
 		$c->add(TaskFileProviderInterface::class, TaskFileProvider::class);
 		$c->add(TaskRelationProviderInterface::class, TaskRelationProvider::class);

@@ -125,6 +125,7 @@ final readonly class TaskProvider implements TaskProviderInterface
 		}
 
 		$position = $this->nextPosition($status);
+		$sequenceNumber = $this->taskRepository->nextSequenceNumber($project->id);
 
 		$now = new DateTimeImmutable();
 		$task = new Task(
@@ -135,6 +136,7 @@ final readonly class TaskProvider implements TaskProviderInterface
 			priority: $priority,
 			dueDate: $dueDate,
 			position: $position,
+			sequenceNumber: $sequenceNumber,
 			createdByAgent: $this->actorContext->isAgent(),
 		);
 		$task->createdAt = $now;

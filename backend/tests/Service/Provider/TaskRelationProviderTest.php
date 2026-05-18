@@ -242,7 +242,7 @@ final class TaskRelationProviderTest extends TestCase
 
 	private function makeProject(int $id, Workspace $workspace): Project
 	{
-		$p = new Project(workspace: $workspace, name: 'P-' . $id);
+		$p = new Project(workspace: $workspace, name: 'P-' . $id, prefix: 'P' . $id);
 		$p->id = $id;
 		$p->createdAt = new DateTimeImmutable();
 		$p->updatedAt = new DateTimeImmutable();
@@ -269,6 +269,7 @@ final class TaskRelationProviderTest extends TestCase
 			priority: TaskPriorityEnum::Medium,
 			dueDate: null,
 			position: 0,
+			sequenceNumber: $id,
 		);
 		$task->id = $id;
 		$task->createdAt = new DateTimeImmutable();

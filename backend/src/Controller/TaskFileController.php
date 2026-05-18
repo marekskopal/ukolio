@@ -22,24 +22,22 @@ use Ukolio\Response\ErrorResponse;
 use Ukolio\Response\NotFoundResponse;
 use Ukolio\Response\OkResponse;
 use Ukolio\Route\Routes;
+use Ukolio\Service\Provider\TaskCodeResolverInterface;
 use Ukolio\Service\Provider\TaskFileProviderInterface;
-use Ukolio\Service\Provider\TaskProviderInterface;
-use Ukolio\Service\Provider\WorkspaceProviderInterface;
 use Ukolio\Service\Request\RequestServiceInterface;
 use const UPLOAD_ERR_OK;
 
 final readonly class TaskFileController
 {
 	public function __construct(
-		private TaskProviderInterface $taskProvider,
+		private TaskCodeResolverInterface $taskCodeResolver,
 		private TaskFileProviderInterface $taskFileProvider,
-		private WorkspaceProviderInterface $workspaceProvider,
 		private RequestServiceInterface $requestService,
 	) {
 	}
 
 	#[RouteGet(Routes::TaskFiles->value)]
-	public function actionGetFiles(ServerRequestInterface $request, int $taskId): ResponseInterface
+	public function actionGetFiles(ServerRequestInterface $request, string $taskId): ResponseInterface
 	{
 		$user = $this->requestService->getUser($request);
 		$task = $this->loadTaskInScope($user, $taskId);
@@ -56,7 +54,7 @@ final readonly class TaskFileController
 	}
 
 	#[RoutePost(Routes::TaskFiles->value)]
-	public function actionPostFile(ServerRequestInterface $request, int $taskId): ResponseInterface
+	public function actionPostFile(ServerRequestInterface $request, string $taskId): ResponseInterface
 	{
 		$user = $this->requestService->getUser($request);
 		$task = $this->loadTaskInScope($user, $taskId);
@@ -86,7 +84,7 @@ final readonly class TaskFileController
 	}
 
 	#[RouteGet(Routes::TaskFileContent->value)]
-	public function actionGetFileContent(ServerRequestInterface $request, int $taskId, int $fileId): ResponseInterface
+	public function actionGetFileContent(ServerRequestInterface $request, string $taskId, int $fileId): ResponseInterface
 	{
 		$user = $this->requestService->getUser($request);
 		$task = $this->loadTaskInScope($user, $taskId);
@@ -117,7 +115,7 @@ final readonly class TaskFileController
 	}
 
 	#[RouteDelete(Routes::TaskFile->value)]
-	public function actionDeleteFile(ServerRequestInterface $request, int $taskId, int $fileId): ResponseInterface
+	public function actionDeleteFile(ServerRequestInterface $request, string $taskId, int $fileId): ResponseInterface
 	{
 		$user = $this->requestService->getUser($request);
 		$task = $this->loadTaskInScope($user, $taskId);
@@ -135,15 +133,8 @@ final readonly class TaskFileController
 		return new OkResponse();
 	}
 
-	private function loadTaskInScope(User $user, int $taskId): ?Task
+	private function loadTaskInScope(User $user, string $taskId): ?Task
 	{
-		$task = $this->taskProvider->getTask($taskId);
-		if ($task === null) {
-			return null;
-		}
-		if (!$this->workspaceProvider->isMember($user, $task->project->workspace)) {
-			return null;
-		}
-		return $task;
+		return $this->taskCodeResolver->resolveForUser($user, $taskId);
 	}
 }

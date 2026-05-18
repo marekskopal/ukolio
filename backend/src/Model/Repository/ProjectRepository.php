@@ -24,4 +24,22 @@ final class ProjectRepository extends AbstractRepository
 	{
 		return $this->findOne(['workspace_id' => $workspaceId, 'id' => $projectId]);
 	}
+
+	public function findByWorkspaceAndPrefix(int $workspaceId, string $prefix): ?Project
+	{
+		return $this->findOne(['workspace_id' => $workspaceId, 'prefix' => $prefix]);
+	}
+
+	/** @return list<string> */
+	public function findPrefixesInWorkspace(int $workspaceId, ?int $excludeProjectId): array
+	{
+		$prefixes = [];
+		foreach ($this->findProjectsByWorkspace($workspaceId) as $project) {
+			if ($excludeProjectId !== null && $project->id === $excludeProjectId) {
+				continue;
+			}
+			$prefixes[] = $project->prefix;
+		}
+		return $prefixes;
+	}
 }

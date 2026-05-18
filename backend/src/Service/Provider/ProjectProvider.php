@@ -18,6 +18,7 @@ final readonly class ProjectProvider implements ProjectProviderInterface
 		private ProjectRepository $projectRepository,
 		private WorkflowProviderInterface $workflowProvider,
 		private EventProviderInterface $eventProvider,
+		private ProjectPrefixGeneratorInterface $prefixGenerator,
 	) {
 	}
 
@@ -35,7 +36,8 @@ final readonly class ProjectProvider implements ProjectProviderInterface
 	public function createProject(User $author, Workspace $workspace, string $name, ?string $description): Project
 	{
 		$now = new DateTimeImmutable();
-		$project = new Project(workspace: $workspace, name: $name, description: $description);
+		$prefix = $this->prefixGenerator->generate($workspace, $name, null);
+		$project = new Project(workspace: $workspace, name: $name, prefix: $prefix, description: $description);
 		$project->createdAt = $now;
 		$project->updatedAt = $now;
 
@@ -50,6 +52,9 @@ final readonly class ProjectProvider implements ProjectProviderInterface
 
 	public function updateProject(User $author, Project $project, string $name, ?string $description): Project
 	{
+		if ($name !== $project->name) {
+			$project->prefix = $this->prefixGenerator->generate($project->workspace, $name, $project->id);
+		}
 		$project->name = $name;
 		$project->description = $description;
 		$project->updatedAt = new DateTimeImmutable();

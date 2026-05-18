@@ -15,6 +15,7 @@ final readonly class TaskDto
 	 */
 	public function __construct(
 		public int $id,
+		public string $code,
 		public int $projectId,
 		public int $statusId,
 		public string $name,
@@ -22,6 +23,7 @@ final readonly class TaskDto
 		public string $priority,
 		public ?string $dueDate,
 		public int $position,
+		public int $sequenceNumber,
 		public bool $createdByAgent,
 		public string $createdAt,
 		public string $updatedAt,
@@ -43,6 +45,7 @@ final readonly class TaskDto
 
 		return new self(
 			id: $task->id,
+			code: $task->project->prefix . '-' . $task->sequenceNumber,
 			projectId: $task->project->id,
 			statusId: $task->status->id,
 			name: $task->name,
@@ -50,6 +53,7 @@ final readonly class TaskDto
 			priority: $task->priority->value,
 			dueDate: $task->dueDate?->format('Y-m-d'),
 			position: $task->position,
+			sequenceNumber: $task->sequenceNumber,
 			createdByAgent: $task->createdByAgent,
 			createdAt: $task->createdAt->format(DATE_ATOM),
 			updatedAt: $task->updatedAt->format(DATE_ATOM),

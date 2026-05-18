@@ -5,6 +5,7 @@ export type TaskPriority = 'Low' | 'Medium' | 'High';
 
 export interface Task {
     id: number;
+    code: string;
     projectId: number;
     statusId: number;
     name: string;
@@ -12,6 +13,7 @@ export interface Task {
     priority: TaskPriority;
     dueDate: string | null;
     position: number;
+    sequenceNumber: number;
     createdByAgent: boolean;
     createdAt: string;
     updatedAt: string;
@@ -24,6 +26,7 @@ export type OrderDirection = 'ASC' | 'DESC';
 
 export interface TaskListItem {
     id: number;
+    code: string;
     projectId: number;
     projectName: string;
     statusId: number;
@@ -33,6 +36,7 @@ export interface TaskListItem {
     priority: TaskPriority;
     dueDate: string | null;
     position: number;
+    sequenceNumber: number;
     createdByAgent: boolean;
     createdAt: string;
     updatedAt: string;

@@ -18,6 +18,7 @@ use Ukolio\Model\Entity\Task;
 use Ukolio\Model\Entity\Workspace;
 use Ukolio\Service\Provider\ProjectProviderInterface;
 use Ukolio\Service\Provider\StatusProviderInterface;
+use Ukolio\Service\Provider\TaskCodeResolverInterface;
 use Ukolio\Service\Provider\TaskFieldValueProviderInterface;
 use Ukolio\Service\Provider\TaskProviderInterface;
 use Ukolio\Service\Provider\TaskTagProviderInterface;
@@ -32,6 +33,7 @@ final readonly class TaskTools
 		private WorkflowProviderInterface $workflowProvider,
 		private StatusProviderInterface $statusProvider,
 		private TaskProviderInterface $taskProvider,
+		private TaskCodeResolverInterface $taskCodeResolver,
 		private WorkspaceProviderInterface $workspaceProvider,
 		private TaskFieldValueProviderInterface $taskFieldValueProvider,
 		private TaskTagProviderInterface $taskTagProvider,
@@ -105,12 +107,12 @@ final readonly class TaskTools
 	}
 
 	/**
-	 * Get a single task by ID.
+	 * Get a single task by numeric ID or by code (e.g. "MP-3").
 	 *
-	 * @param int $taskId Task ID
+	 * @param int|string $taskId Task ID or code
 	 */
-	#[McpTool(name: 'get_task', description: 'Get a single task by ID')]
-	public function getTask(int $taskId): McpTaskDto
+	#[McpTool(name: 'get_task', description: 'Get a single task by numeric ID or code (e.g. "MP-3")')]
+	public function getTask(int|string $taskId): McpTaskDto
 	{
 		$task = $this->requireTask($taskId);
 		return McpTaskDto::fromEntity(
@@ -175,7 +177,7 @@ final readonly class TaskTools
 	/**
 	 * Update a task's editable fields. Omitted parameters are left unchanged.
 	 *
-	 * @param int $taskId Task ID
+	 * @param int|string $taskId Task ID or code (e.g. "MP-3")
 	 * @param string|null $name New name
 	 * @param string|null $description New description
 	 * @param string|null $priority New priority: Low, Medium, or High
@@ -185,7 +187,7 @@ final readonly class TaskTools
 	 */
 	#[McpTool(name: 'update_task', description: 'Update a task. Use move_task to change status.')]
 	public function updateTask(
-		int $taskId,
+		int|string $taskId,
 		?string $name = null,
 		?string $description = null,
 		?string $priority = null,
@@ -224,12 +226,12 @@ final readonly class TaskTools
 	 * Move a task to a different status (column). Provide either statusId or statusName.
 	 * The task is appended to the end of the destination column.
 	 *
-	 * @param int $taskId Task ID
+	 * @param int|string $taskId Task ID or code (e.g. "MP-3")
 	 * @param int|null $statusId Target status ID
 	 * @param string|null $statusName Target status name (case-insensitive); ignored if statusId is given
 	 */
 	#[McpTool(name: 'move_task', description: 'Move a task to a different status. Appends to the end of the destination column.')]
-	public function moveTask(int $taskId, ?int $statusId = null, ?string $statusName = null): McpTaskDto
+	public function moveTask(int|string $taskId, ?int $statusId = null, ?string $statusName = null): McpTaskDto
 	{
 		$user = $this->userContext->getUser();
 		$task = $this->requireTask($taskId);
@@ -251,10 +253,10 @@ final readonly class TaskTools
 	/**
 	 * Delete a task.
 	 *
-	 * @param int $taskId Task ID
+	 * @param int|string $taskId Task ID or code (e.g. "MP-3")
 	 */
 	#[McpTool(name: 'delete_task', description: 'Delete a task (irreversible)')]
-	public function deleteTask(int $taskId): string
+	public function deleteTask(int|string $taskId): string
 	{
 		$user = $this->userContext->getUser();
 		$task = $this->requireTask($taskId);
@@ -285,13 +287,12 @@ final readonly class TaskTools
 		return $project;
 	}
 
-	private function requireTask(int $taskId): Task
+	private function requireTask(int|string $taskId): Task
 	{
-		$task = $this->taskProvider->getTask($taskId);
-		if ($task === null || !$this->workspaceProvider->isMember($this->userContext->getUser(), $task->project->workspace)) {
-			throw new RuntimeException(sprintf('Task %d not found.', $taskId));
+		$task = $this->taskCodeResolver->resolveForUser($this->userContext->getUser(), (string) $taskId);
+		if ($task === null) {
+			throw new RuntimeException(sprintf('Task "%s" not found.', (string) $taskId));
 		}
-
 		return $task;
 	}
 

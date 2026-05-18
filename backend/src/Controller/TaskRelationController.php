@@ -21,7 +21,7 @@ use Ukolio\Response\ErrorResponse;
 use Ukolio\Response\NotFoundResponse;
 use Ukolio\Response\OkResponse;
 use Ukolio\Route\Routes;
-use Ukolio\Service\Provider\TaskProviderInterface;
+use Ukolio\Service\Provider\TaskCodeResolverInterface;
 use Ukolio\Service\Provider\TaskRelationProviderInterface;
 use Ukolio\Service\Provider\WorkspaceProviderInterface;
 use Ukolio\Service\Request\RequestServiceInterface;
@@ -29,7 +29,7 @@ use Ukolio\Service\Request\RequestServiceInterface;
 final readonly class TaskRelationController
 {
 	public function __construct(
-		private TaskProviderInterface $taskProvider,
+		private TaskCodeResolverInterface $taskCodeResolver,
 		private TaskRelationProviderInterface $taskRelationProvider,
 		private WorkspaceProviderInterface $workspaceProvider,
 		private RequestServiceInterface $requestService,
@@ -37,7 +37,7 @@ final readonly class TaskRelationController
 	}
 
 	#[RouteGet(Routes::TaskRelations->value)]
-	public function actionGetRelations(ServerRequestInterface $request, int $taskId): ResponseInterface
+	public function actionGetRelations(ServerRequestInterface $request, string $taskId): ResponseInterface
 	{
 		$user = $this->requestService->getUser($request);
 		$task = $this->loadTaskInScope($user, $taskId);
@@ -58,7 +58,7 @@ final readonly class TaskRelationController
 	}
 
 	#[RoutePost(Routes::TaskRelations->value)]
-	public function actionPostRelation(ServerRequestInterface $request, int $taskId): ResponseInterface
+	public function actionPostRelation(ServerRequestInterface $request, string $taskId): ResponseInterface
 	{
 		$user = $this->requestService->getUser($request);
 		$source = $this->loadTaskInScope($user, $taskId);
@@ -72,7 +72,7 @@ final readonly class TaskRelationController
 			return new ErrorResponse($e->getMessage(), 422);
 		}
 
-		$target = $this->loadTaskInScope($user, $dto->targetTaskId);
+		$target = $this->loadTaskInScope($user, (string) $dto->targetTaskId);
 		if ($target === null) {
 			return new NotFoundResponse('Target task not found.');
 		}
@@ -104,15 +104,8 @@ final readonly class TaskRelationController
 		return new OkResponse();
 	}
 
-	private function loadTaskInScope(User $user, int $taskId): ?Task
+	private function loadTaskInScope(User $user, string $taskId): ?Task
 	{
-		$task = $this->taskProvider->getTask($taskId);
-		if ($task === null) {
-			return null;
-		}
-		if (!$this->workspaceProvider->isMember($user, $task->project->workspace)) {
-			return null;
-		}
-		return $task;
+		return $this->taskCodeResolver->resolveForUser($user, $taskId);
 	}
 }

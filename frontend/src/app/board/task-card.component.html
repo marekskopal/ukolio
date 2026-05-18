@@ -1,6 +1,6 @@
 <div class="task-card" [attr.data-agent]="task().createdByAgent ? 'true' : null">
     <div class="task-card-head">
-        <span class="task-card-id uk-mono">T-{{ task().id }}</span>
+        <span class="task-card-id uk-mono">{{ task().code }}</span>
         @if (task().createdByAgent) {
             <span class="uk-badge uk-badge--ai task-card-agent-badge" [attr.aria-label]="'app.agent.createdBy' | translate">
                 <svg width="9" height="9" viewBox="0 0 16 16" aria-hidden="true">

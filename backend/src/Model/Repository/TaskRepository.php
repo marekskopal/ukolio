@@ -21,6 +21,36 @@ final class TaskRepository extends AbstractRepository
 		return $this->findOne(['id' => $taskId]);
 	}
 
+	public function findByProjectAndSequence(int $projectId, int $sequenceNumber): ?Task
+	{
+		return $this->findOne(['project_id' => $projectId, 'sequence_number' => $sequenceNumber]);
+	}
+
+	/**
+	 * @param list<int> $taskIds
+	 * @return Iterator<Task>
+	 */
+	public function findByIds(array $taskIds): Iterator
+	{
+		if ($taskIds === []) {
+			return new EmptyIterator();
+		}
+		return $this->select()
+			->where(['id', 'IN', $taskIds])
+			->fetchAll();
+	}
+
+	public function nextSequenceNumber(int $projectId): int
+	{
+		$max = 0;
+		foreach ($this->findByProject($projectId) as $task) {
+			if ($task->sequenceNumber > $max) {
+				$max = $task->sequenceNumber;
+			}
+		}
+		return $max + 1;
+	}
+
 	/** @return Iterator<Task> */
 	public function findByProject(int $projectId): Iterator
 	{

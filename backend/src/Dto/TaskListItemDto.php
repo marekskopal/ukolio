@@ -12,6 +12,7 @@ final readonly class TaskListItemDto
 	/** @param list<int> $tagIds */
 	public function __construct(
 		public int $id,
+		public string $code,
 		public int $projectId,
 		public string $projectName,
 		public int $statusId,
@@ -21,6 +22,7 @@ final readonly class TaskListItemDto
 		public string $priority,
 		public ?string $dueDate,
 		public int $position,
+		public int $sequenceNumber,
 		public bool $createdByAgent,
 		public string $createdAt,
 		public string $updatedAt,
@@ -33,6 +35,7 @@ final readonly class TaskListItemDto
 	{
 		return new self(
 			id: $task->id,
+			code: $task->project->prefix . '-' . $task->sequenceNumber,
 			projectId: $task->project->id,
 			projectName: $task->project->name,
 			statusId: $task->status->id,
@@ -42,6 +45,7 @@ final readonly class TaskListItemDto
 			priority: $task->priority->value,
 			dueDate: $task->dueDate?->format('Y-m-d'),
 			position: $task->position,
+			sequenceNumber: $task->sequenceNumber,
 			createdByAgent: $task->createdByAgent,
 			createdAt: $task->createdAt->format(DATE_ATOM),
 			updatedAt: $task->updatedAt->format(DATE_ATOM),

@@ -18,6 +18,8 @@ class Project extends AEntity
 		public readonly Workspace $workspace,
 		#[Column(type: Type::String)]
 		public string $name,
+		#[Column(type: Type::String, size: 16)]
+		public string $prefix,
 		#[Column(type: Type::Text, nullable: true)]
 		public ?string $description = null,
 	) {

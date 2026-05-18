@@ -76,6 +76,9 @@ export class AgentsComponent {
     }
 
     protected eventTarget(event: AuditEvent): string {
+        if (event.taskCode !== null) {
+            return event.taskCode;
+        }
         if (event.taskId !== null) {
             return `T-${event.taskId}`;
         }

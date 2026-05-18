@@ -13,6 +13,7 @@ export interface AuditEvent {
     id: number;
     authorName: string;
     taskId: number | null;
+    taskCode: string | null;
     type: EventType;
     metadata: Record<string, unknown>;
     actorType: ActorType;

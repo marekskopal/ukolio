@@ -9,7 +9,7 @@
 <aside class="drawer" [formGroup]="form">
     <header class="drawer-header">
         @if (task(); as t) {
-            <span class="drawer-id uk-mono">T-{{ t.id }}</span>
+            <span class="drawer-id uk-mono">{{ t.code }}</span>
             <span class="drawer-divider" aria-hidden="true"></span>
         } @else {
             <span class="drawer-id uk-mono">{{ 'app.board.drawer.newTask' | translate }}</span>
@@ -272,7 +272,7 @@
                                             (click)="onPickTarget(item)"
                                         >
                                             <span class="relation-status-dot" [style.background]="item.status.color"></span>
-                                            <span class="relation-id uk-mono">T-{{ item.id }}</span>
+                                            <span class="relation-id uk-mono">{{ item.code }}</span>
                                             <span class="relation-task-name">{{ item.name }}</span>
                                             <span class="relation-task-meta">{{ item.projectName }}</span>
                                         </button>
@@ -295,7 +295,7 @@
                                         <li class="relation-item">
                                             <button type="button" class="relation-link" (click)="onOpenRelatedTask(rel)">
                                                 <span class="relation-status-dot" [style.background]="rel.otherTaskStatusColor"></span>
-                                                <span class="relation-id uk-mono">T-{{ rel.otherTaskId }}</span>
+                                                <span class="relation-id uk-mono">{{ rel.otherTaskCode }}</span>
                                                 <span class="relation-task-name">{{ rel.otherTaskName }}</span>
                                                 <span class="relation-task-meta">{{ rel.otherTaskProjectName }}</span>
                                             </button>
