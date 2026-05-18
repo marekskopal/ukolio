@@ -13,9 +13,11 @@ enum Routes: string
 	case AuthenticationRefreshToken = '/api/authentication/refresh-token';
 	case AuthenticationRequestPasswordReset = '/api/authentication/request-password-reset';
 	case AuthenticationConfirmPasswordReset = '/api/authentication/confirm-password-reset';
+	case AuthenticationVerifyEmail = '/api/authentication/verify-email';
 
 	case CurrentUser = '/api/current-user';
 	case CurrentUserPassword = '/api/current-user/password';
+	case CurrentUserResendVerification = '/api/current-user/resend-verification';
 
 	case Workspaces = '/api/workspaces';
 	case Workspace = '/api/workspaces/{workspaceId:number}';

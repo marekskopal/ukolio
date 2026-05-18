@@ -145,4 +145,31 @@ export class LayoutComponent implements OnInit {
         this.workspaceService.clear();
         this.auth.logout();
     }
+
+    protected readonly resendingVerification = signal(false);
+
+    protected async resendVerification(): Promise<void> {
+        if (this.resendingVerification()) {
+            return;
+        }
+        this.resendingVerification.set(true);
+        try {
+            await this.auth.resendVerification();
+            const message = await this.translate.instant('app.verifyBanner.resent') as string;
+            this.alertService.success(message);
+        } catch {
+            // error interceptor
+        } finally {
+            this.resendingVerification.set(false);
+        }
+    }
+
+    protected async refreshUser(): Promise<void> {
+        try {
+            const user = await this.currentUserService.load();
+            this.user.set(user);
+        } catch {
+            // ignore
+        }
+    }
 }

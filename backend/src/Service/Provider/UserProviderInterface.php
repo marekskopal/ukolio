@@ -18,4 +18,6 @@ interface UserProviderInterface
 	public function updateUser(User $user, ?string $name = null, ?LocaleEnum $locale = null): User;
 
 	public function updateUserPassword(User $user, string $newPassword): User;
+
+	public function markEmailVerified(User $user): User;
 }

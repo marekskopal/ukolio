@@ -19,6 +19,8 @@ use Ukolio\Service\Auth\AdminService;
 use Ukolio\Service\Auth\AdminServiceInterface;
 use Ukolio\Service\Auth\PermissionChecker;
 use Ukolio\Service\Auth\PermissionCheckerInterface;
+use Ukolio\Service\Provider\EmailVerificationProvider;
+use Ukolio\Service\Provider\EmailVerificationProviderInterface;
 use Ukolio\Service\Provider\EventProvider;
 use Ukolio\Service\Provider\EventProviderInterface;
 use Ukolio\Service\Provider\FieldProvider;
@@ -71,6 +73,7 @@ final class DomainServiceProvider extends AbstractServiceProvider
 			AdminServiceInterface::class,
 			InvitationProviderInterface::class,
 			PasswordResetProviderInterface::class,
+			EmailVerificationProviderInterface::class,
 			ProjectProviderInterface::class,
 			WorkflowProviderInterface::class,
 			StatusProviderInterface::class,
@@ -106,6 +109,7 @@ final class DomainServiceProvider extends AbstractServiceProvider
 		));
 		$c->add(InvitationProviderInterface::class, InvitationProvider::class);
 		$c->add(PasswordResetProviderInterface::class, PasswordResetProvider::class);
+		$c->add(EmailVerificationProviderInterface::class, EmailVerificationProvider::class);
 		$c->add(EventProviderInterface::class, EventProvider::class);
 		$c->add(StatusProviderInterface::class, StatusProvider::class);
 		$c->add(WorkflowProviderInterface::class, WorkflowProvider::class);

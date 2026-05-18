@@ -44,6 +44,10 @@ final readonly class InvitationProvider implements InvitationProviderInterface
 
 	public function createInvitation(User $inviter, Workspace $workspace, string $email, WorkspaceRoleEnum $role): Invitation
 	{
+		if (!$inviter->emailVerified) {
+			throw new RuntimeException('Verify your email address before inviting others.');
+		}
+
 		$email = mb_strtolower(trim($email));
 		if ($email === '' || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 			throw new RuntimeException('Invalid email address.');

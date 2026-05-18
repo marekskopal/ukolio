@@ -2,7 +2,8 @@
     "email": {
         "subject": {
             "invitation": "You've been invited to {workspace} on Ukolio",
-            "passwordReset": "Reset your Ukolio password"
+            "passwordReset": "Reset your Ukolio password",
+            "emailVerification": "Verify your Ukolio email"
         },
         "invitation": {
             "title": "You've been invited to Ukolio",
@@ -20,6 +21,15 @@
             "fallback": "Or copy this link into your browser:",
             "expires": "This link expires in 1 hour.",
             "ignore": "If you didn't request this, you can safely ignore this email — your password won't change."
+        },
+        "emailVerification": {
+            "title": "Verify your email",
+            "greeting": "Hi {name},",
+            "intro": "Welcome to Ukolio! Please confirm this is your email address so you can start inviting teammates and connecting AI agents.",
+            "button": "Verify email",
+            "fallback": "Or copy this link into your browser:",
+            "expires": "This link expires in 24 hours.",
+            "ignore": "If you didn't sign up for Ukolio, you can safely ignore this email."
         }
     }
 }

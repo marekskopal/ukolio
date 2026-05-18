@@ -20,6 +20,10 @@ export const appRoutes: Routes = [
         loadComponent: () => import('@app/authentication/reset-password.component').then((m) => m.ResetPasswordComponent),
     },
     {
+        path: 'verify-email',
+        loadComponent: () => import('@app/authentication/verify-email.component').then((m) => m.VerifyEmailComponent),
+    },
+    {
         path: 'invitations/accept',
         loadComponent: () => import('@app/invitations/accept-invitation.component').then((m) => m.AcceptInvitationComponent),
     },

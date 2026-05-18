@@ -9,6 +9,7 @@ use League\Container\ServiceProvider\AbstractServiceProvider;
 use MarekSkopal\ORM\Database\DatabaseInterface;
 use MarekSkopal\ORM\ORM;
 use MarekSkopal\ORM\Repository\RepositoryInterface;
+use Ukolio\Model\Entity\EmailVerificationToken;
 use Ukolio\Model\Entity\Event;
 use Ukolio\Model\Entity\Field;
 use Ukolio\Model\Entity\Invitation;
@@ -28,6 +29,7 @@ use Ukolio\Model\Entity\User;
 use Ukolio\Model\Entity\Workflow;
 use Ukolio\Model\Entity\Workspace;
 use Ukolio\Model\Entity\WorkspaceUser;
+use Ukolio\Model\Repository\EmailVerificationTokenRepository;
 use Ukolio\Model\Repository\EventRepository;
 use Ukolio\Model\Repository\FieldRepository;
 use Ukolio\Model\Repository\InvitationRepository;
@@ -65,6 +67,7 @@ final class OrmServiceProvider extends AbstractServiceProvider
 			WorkspaceUserRepository::class,
 			InvitationRepository::class,
 			PasswordResetTokenRepository::class,
+			EmailVerificationTokenRepository::class,
 			ProjectRepository::class,
 			WorkflowRepository::class,
 			StatusRepository::class,
@@ -97,6 +100,7 @@ final class OrmServiceProvider extends AbstractServiceProvider
 		$this->addRepository($container, $orm, WorkspaceUserRepository::class, WorkspaceUser::class);
 		$this->addRepository($container, $orm, InvitationRepository::class, Invitation::class);
 		$this->addRepository($container, $orm, PasswordResetTokenRepository::class, PasswordResetToken::class);
+		$this->addRepository($container, $orm, EmailVerificationTokenRepository::class, EmailVerificationToken::class);
 		$this->addRepository($container, $orm, ProjectRepository::class, Project::class);
 		$this->addRepository($container, $orm, WorkflowRepository::class, Workflow::class);
 		$this->addRepository($container, $orm, StatusRepository::class, Status::class);

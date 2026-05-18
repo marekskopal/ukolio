@@ -17,6 +17,7 @@ use Ukolio\Dto\CredentialsDto;
 use Ukolio\Dto\RefreshTokenDto;
 use Ukolio\Dto\RequestPasswordResetDto;
 use Ukolio\Dto\SignUpDto;
+use Ukolio\Dto\VerifyEmailDto;
 use Ukolio\Model\Entity\Enum\LocaleEnum;
 use Ukolio\Response\ConflictResponse;
 use Ukolio\Response\ErrorResponse;
@@ -25,6 +26,7 @@ use Ukolio\Response\OkResponse;
 use Ukolio\Route\Routes;
 use Ukolio\Service\Authentication\AuthenticationServiceInterface;
 use Ukolio\Service\Authentication\Exception\AuthenticationException;
+use Ukolio\Service\Provider\EmailVerificationProviderInterface;
 use Ukolio\Service\Provider\PasswordResetProviderInterface;
 use Ukolio\Service\Provider\UserProviderInterface;
 use Ukolio\Service\Provider\WorkspaceProviderInterface;
@@ -38,6 +40,7 @@ final readonly class AuthenticationController
 		private UserProviderInterface $userProvider,
 		private WorkspaceProviderInterface $workspaceProvider,
 		private PasswordResetProviderInterface $passwordResetProvider,
+		private EmailVerificationProviderInterface $emailVerificationProvider,
 		private RequestServiceInterface $requestService,
 	) {
 	}
@@ -71,6 +74,8 @@ final readonly class AuthenticationController
 		$user = $this->userProvider->createUser($signUp->email, $signUp->password, $signUp->name, $locale);
 
 		$this->workspaceProvider->createWorkspace($user, $signUp->name . "'s Workspace");
+
+		$this->emailVerificationProvider->requestVerification($user);
 
 		return new JsonResponse($this->authenticationService->authenticate(new CredentialsDto($signUp->email, $signUp->password)));
 	}
@@ -130,5 +135,24 @@ final readonly class AuthenticationController
 		}
 
 		return new JsonResponse($this->authenticationService->createAuthentication($user));
+	}
+
+	#[RoutePost(Routes::AuthenticationVerifyEmail->value)]
+	public function actionPostVerifyEmail(ServerRequestInterface $request): ResponseInterface
+	{
+		$dto = $this->requestService->getRequestBodyDto($request, VerifyEmailDto::class);
+
+		$token = $this->emailVerificationProvider->findByToken($dto->token);
+		if ($token === null) {
+			return new ErrorResponse('This verification link is invalid.', 422);
+		}
+
+		try {
+			$this->emailVerificationProvider->confirmVerification($token);
+		} catch (RuntimeException $e) {
+			return new ErrorResponse($e->getMessage(), 422);
+		}
+
+		return new OkResponse();
 	}
 }

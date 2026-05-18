@@ -15,6 +15,7 @@ final readonly class UserDto
 		public string $locale,
 		public ?int $currentWorkspaceId,
 		public string $systemRole,
+		public bool $emailVerified,
 	) {
 	}
 
@@ -27,6 +28,7 @@ final readonly class UserDto
 			locale: $user->locale->value,
 			currentWorkspaceId: $user->currentWorkspaceId,
 			systemRole: $user->systemRole->value,
+			emailVerified: $user->emailVerified,
 		);
 	}
 }

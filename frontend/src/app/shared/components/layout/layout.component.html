@@ -139,6 +139,19 @@
             }
         </div>
     </header>
+    @if (user(); as u) {
+        @if (!u.emailVerified) {
+            <div class="verify-banner" role="status">
+                <span class="verify-banner-text">{{ 'app.verifyBanner.message' | translate }}</span>
+                <button type="button" class="btn-link verify-banner-action" (click)="resendVerification()" [disabled]="resendingVerification()">
+                    {{ (resendingVerification() ? 'app.verifyBanner.resending' : 'app.verifyBanner.resend') | translate }}
+                </button>
+                <button type="button" class="btn-link verify-banner-action" (click)="refreshUser()">
+                    {{ 'app.verifyBanner.alreadyVerified' | translate }}
+                </button>
+            </div>
+        }
+    }
     <main class="content">
         <router-outlet />
     </main>

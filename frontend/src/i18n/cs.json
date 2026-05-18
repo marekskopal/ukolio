@@ -169,6 +169,15 @@
                 "requestNew": "Vyžádat nový odkaz",
                 "backToLogin": "Zpět na přihlášení"
             },
+            "verifyEmail": {
+                "title": "Ověření e-mailu",
+                "verifying": "Ověřujeme vaši e-mailovou adresu…",
+                "success": "E-mail je ověřen. Vítejte!",
+                "invalid": "Tento ověřovací odkaz chybí, vypršel nebo už byl použit.",
+                "requestNew": "Vyžádat nový ověřovací e-mail",
+                "backToApp": "Zpět do aplikace",
+                "backToLogin": "Zpět na přihlášení"
+            },
             "errors": {
                 "invalidCredentials": "Neplatný e-mail nebo heslo.",
                 "passwordPolicy": "Heslo musí mít alespoň 8 znaků a obsahovat velké písmeno, malé písmeno a číslici.",
@@ -418,6 +427,13 @@
             "missingToken": "Chybí token pozvánky.",
             "notFound": "Pozvánka nebyla nalezena nebo už byla použita.",
             "joined": "Připojeno k „{{workspace}}\"."
+        },
+        "verifyBanner": {
+            "message": "Ověřte prosím svou e-mailovou adresu, abyste mohli zvát kolegy a využívat všechny funkce.",
+            "resend": "Znovu odeslat ověřovací e-mail",
+            "resending": "Odesílám…",
+            "resent": "Ověřovací e-mail byl odeslán. Zkontrolujte si schránku.",
+            "alreadyVerified": "Ověřeno — obnovit"
         },
         "settings": {
             "title": "Nastavení",

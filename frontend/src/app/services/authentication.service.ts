@@ -67,6 +67,18 @@ export class AuthenticationService {
         );
     }
 
+    public async verifyEmail(token: string): Promise<void> {
+        await firstValueFrom(
+            this.http.post<void>(`${environment.apiUrl}/authentication/verify-email`, {token}),
+        );
+    }
+
+    public async resendVerification(): Promise<void> {
+        await firstValueFrom(
+            this.http.post<void>(`${environment.apiUrl}/current-user/resend-verification`, {}),
+        );
+    }
+
     public logout(): void {
         this.storage.remove(STORAGE_KEY_AUTH);
         this.authentication.set(null);

@@ -2,7 +2,8 @@
     "email": {
         "subject": {
             "invitation": "Pozvánka do pracovního prostoru {workspace} v Ukolio",
-            "passwordReset": "Obnovení hesla pro Ukolio"
+            "passwordReset": "Obnovení hesla pro Ukolio",
+            "emailVerification": "Ověřte svůj e-mail pro Ukolio"
         },
         "invitation": {
             "title": "Pozvánka do Ukolio",
@@ -20,6 +21,15 @@
             "fallback": "Nebo zkopírujte tento odkaz do prohlížeče:",
             "expires": "Tento odkaz vyprší za 1 hodinu.",
             "ignore": "Pokud jste o obnovení nežádali, můžete tento e-mail bez obav ignorovat — vaše heslo se nezmění."
+        },
+        "emailVerification": {
+            "title": "Ověření e-mailu",
+            "greeting": "Dobrý den, {name},",
+            "intro": "Vítejte v Ukolio! Potvrďte prosím, že vám patří tato e-mailová adresa, abyste mohli zvát kolegy a propojovat AI agenty.",
+            "button": "Ověřit e-mail",
+            "fallback": "Nebo zkopírujte tento odkaz do prohlížeče:",
+            "expires": "Tento odkaz vyprší za 24 hodin.",
+            "ignore": "Pokud jste si Ukolio nezakládal(a), můžete tento e-mail bez obav ignorovat."
         }
     }
 }

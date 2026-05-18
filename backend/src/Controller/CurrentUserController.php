@@ -18,14 +18,18 @@ use Ukolio\Response\ErrorResponse;
 use Ukolio\Response\NotAuthorizedResponse;
 use Ukolio\Response\OkResponse;
 use Ukolio\Route\Routes;
+use Ukolio\Service\Provider\EmailVerificationProviderInterface;
 use Ukolio\Service\Provider\UserProviderInterface;
 use Ukolio\Service\Request\RequestServiceInterface;
 use Ukolio\Validator\PasswordValidator;
 
 final readonly class CurrentUserController
 {
-	public function __construct(private UserProviderInterface $userProvider, private RequestServiceInterface $requestService,)
-	{
+	public function __construct(
+		private UserProviderInterface $userProvider,
+		private EmailVerificationProviderInterface $emailVerificationProvider,
+		private RequestServiceInterface $requestService,
+	) {
 	}
 
 	#[RouteGet(Routes::CurrentUser->value)]
@@ -73,6 +77,20 @@ final readonly class CurrentUserController
 		}
 
 		$this->userProvider->updateUserPassword($user, $dto->newPassword);
+
+		return new OkResponse();
+	}
+
+	#[RoutePost(Routes::CurrentUserResendVerification->value)]
+	public function actionPostResendVerification(ServerRequestInterface $request): ResponseInterface
+	{
+		$user = $this->requestService->getUser($request);
+
+		if ($user->emailVerified) {
+			return new ErrorResponse('Email is already verified.', 422);
+		}
+
+		$this->emailVerificationProvider->requestVerification($user);
 
 		return new OkResponse();
 	}

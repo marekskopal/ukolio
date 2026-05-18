@@ -9,4 +9,5 @@ export interface User {
     locale: Locale;
     currentWorkspaceId: number | null;
     systemRole: SystemRole;
+    emailVerified: boolean;
 }

@@ -28,6 +28,8 @@ class User extends AEntity
 		public ?int $currentWorkspaceId = null,
 		#[ColumnEnum(enum: SystemRoleEnum::class, default: SystemRoleEnum::User)]
 		public SystemRoleEnum $systemRole = SystemRoleEnum::User,
+		#[Column(type: Type::Boolean, default: false)]
+		public bool $emailVerified = false,
 	) {
 	}
 }

@@ -70,4 +70,13 @@ final readonly class UserProvider implements UserProviderInterface
 
 		return $user;
 	}
+
+	public function markEmailVerified(User $user): User
+	{
+		$user->emailVerified = true;
+		$user->updatedAt = new DateTimeImmutable();
+		$this->userRepository->persist($user);
+
+		return $user;
+	}
 }

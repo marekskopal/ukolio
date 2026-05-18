@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ukolio\Service\Email;
 
 use Symfony\Component\Mime\Email;
+use Ukolio\Email\EmailVerificationEmail;
 use Ukolio\Email\InvitationEmail;
 use Ukolio\Email\PasswordResetEmail;
 use Ukolio\Model\Entity\Enum\LocaleEnum;
@@ -60,6 +61,25 @@ final readonly class EmailFactory
 			userName: $user->name,
 			resetUrl: $resetUrl,
 			t: $this->translator->section('email.passwordReset', $locale),
+		);
+
+		return new Email()
+			->from($this->from)
+			->to($user->email)
+			->subject($subject)
+			->html($html);
+	}
+
+	public function createEmailVerificationEmail(User $user, string $token, LocaleEnum $locale): Email
+	{
+		$verifyUrl = $this->appUrl . '/verify-email?token=' . urlencode($token);
+
+		$subject = $this->translator->translate('email.subject.emailVerification', $locale);
+
+		$html = EmailVerificationEmail::getHtml(
+			userName: $user->name,
+			verifyUrl: $verifyUrl,
+			t: $this->translator->section('email.emailVerification', $locale),
 		);
 
 		return new Email()

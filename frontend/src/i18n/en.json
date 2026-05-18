@@ -169,6 +169,15 @@
                 "requestNew": "Request a new reset link",
                 "backToLogin": "Back to sign in"
             },
+            "verifyEmail": {
+                "title": "Verify your email",
+                "verifying": "Confirming your email address…",
+                "success": "Your email is verified. Welcome aboard!",
+                "invalid": "This verification link is missing, expired, or has already been used.",
+                "requestNew": "Request a new verification email",
+                "backToApp": "Back to the app",
+                "backToLogin": "Back to sign in"
+            },
             "errors": {
                 "invalidCredentials": "Email or password is invalid.",
                 "passwordPolicy": "Password must be at least 8 characters and contain uppercase, lowercase, and a digit.",
@@ -418,6 +427,13 @@
             "missingToken": "Missing invitation token.",
             "notFound": "Invitation not found or already used.",
             "joined": "Joined \"{{workspace}}\"."
+        },
+        "verifyBanner": {
+            "message": "Please verify your email address to invite teammates and start using all features.",
+            "resend": "Resend verification email",
+            "resending": "Sending…",
+            "resent": "Verification email sent. Check your inbox.",
+            "alreadyVerified": "I've verified — refresh"
         },
         "settings": {
             "title": "Settings",
