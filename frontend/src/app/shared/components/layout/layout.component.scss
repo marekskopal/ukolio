@@ -40,33 +40,16 @@
 .brand {
     display: inline-flex;
     align-items: center;
-    gap: $space-3;
     color: $color-text;
     text-decoration: none;
 
     &:hover { text-decoration: none; }
 }
 
-.brand-mark {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
+.brand-logo {
     height: 22px;
-    border-radius: 6px;
-    background: $color-text;
-    color: #fff;
-    font-weight: 700;
-    font-size: 11px;
-    letter-spacing: -0.04em;
-    line-height: 1;
-}
-
-.brand-wordmark {
-    font-size: $font-size-14;
-    font-weight: 600;
-    letter-spacing: -0.018em;
-    color: $color-text;
+    width: auto;
+    display: block;
 }
 
 .topbar-divider {

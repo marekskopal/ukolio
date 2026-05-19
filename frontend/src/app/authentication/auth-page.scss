@@ -23,28 +23,13 @@
 .auth-brand {
     display: flex;
     align-items: center;
-    gap: $space-3;
     margin-bottom: $space-9;
 }
 
-.auth-brand-mark {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
+.auth-brand-logo {
     height: 28px;
-    border-radius: 8px;
-    background: $color-text;
-    color: #fff;
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: -0.04em;
-}
-
-.auth-brand-wordmark {
-    font-size: $font-size-18;
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    width: auto;
+    display: block;
 }
 
 .auth-title {
