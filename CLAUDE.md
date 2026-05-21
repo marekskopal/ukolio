@@ -152,7 +152,7 @@ Designed for AI-agent-driven flows; the frontend stays for human overview.
 make test                    # All tests (backend + frontend)
 make test-backend            # PHPUnit (runs inside the backend container)
 make test-backend-coverage   # +pcov HTML report at backend/.phpunit.cache/coverage-html
-make test-frontend           # Vitest (no specs yet at time of writing)
+make test-frontend           # Vitest (jsdom + @analogjs/vite-plugin-angular)
 ```
 
 Backend tests boot the full `ApplicationFactory` container against a separate
@@ -162,6 +162,19 @@ truncate tables between tests via `IntegrationTestCase`. Test helpers live in
 `IntegrationTestCase` (HTTP dispatch + DB reset), and `Fixture` (deterministic
 user/workspace/project/JWT builders). `phpunit.xml` scopes coverage to
 `src/{Controller,Mcp,Service,OAuth,Validator}`.
+
+Frontend tests use Vitest 4 with jsdom and the AnalogJS Vite plugin (config
+in `frontend/vitest.config.ts`, TestBed bootstrap in `frontend/src/test-setup.ts`).
+The app is zoneless, so specs **must not** import `zone.js/testing` — use
+`provideZonelessChangeDetection()` in TestBed providers and the standard
+`fixture.detectChanges()` / `await fixture.whenStable()` lifecycle.
+
+- File naming: `*.spec.ts` co-located next to the unit under test.
+- Shared TestBed boilerplate lives in `frontend/src/app/testing/test-providers.ts` —
+  prefer `commonTestProviders()` (zoneless + router + HTTP testing) and
+  `provideTranslateStub()` (covers any component whose template uses `TranslatePipe`).
+- Run: `pnpm run test` (single run) or `pnpm run test:watch`. `make test-frontend`
+  is the equivalent from the repo root.
 
 ## Linting
 
