@@ -13,6 +13,24 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.5'
+                  coverage: none
+                  tools: composer
+
+            - name: Cache composer dependencies
+              uses: actions/cache@v4
+              with:
+                  path: backend/vendor
+                  key: ${{ runner.os }}-composer-${{ hashFiles('backend/composer.lock') }}
+                  restore-keys: ${{ runner.os }}-composer-
+
+            - name: Install composer dependencies
+              working-directory: backend
+              run: composer install --prefer-dist --no-progress --no-interaction
+
             - name: Setup pnpm
               uses: pnpm/action-setup@v4
               with:
