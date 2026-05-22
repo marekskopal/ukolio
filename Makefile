@@ -71,12 +71,12 @@ test-env-up:
 		openssl req -x509 -newkey rsa:2048 -keyout test-ssl/server.key -out test-ssl/server.crt \
 			-days 365 -nodes -subj '/CN=localhost' 2>/dev/null; \
 	fi
+	@sed -i.bak "s|^PROXY_SSL_CERT=.*|PROXY_SSL_CERT=$(CURDIR)/test-ssl/server.crt|" .env && rm -f .env.bak
+	@sed -i.bak "s|^PROXY_SSL_KEY=.*|PROXY_SSL_KEY=$(CURDIR)/test-ssl/server.key|" .env && rm -f .env.bak
 	@if [ ! -d backend/vendor ]; then \
 		echo "backend/vendor missing — run 'cd backend && composer install' first"; \
 		exit 1; \
 	fi
-	PROXY_SSL_CERT=$(CURDIR)/test-ssl/server.crt \
-	PROXY_SSL_KEY=$(CURDIR)/test-ssl/server.key \
 	ADMINER_USER=test ADMINER_PASSWORD=test \
 		docker compose -f docker-compose.yml -f docker-compose.ssl.yml -f docker-compose.test.yml --profile dev up -d --build --wait db redis memcached backend frontend proxy
 	docker compose exec -T backend php bin/console migration:run
