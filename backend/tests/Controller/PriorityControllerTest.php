@@ -7,6 +7,9 @@ namespace Ukolio\Tests\Controller;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Ukolio\Controller\PriorityController;
 use Ukolio\Model\Entity\Enum\WorkspaceRoleEnum;
+use Ukolio\Model\Repository\StatusRepository;
+use Ukolio\Model\Repository\WorkflowRepository;
+use Ukolio\Tests\Support\AppHarness;
 use Ukolio\Tests\Support\Fixture;
 use Ukolio\Tests\Support\IntegrationTestCase;
 
@@ -134,13 +137,18 @@ final class PriorityControllerTest extends IntegrationTestCase
 		));
 		$mediumId = self::intField($list[1]['id']);
 
-		$workflow = $this->request('GET', '/api/projects/' . $project->id . '/workflow', authenticatedAs: $owner);
-		$workflowBody = $this->jsonBody($workflow);
-		$statuses = $workflowBody['statuses'];
-		assert(is_array($statuses) && $statuses !== []);
-		$firstStatus = $statuses[0];
-		assert(is_array($firstStatus));
-		$statusId = self::intField($firstStatus['id']);
+		$workflowRepo = AppHarness::container()->get(WorkflowRepository::class);
+		assert($workflowRepo instanceof WorkflowRepository);
+		$workflow = $workflowRepo->findByProject($project->id);
+		assert($workflow !== null);
+		$statusRepo = AppHarness::container()->get(StatusRepository::class);
+		assert($statusRepo instanceof StatusRepository);
+		$statusId = 0;
+		foreach ($statusRepo->findByWorkflow($workflow->id) as $status) {
+			$statusId = $status->id;
+			break;
+		}
+		assert($statusId > 0);
 
 		$created = $this->request(
 			'POST',
