@@ -20,6 +20,9 @@ use Ukolio\Model\Entity\Priority;
 use Ukolio\Model\Entity\Project;
 use Ukolio\Model\Entity\ProjectField;
 use Ukolio\Model\Entity\SavedView;
+use Ukolio\Model\Entity\Script;
+use Ukolio\Model\Entity\ScriptRun;
+use Ukolio\Model\Entity\ScriptVariable;
 use Ukolio\Model\Entity\Status;
 use Ukolio\Model\Entity\Tag;
 use Ukolio\Model\Entity\Task;
@@ -43,6 +46,9 @@ use Ukolio\Model\Repository\PriorityRepository;
 use Ukolio\Model\Repository\ProjectFieldRepository;
 use Ukolio\Model\Repository\ProjectRepository;
 use Ukolio\Model\Repository\SavedViewRepository;
+use Ukolio\Model\Repository\ScriptRepository;
+use Ukolio\Model\Repository\ScriptRunRepository;
+use Ukolio\Model\Repository\ScriptVariableRepository;
 use Ukolio\Model\Repository\StatusRepository;
 use Ukolio\Model\Repository\TagRepository;
 use Ukolio\Model\Repository\TaskCommentRepository;
@@ -91,6 +97,9 @@ final class OrmServiceProvider extends AbstractServiceProvider
 			EventRepository::class,
 			OAuthClientRepository::class,
 			OAuthAuthorizationRepository::class,
+			ScriptRepository::class,
+			ScriptVariableRepository::class,
+			ScriptRunRepository::class,
 		], true);
 	}
 
@@ -127,6 +136,9 @@ final class OrmServiceProvider extends AbstractServiceProvider
 		$this->addRepository($container, $orm, EventRepository::class, Event::class);
 		$this->addRepository($container, $orm, OAuthClientRepository::class, OAuthClient::class);
 		$this->addRepository($container, $orm, OAuthAuthorizationRepository::class, OAuthAuthorization::class);
+		$this->addRepository($container, $orm, ScriptRepository::class, Script::class);
+		$this->addRepository($container, $orm, ScriptVariableRepository::class, ScriptVariable::class);
+		$this->addRepository($container, $orm, ScriptRunRepository::class, ScriptRun::class);
 	}
 
 	/**

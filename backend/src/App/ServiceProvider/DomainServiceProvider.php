@@ -75,6 +75,16 @@ use Ukolio\Service\Request\RequestService;
 use Ukolio\Service\Request\RequestServiceInterface;
 use Ukolio\Service\Task\TaskService;
 use Ukolio\Service\Task\TaskServiceInterface;
+use Ukolio\Service\Script\Engine\ScriptEngineInterface;
+use Ukolio\Service\Script\Engine\V8JsScriptEngine;
+use Ukolio\Service\Script\ScriptProvider;
+use Ukolio\Service\Script\ScriptProviderInterface;
+use Ukolio\Service\Script\ScriptRunDispatcher;
+use Ukolio\Service\Script\ScriptRunDispatcherInterface;
+use Ukolio\Service\Script\ScriptVariableProvider;
+use Ukolio\Service\Script\ScriptVariableProviderInterface;
+use Ukolio\Service\Script\SecretCipher;
+use Ukolio\Service\Script\SecretCipherInterface;
 use Ukolio\Service\Translator\TranslatorService;
 use Ukolio\Service\Translator\TranslatorServiceInterface;
 
@@ -119,6 +129,11 @@ final class DomainServiceProvider extends AbstractServiceProvider
 			AuthorizationServiceInterface::class,
 			TranslatorServiceInterface::class,
 			TaskServiceInterface::class,
+			SecretCipherInterface::class,
+			ScriptEngineInterface::class,
+			ScriptVariableProviderInterface::class,
+			ScriptProviderInterface::class,
+			ScriptRunDispatcherInterface::class,
 		], true);
 	}
 
@@ -167,5 +182,11 @@ final class DomainServiceProvider extends AbstractServiceProvider
 		});
 		$c->add(ClientServiceInterface::class, ClientService::class);
 		$c->add(AuthorizationServiceInterface::class, AuthorizationService::class);
+
+		$c->add(SecretCipherInterface::class, static fn (): SecretCipher => new SecretCipher((string) getenv('AUTHORIZATION_TOKEN_KEY')));
+		$c->add(ScriptEngineInterface::class, V8JsScriptEngine::class);
+		$c->add(ScriptVariableProviderInterface::class, ScriptVariableProvider::class);
+		$c->add(ScriptProviderInterface::class, ScriptProvider::class);
+		$c->add(ScriptRunDispatcherInterface::class, ScriptRunDispatcher::class);
 	}
 }
