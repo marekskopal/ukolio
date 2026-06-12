@@ -11,6 +11,7 @@ import {Task, TaskListItem} from '@app/models/task';
 import {TaskComment} from '@app/models/task-comment';
 import {TaskFile} from '@app/models/task-file';
 import {TaskRelation, TaskRelationType} from '@app/models/task-relation';
+import {TaskTemplate} from '@app/models/task-template';
 import {WorkspaceMember} from '@app/models/workspace';
 import {AlertService} from '@app/services/alert.service';
 import {CurrentUserService} from '@app/services/current-user.service';
@@ -19,6 +20,7 @@ import {RealtimeService} from '@app/services/realtime.service';
 import {TaskService} from '@app/services/task.service';
 import {TaskCommentService} from '@app/services/task-comment.service';
 import {TaskRelationService} from '@app/services/task-relation.service';
+import {TaskTemplateService} from '@app/services/task-template.service';
 import {WorkspaceService} from '@app/services/workspace.service';
 import {pickReadableForeground} from '@app/shared/color-contrast';
 import {MarkdownEditorComponent} from '@app/shared/components/markdown-editor/markdown-editor.component';
@@ -99,6 +101,7 @@ export class TaskDetailDrawerComponent implements OnInit {
     private readonly fieldService = inject(FieldService);
     private readonly taskRelationService = inject(TaskRelationService);
     private readonly taskCommentService = inject(TaskCommentService);
+    private readonly taskTemplateService = inject(TaskTemplateService);
     private readonly currentUserService = inject(CurrentUserService);
     private readonly alertService = inject(AlertService);
     private readonly translate = inject(TranslateService);
@@ -106,6 +109,8 @@ export class TaskDetailDrawerComponent implements OnInit {
     private readonly workspaceService = inject(WorkspaceService);
 
     protected readonly saving = signal(false);
+    protected readonly duplicating = signal(false);
+    protected readonly templates = signal<TaskTemplate[]>([]);
     protected readonly descriptionInitialTab = computed<'edit' | 'preview'>(() =>
         this.task() === null ? 'edit' : 'preview',
     );
@@ -282,6 +287,7 @@ export class TaskDetailDrawerComponent implements OnInit {
             this.form.patchValue({statusId: fallbackStatusId, priorityId: defaultPriority?.id ?? 0});
             this.statusId.set(fallbackStatusId);
             this.selectedAssigneeId.set(this.currentUserService.currentUser()?.id ?? null);
+            void this.loadTemplates();
         }
 
         this.form.controls.statusId.valueChanges.subscribe((value) => {
@@ -361,6 +367,81 @@ export class TaskDetailDrawerComponent implements OnInit {
 
     protected onCancel(): void {
         this.cancelled.emit();
+    }
+
+    protected async onDuplicate(): Promise<void> {
+        const existing = this.task();
+        if (!existing) {
+            return;
+        }
+        this.duplicating.set(true);
+        try {
+            const copy = await this.taskService.duplicateTask(existing.id);
+            this.alertService.success(await this.translate.instant('app.taskTemplates.duplicated') as string);
+            this.saved.emit(copy);
+        } catch {
+            // error interceptor
+        } finally {
+            this.duplicating.set(false);
+        }
+    }
+
+    protected async onSaveAsTemplate(): Promise<void> {
+        const existing = this.task();
+        if (!existing) {
+            return;
+        }
+        const promptMessage = await this.translate.instant('app.taskTemplates.namePrompt') as string;
+        const name = prompt(promptMessage, existing.name);
+        if (name === null || name.trim() === '') {
+            return;
+        }
+        try {
+            await this.taskTemplateService.saveFromTask(existing.id, name.trim());
+            this.alertService.success(await this.translate.instant('app.taskTemplates.saved') as string);
+        } catch {
+            // error interceptor
+        }
+    }
+
+    protected onTemplateSelected(event: Event): void {
+        const id = Number((event.target as HTMLSelectElement).value);
+        const template = this.templates().find((t) => t.id === id);
+        if (template) {
+            this.applyTemplate(template);
+        }
+    }
+
+    private applyTemplate(template: TaskTemplate): void {
+        const payload = template.payload;
+        this.form.patchValue({name: payload.name, description: payload.description ?? ''});
+        if (payload.priorityId !== null && this.workspacePriorities().some((p) => p.id === payload.priorityId)) {
+            this.form.patchValue({priorityId: payload.priorityId});
+        }
+        const workspaceTagIds = new Set(this.workspaceTags().map((t) => t.id));
+        this.selectedTagIds.set(payload.tagIds.filter((tagId) => workspaceTagIds.has(tagId)));
+        for (const fv of payload.fieldValues) {
+            this.form.get('field_' + fv.fieldId)?.setValue(fv.value ?? '');
+        }
+    }
+
+    private async loadTemplates(): Promise<void> {
+        let workspaceId = this.workspaceService.currentWorkspaceId();
+        if (workspaceId === null) {
+            try {
+                workspaceId = (await this.currentUserService.load()).currentWorkspaceId;
+            } catch {
+                workspaceId = null;
+            }
+        }
+        if (workspaceId === null) {
+            return;
+        }
+        try {
+            this.templates.set(await this.taskTemplateService.loadWorkspaceTemplates(workspaceId));
+        } catch {
+            this.templates.set([]);
+        }
     }
 
     protected toggleTagPicker(): void {

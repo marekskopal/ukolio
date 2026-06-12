@@ -354,6 +354,30 @@ final readonly class TaskController
 		);
 	}
 
+	#[RoutePost(Routes::TaskDuplicate->value)]
+	public function actionPostTaskDuplicate(ServerRequestInterface $request, int|string $taskId): ResponseInterface
+	{
+		$user = $this->requestService->getUser($request);
+		$task = $this->loadTaskInScope($user, $taskId);
+		if ($task === null) {
+			return new NotFoundResponse('Task not found.');
+		}
+
+		try {
+			$duplicate = $this->taskProvider->duplicateTask($user, $task);
+		} catch (RuntimeException $e) {
+			return new ErrorResponse($e->getMessage(), 422);
+		}
+
+		return new JsonResponse(
+			TaskDto::fromEntity(
+				$duplicate,
+				$this->taskFieldValueProvider->findByTask($duplicate),
+				$this->taskTagProvider->getTagIdsForTask($duplicate),
+			),
+		);
+	}
+
 	#[RouteDelete(Routes::Task->value)]
 	public function actionDeleteTask(ServerRequestInterface $request, int|string $taskId): ResponseInterface
 	{

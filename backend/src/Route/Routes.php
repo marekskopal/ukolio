@@ -63,6 +63,8 @@ enum Routes: string
 	// Lowercase is intentionally excluded so static sibling paths like /api/tasks/bulk don't collide.
 	case Task = '/api/tasks/{taskId:[A-Z0-9][A-Z0-9-]*}';
 	case TaskMove = '/api/tasks/{taskId:[A-Z0-9][A-Z0-9-]*}/move';
+	case TaskDuplicate = '/api/tasks/{taskId:[A-Z0-9][A-Z0-9-]*}/duplicate';
+	case TaskSaveAsTemplate = '/api/tasks/{taskId:[A-Z0-9][A-Z0-9-]*}/save-as-template';
 	case TaskFiles = '/api/tasks/{taskId:[A-Z0-9][A-Z0-9-]*}/files';
 	case TaskFile = '/api/tasks/{taskId:[A-Z0-9][A-Z0-9-]*}/files/{fileId:number}';
 	case TaskFileContent = '/api/tasks/{taskId:[A-Z0-9][A-Z0-9-]*}/files/{fileId:number}/content';
@@ -75,6 +77,9 @@ enum Routes: string
 
 	case WorkspaceSavedViews = '/api/workspaces/{workspaceId:number}/saved-views';
 	case SavedView = '/api/saved-views/{savedViewId:number}';
+
+	case WorkspaceTaskTemplates = '/api/workspaces/{workspaceId:number}/task-templates';
+	case TaskTemplate = '/api/task-templates/{taskTemplateId:number}';
 
 	case WorkspaceScripts = '/api/workspaces/{workspaceId:number}/scripts';
 	case Script = '/api/scripts/{scriptId:number}';

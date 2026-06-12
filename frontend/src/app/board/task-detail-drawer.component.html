@@ -37,6 +37,18 @@
     </header>
 
     <form class="drawer-body" (ngSubmit)="onSubmit()">
+        @if (!task() && templates().length > 0) {
+            <select
+                class="select template-select"
+                (change)="onTemplateSelected($event)"
+                [attr.aria-label]="'app.taskTemplates.startFromTemplate' | translate"
+            >
+                <option value="">{{ 'app.taskTemplates.startFromTemplate' | translate }}</option>
+                @for (tpl of templates(); track tpl.id) {
+                    <option [value]="tpl.id">{{ tpl.name }}</option>
+                }
+            </select>
+        }
         <input
             id="task-name"
             type="text"
@@ -49,10 +61,10 @@
             <div class="uk-overline">{{ 'app.board.drawer.details' | translate }}</div>
             <div class="meta-grid">
                 <div class="meta-label">{{ 'app.common.priority' | translate }}</div>
-                <select formControlName="priority" class="select meta-control">
-                    <option value="Low">{{ 'app.priority.Low' | translate }}</option>
-                    <option value="Medium">{{ 'app.priority.Medium' | translate }}</option>
-                    <option value="High">{{ 'app.priority.High' | translate }}</option>
+                <select formControlName="priorityId" class="select meta-control">
+                    @for (p of workspacePriorities(); track p.id) {
+                        <option [value]="p.id">{{ p.name }}</option>
+                    }
                 </select>
 
                 <div class="meta-label">{{ 'app.board.drawer.dueDate' | translate }}</div>
@@ -457,9 +469,17 @@
 
     <footer class="drawer-footer">
         @if (task()) {
-            <button type="button" class="btn btn-danger-ghost btn-sm" (click)="onDelete()">
-                {{ 'app.actions.delete' | translate }}
-            </button>
+            <div class="drawer-footer-actions">
+                <button type="button" class="btn btn-danger-ghost btn-sm" (click)="onDelete()">
+                    {{ 'app.actions.delete' | translate }}
+                </button>
+                <button type="button" class="btn btn-ghost btn-sm" [disabled]="duplicating()" (click)="onDuplicate()">
+                    {{ (duplicating() ? 'app.actions.loading' : 'app.taskTemplates.duplicate') | translate }}
+                </button>
+                <button type="button" class="btn btn-ghost btn-sm" (click)="onSaveAsTemplate()">
+                    {{ 'app.taskTemplates.saveAsTemplate' | translate }}
+                </button>
+            </div>
         } @else {
             <span></span>
         }

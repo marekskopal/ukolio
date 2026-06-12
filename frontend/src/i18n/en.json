@@ -710,6 +710,14 @@
             "filterTitle": "Filter by tag",
             "noTagsAvailable": "No more tags to add."
         },
+        "taskTemplates": {
+            "duplicate": "Duplicate",
+            "duplicated": "Task duplicated.",
+            "saveAsTemplate": "Save as template",
+            "namePrompt": "Template name:",
+            "saved": "Template saved.",
+            "startFromTemplate": "Start from template…"
+        },
         "onboarding": {
             "shell": {
                 "gettingStarted": "Getting started",

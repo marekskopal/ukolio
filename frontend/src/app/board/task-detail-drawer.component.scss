@@ -102,6 +102,12 @@
     gap: $space-7;
 }
 
+// "Start from template" picker shown only when creating a task.
+.template-select {
+    align-self: flex-start;
+    max-width: 100%;
+}
+
 // Inline-editable title — no border, just type.
 .drawer-title-input {
     width: 100%;

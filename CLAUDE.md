@@ -24,6 +24,7 @@ as the primary actor; the web UI is for human overview.
 - `Field` (workspace, name, type ∈ Text/Textarea/Select/Version, required, defaultValue, options) — per-workspace custom-field catalog.
 - `ProjectField` (project, field, position, required) — attaches a workspace field to a project and orders it in the task drawer.
 - `TaskFieldValue` (task, field, value) — concrete value per task.
+- `TaskTemplate` (workspace, name, payload JSON) — reusable task snapshot (task name, description, priorityId, fieldValues, tagIds). Saved from an existing task; any member may manage them (`canManageTaskTemplates`). Stale tag/priority ids in the payload are dropped / fall back to the default priority on instantiation.
 - `Event` (author, type, metadata JSON, project?, workspaceId?, taskId?, actorType ∈ Human/Agent, mcpClientId?, mcpClientName?) — append-only audit log; `project`/`workspaceId` nullable so workspace- and admin-level events fit alongside project events. `actorType` + `mcpClient*` are set by `ActorContext`, which `McpController` flips to `Agent` after OAuth-token validation.
 
 On sign-up a personal `Workspace` is auto-created and the user becomes its
@@ -70,6 +71,8 @@ All routes live in `Ukolio\Route\Routes` (single enum). Highlights:
 - `GET/POST/PUT/DELETE /api/workflows/{id}/statuses`, `/api/statuses/{id}`, `/api/statuses/{id}/move`.
 - `GET /api/tasks` — workspace-wide paginated list. Query params: `limit` (default 50, max 200), `offset`, `orderBy` (`created_at|name|status_id`), `orderDirection` (`ASC|DESC`), `search`, `statusIds` (pipe-delimited), `onlyActive` (status type ≠ Finish). Response shape: `{ tasks: TaskListItemDto[], count: int }`.
 - `GET/PUT/DELETE /api/tasks/{id}`, `PUT /api/tasks/{id}/move`, `POST /api/projects/{id}/tasks`.
+- `POST /api/tasks/{id}/duplicate` — clones name (+" (copy)"), description, priority, due date, assignee, field values, tags; not comments/files/events/relations.
+- Templates: `GET /api/workspaces/{id}/task-templates`, `POST /api/tasks/{id}/save-as-template` (`{name}`), `DELETE /api/task-templates/{id}`. The UI "Create from template" prefills the new-task drawer client-side and goes through the normal create endpoint.
 - Admin: `GET/PUT/DELETE /api/admin/users[/{id}]`, `GET/PUT/DELETE /api/admin/workspaces[/{id}]`, plus `/members`, `/transfer-ownership`.
 - MCP: `POST/GET/DELETE /api/mcp`, OAuth discovery + flow endpoints (see below).
 
@@ -141,7 +144,8 @@ Tools live in `backend/src/Mcp/Tool/` (auto-discovered by basePath/scanDirs):
 
 - `ProjectTools` — list/find/get/create/delete projects
 - `WorkflowTools` — list/find statuses for a project's workflow
-- `TaskTools` — list/find/get/create/update/move/delete tasks (move accepts `statusId` or `statusName`)
+- `TaskTools` — list/find/get/create/update/move/duplicate/delete tasks (move accepts `statusId` or `statusName`)
+- `TaskTemplateTools` — `list_task_templates`, `save_task_as_template`, `create_task_from_template` (defaults to Start status; accepts name/status overrides)
 - `FieldTools` — manage the workspace's custom-field catalog and per-project attachments
 
 Designed for AI-agent-driven flows; the frontend stays for human overview.

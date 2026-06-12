@@ -34,6 +34,8 @@ interface PermissionCheckerInterface
 
 	public function canManagePriorities(User $user, Workspace $workspace): bool;
 
+	public function canManageTaskTemplates(User $user, Workspace $workspace): bool;
+
 	public function canManageScripts(User $user, Workspace $workspace): bool;
 
 	public function canInviteAs(User $actor, Workspace $workspace, WorkspaceRoleEnum $role): bool;

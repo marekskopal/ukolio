@@ -97,7 +97,10 @@ final readonly class OAuthController
 		}
 
 		if (!self::resourceMatches($request, $body['resource'] ?? null)) {
-			return new ErrorResponse('Invalid resource indicator: this authorization server only issues tokens for its own MCP resource', 400);
+			return new ErrorResponse(
+				'Invalid resource indicator: this authorization server only issues tokens for its own MCP resource',
+				400,
+			);
 		}
 
 		$client = $this->clientService->findByClientId($clientId);

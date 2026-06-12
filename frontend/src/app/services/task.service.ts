@@ -85,6 +85,10 @@ export class TaskService {
         return firstValueFrom(this.http.put<Task>(`${environment.apiUrl}/tasks/${taskId}/move`, {statusId, position}));
     }
 
+    public duplicateTask(taskId: number): Promise<Task> {
+        return firstValueFrom(this.http.post<Task>(`${environment.apiUrl}/tasks/${taskId}/duplicate`, {}));
+    }
+
     public deleteTask(taskId: number): Promise<void> {
         return firstValueFrom(this.http.delete<void>(`${environment.apiUrl}/tasks/${taskId}`));
     }

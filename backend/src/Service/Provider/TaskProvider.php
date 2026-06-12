@@ -185,6 +185,22 @@ final readonly class TaskProvider implements TaskProviderInterface
 		return $task;
 	}
 
+	public function duplicateTask(User $author, Task $task, ?string $name = null): Task
+	{
+		return $this->createTask(
+			author: $author,
+			project: $task->project,
+			status: $task->status,
+			name: $name ?? $task->name . ' (copy)',
+			description: $task->description,
+			priority: $task->priority,
+			dueDate: $task->dueDate,
+			assignee: $task->assignee,
+			fieldValues: $this->taskFieldValueProvider->findByTask($task),
+			tagIds: $this->taskTagProvider->getTagIdsForTask($task),
+		);
+	}
+
 	/**
 	 * @param array<int, ?string>|null $fieldValues
 	 * @param list<int>|null $tagIds

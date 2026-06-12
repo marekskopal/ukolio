@@ -63,6 +63,8 @@ use Ukolio\Service\Provider\TaskRelationProvider;
 use Ukolio\Service\Provider\TaskRelationProviderInterface;
 use Ukolio\Service\Provider\TaskTagProvider;
 use Ukolio\Service\Provider\TaskTagProviderInterface;
+use Ukolio\Service\Provider\TaskTemplateProvider;
+use Ukolio\Service\Provider\TaskTemplateProviderInterface;
 use Ukolio\Service\Provider\UserProvider;
 use Ukolio\Service\Provider\UserProviderInterface;
 use Ukolio\Service\Provider\WorkflowProvider;
@@ -73,14 +75,8 @@ use Ukolio\Service\Provider\WorkspaceProvider;
 use Ukolio\Service\Provider\WorkspaceProviderInterface;
 use Ukolio\Service\Request\RequestService;
 use Ukolio\Service\Request\RequestServiceInterface;
-use Ukolio\Service\Task\TaskService;
-use Ukolio\Service\Task\TaskServiceInterface;
 use Ukolio\Service\Script\Engine\ScriptEngineInterface;
 use Ukolio\Service\Script\Engine\V8JsScriptEngine;
-use Ukolio\Service\Script\Trigger\CronEvaluator;
-use Ukolio\Service\Script\Trigger\CronEvaluatorInterface;
-use Ukolio\Service\Script\Trigger\ScriptEventTrigger;
-use Ukolio\Service\Script\Trigger\ScriptEventTriggerInterface;
 use Ukolio\Service\Script\ScriptProvider;
 use Ukolio\Service\Script\ScriptProviderInterface;
 use Ukolio\Service\Script\ScriptRunDispatcher;
@@ -89,6 +85,12 @@ use Ukolio\Service\Script\ScriptVariableProvider;
 use Ukolio\Service\Script\ScriptVariableProviderInterface;
 use Ukolio\Service\Script\SecretCipher;
 use Ukolio\Service\Script\SecretCipherInterface;
+use Ukolio\Service\Script\Trigger\CronEvaluator;
+use Ukolio\Service\Script\Trigger\CronEvaluatorInterface;
+use Ukolio\Service\Script\Trigger\ScriptEventTrigger;
+use Ukolio\Service\Script\Trigger\ScriptEventTriggerInterface;
+use Ukolio\Service\Task\TaskService;
+use Ukolio\Service\Task\TaskServiceInterface;
 use Ukolio\Service\Translator\TranslatorService;
 use Ukolio\Service\Translator\TranslatorServiceInterface;
 
@@ -123,6 +125,7 @@ final class DomainServiceProvider extends AbstractServiceProvider
 			ProjectFieldProviderInterface::class,
 			TagProviderInterface::class,
 			TaskTagProviderInterface::class,
+			TaskTemplateProviderInterface::class,
 			SavedViewProviderInterface::class,
 			PriorityProviderInterface::class,
 			EventProviderInterface::class,
@@ -177,6 +180,7 @@ final class DomainServiceProvider extends AbstractServiceProvider
 		$c->add(ProjectFieldProviderInterface::class, ProjectFieldProvider::class);
 		$c->add(TagProviderInterface::class, TagProvider::class);
 		$c->add(TaskTagProviderInterface::class, TaskTagProvider::class);
+		$c->add(TaskTemplateProviderInterface::class, TaskTemplateProvider::class);
 		$c->add(SavedViewProviderInterface::class, SavedViewProvider::class);
 		$c->add(PriorityProviderInterface::class, PriorityProvider::class);
 		$c->add(McpUserContextInterface::class, McpUserContext::class);

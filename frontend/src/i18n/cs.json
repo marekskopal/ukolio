@@ -710,6 +710,14 @@
             "filterTitle": "Filtrovat podle štítku",
             "noTagsAvailable": "Žádné další štítky k přidání."
         },
+        "taskTemplates": {
+            "duplicate": "Duplikovat",
+            "duplicated": "Úkol zduplikován.",
+            "saveAsTemplate": "Uložit jako šablonu",
+            "namePrompt": "Název šablony:",
+            "saved": "Šablona uložena.",
+            "startFromTemplate": "Začít ze šablony…"
+        },
         "onboarding": {
             "shell": {
                 "gettingStarted": "Začínáme",

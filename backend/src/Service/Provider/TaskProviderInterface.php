@@ -72,6 +72,8 @@ interface TaskProviderInterface
 		?array $tagIds = null,
 	): Task;
 
+	public function duplicateTask(User $author, Task $task, ?string $name = null): Task;
+
 	/**
 	 * @param array<int, ?string>|null $fieldValues
 	 * @param list<int>|null $tagIds
