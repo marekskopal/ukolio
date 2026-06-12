@@ -14,6 +14,7 @@ use Ukolio\Model\Entity\User;
 use Ukolio\Model\Entity\Workspace;
 use Ukolio\Model\Repository\ScriptRepository;
 use Ukolio\Model\Repository\ScriptRunRepository;
+use Ukolio\Service\Script\Trigger\CronEvaluatorInterface;
 
 final readonly class ScriptProvider implements ScriptProviderInterface
 {
@@ -22,8 +23,11 @@ final readonly class ScriptProvider implements ScriptProviderInterface
 	private const int MaxScriptsPerWorkspace = 50;
 	private const int MaxScheduledPerWorkspace = 20;
 
-	public function __construct(private ScriptRepository $scriptRepository, private ScriptRunRepository $scriptRunRepository,)
-	{
+	public function __construct(
+		private ScriptRepository $scriptRepository,
+		private ScriptRunRepository $scriptRunRepository,
+		private CronEvaluatorInterface $cronEvaluator,
+	) {
 	}
 
 	/** @return Iterator<Script> */
@@ -35,6 +39,11 @@ final readonly class ScriptProvider implements ScriptProviderInterface
 	public function get(Workspace $workspace, int $scriptId): ?Script
 	{
 		return $this->scriptRepository->findOneByWorkspaceAndId($workspace->id, $scriptId);
+	}
+
+	public function getScript(int $scriptId): ?Script
+	{
+		return $this->scriptRepository->findById($scriptId);
 	}
 
 	public function create(
@@ -139,7 +148,31 @@ final readonly class ScriptProvider implements ScriptProviderInterface
 			throw new RuntimeException(sprintf('Trigger "%s" requires a configuration (cron expression or event types).', $trigger->value));
 		}
 
+		if ($trigger === ScriptTriggerEnum::Scheduled && !$this->cronEvaluator->isValid($triggerConfig)) {
+			throw new RuntimeException('Scheduled trigger requires a valid cron expression (e.g. "0 9 * * 1").');
+		}
+
+		if ($trigger === ScriptTriggerEnum::Event && !$this->isValidEventConfig($triggerConfig)) {
+			throw new RuntimeException('Event trigger requires a non-empty JSON array of event type names.');
+		}
+
 		return $triggerConfig;
+	}
+
+	private function isValidEventConfig(string $triggerConfig): bool
+	{
+		$decoded = json_decode($triggerConfig, true);
+		if (!is_array($decoded) || $decoded === []) {
+			return false;
+		}
+
+		foreach ($decoded as $eventType) {
+			if (!is_string($eventType) || $eventType === '') {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private function assertScheduledCapacity(Workspace $workspace, ScriptTriggerEnum $trigger, ?int $ignoreId): void

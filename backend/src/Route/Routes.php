@@ -76,6 +76,13 @@ enum Routes: string
 	case WorkspaceSavedViews = '/api/workspaces/{workspaceId:number}/saved-views';
 	case SavedView = '/api/saved-views/{savedViewId:number}';
 
+	case WorkspaceScripts = '/api/workspaces/{workspaceId:number}/scripts';
+	case Script = '/api/scripts/{scriptId:number}';
+	case ScriptRunNow = '/api/scripts/{scriptId:number}/run';
+	case ScriptRuns = '/api/scripts/{scriptId:number}/runs';
+	case WorkspaceScriptVariables = '/api/workspaces/{workspaceId:number}/script-variables';
+	case WorkspaceScriptVariable = '/api/workspaces/{workspaceId:number}/script-variables/{variableId:number}';
+
 	case AdminUsers = '/api/admin/users';
 	case AdminUser = '/api/admin/users/{userId:number}';
 	case AdminWorkspaces = '/api/admin/workspaces';

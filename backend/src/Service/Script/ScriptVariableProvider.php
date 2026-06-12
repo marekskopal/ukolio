@@ -31,6 +31,11 @@ final readonly class ScriptVariableProvider implements ScriptVariableProviderInt
 		return $this->scriptVariableRepository->findOneByWorkspaceAndKey($workspace->id, $key);
 	}
 
+	public function getById(Workspace $workspace, int $variableId): ?ScriptVariable
+	{
+		return $this->scriptVariableRepository->findOneByWorkspaceAndId($workspace->id, $variableId);
+	}
+
 	public function decrypt(ScriptVariable $variable): string
 	{
 		return $variable->isSecret ? $this->secretCipher->decrypt($variable->value) : $variable->value;

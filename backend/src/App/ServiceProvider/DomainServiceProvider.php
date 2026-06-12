@@ -77,6 +77,10 @@ use Ukolio\Service\Task\TaskService;
 use Ukolio\Service\Task\TaskServiceInterface;
 use Ukolio\Service\Script\Engine\ScriptEngineInterface;
 use Ukolio\Service\Script\Engine\V8JsScriptEngine;
+use Ukolio\Service\Script\Trigger\CronEvaluator;
+use Ukolio\Service\Script\Trigger\CronEvaluatorInterface;
+use Ukolio\Service\Script\Trigger\ScriptEventTrigger;
+use Ukolio\Service\Script\Trigger\ScriptEventTriggerInterface;
 use Ukolio\Service\Script\ScriptProvider;
 use Ukolio\Service\Script\ScriptProviderInterface;
 use Ukolio\Service\Script\ScriptRunDispatcher;
@@ -134,6 +138,8 @@ final class DomainServiceProvider extends AbstractServiceProvider
 			ScriptVariableProviderInterface::class,
 			ScriptProviderInterface::class,
 			ScriptRunDispatcherInterface::class,
+			CronEvaluatorInterface::class,
+			ScriptEventTriggerInterface::class,
 		], true);
 	}
 
@@ -188,5 +194,7 @@ final class DomainServiceProvider extends AbstractServiceProvider
 		$c->add(ScriptVariableProviderInterface::class, ScriptVariableProvider::class);
 		$c->add(ScriptProviderInterface::class, ScriptProvider::class);
 		$c->add(ScriptRunDispatcherInterface::class, ScriptRunDispatcher::class);
+		$c->add(CronEvaluatorInterface::class, CronEvaluator::class);
+		$c->add(ScriptEventTriggerInterface::class, ScriptEventTrigger::class);
 	}
 }

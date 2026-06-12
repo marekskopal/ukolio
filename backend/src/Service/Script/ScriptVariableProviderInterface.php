@@ -15,6 +15,8 @@ interface ScriptVariableProviderInterface
 
 	public function get(Workspace $workspace, string $key): ?ScriptVariable;
 
+	public function getById(Workspace $workspace, int $variableId): ?ScriptVariable;
+
 	/** Returns the plaintext value, decrypting transparently when the variable is a secret. */
 	public function decrypt(ScriptVariable $variable): string;
 

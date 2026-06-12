@@ -56,6 +56,8 @@ final readonly class ScriptRunner
 			maxTaskApiCalls: self::MaxTaskApiCalls,
 		);
 
+		ScriptExecutionGuard::enter();
+
 		try {
 			$hostApi = $this->hostApiFactory->create($context);
 			$result = $this->engine->execute($script->source, $hostApi, self::TimeLimitMs, self::MemoryLimitBytes);
@@ -66,6 +68,8 @@ final readonly class ScriptRunner
 			$this->logger->error('Script run crashed: ' . $e->getMessage(), ['scriptId' => $script->id, 'exception' => $e]);
 			$run->status = ScriptRunStatusEnum::Error;
 			$run->error = $e->getMessage();
+		} finally {
+			ScriptExecutionGuard::leave();
 		}
 
 		$finishedAt = new DateTimeImmutable();

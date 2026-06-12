@@ -57,4 +57,14 @@ final class ScriptRepository extends AbstractRepository
 			->where(['active' => true])
 			->fetchAll();
 	}
+
+	/** @return Iterator<Script> */
+	public function findActiveByWorkspaceAndTrigger(int $workspaceId, ScriptTriggerEnum $trigger): Iterator
+	{
+		return $this->select()
+			->where(['workspace_id' => $workspaceId])
+			->where(['trigger' => $trigger->value])
+			->where(['active' => true])
+			->fetchAll();
+	}
 }

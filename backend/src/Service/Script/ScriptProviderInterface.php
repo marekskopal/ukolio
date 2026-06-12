@@ -18,6 +18,9 @@ interface ScriptProviderInterface
 
 	public function get(Workspace $workspace, int $scriptId): ?Script;
 
+	/** Load a script by id without a workspace context; the caller must authorise against its workspace. */
+	public function getScript(int $scriptId): ?Script;
+
 	public function create(
 		User $author,
 		Workspace $workspace,
