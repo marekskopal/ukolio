@@ -206,6 +206,23 @@ final class TaskCommentControllerTest extends IntegrationTestCase
 		self::assertCount(50, $meta['mentionedUserIds']);
 	}
 
+	public function testMissingBodyIsRejectedWith422(): void
+	{
+		$owner = Fixture::createUser();
+		$workspace = Fixture::createWorkspace($owner);
+		$project = Fixture::createProject($owner, $workspace);
+		$taskId = $this->createTask($owner, $project->id, 'Task');
+
+		// No body key — must answer 422, not crash with an undefined-key error (500).
+		$response = $this->request(
+			'POST',
+			'/api/tasks/' . $taskId . '/comments',
+			body: ['parentCommentId' => null],
+			authenticatedAs: $owner,
+		);
+		self::assertSame(422, $response->getStatusCode());
+	}
+
 	public function testForeignTaskCommentsAreNotFound(): void
 	{
 		$owner = Fixture::createUser();
