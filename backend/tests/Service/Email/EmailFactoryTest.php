@@ -6,7 +6,9 @@ namespace Ukolio\Tests\Service\Email;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Ukolio\Dto\NotificationEmailQueueDto;
 use Ukolio\Model\Entity\Enum\LocaleEnum;
+use Ukolio\Model\Entity\Enum\NotificationTypeEnum;
 use Ukolio\Service\Email\EmailFactory;
 use Ukolio\Service\Translator\TranslatorService;
 
@@ -84,5 +86,34 @@ final class EmailFactoryTest extends TestCase
 		self::assertIsString($html);
 		self::assertStringContainsString('verify-token', $html);
 		self::assertStringContainsString('/verify-email?token=verify-token', $html);
+	}
+
+	public function testNotificationEmailLinksToTheTaskWithRootRelativePath(): void
+	{
+		putenv('PROXY_HOST=app.ukolio.example');
+		putenv('PROXY_PORT_SSL=443');
+		putenv('EMAIL_FROM=no-reply@ukolio.example');
+
+		$translator = new TranslatorService(__DIR__ . '/../../../translations');
+		$factory = new EmailFactory($translator);
+
+		$email = $factory->createNotificationEmail(new NotificationEmailQueueDto(
+			recipientEmail: 'watcher@example.com',
+			recipientName: 'Watcher',
+			locale: LocaleEnum::En,
+			type: NotificationTypeEnum::TaskMention,
+			actorName: 'Carol',
+			taskCode: 'UK-1',
+			taskName: 'Ship it',
+			projectId: 7,
+			statusName: null,
+			dueDate: null,
+		));
+
+		$html = $email->getHtmlBody();
+		self::assertIsString($html);
+		// Root-relative like the other emails — must not hardcode the SaaS-only /app prefix.
+		self::assertStringContainsString('https://app.ukolio.example/projects/7/board?task=UK-1', $html);
+		self::assertStringNotContainsString('/app/projects/', $html);
 	}
 }

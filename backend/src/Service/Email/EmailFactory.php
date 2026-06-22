@@ -66,8 +66,8 @@ final readonly class EmailFactory
 		$taskCode = $payload->taskCode ?? '';
 
 		$taskUrl = $payload->projectId !== null
-			? $this->appUrl . '/app/projects/' . $payload->projectId . '/board?task=' . urlencode($taskCode)
-			: $this->appUrl . '/app';
+			? $this->appUrl . '/projects/' . $payload->projectId . '/board?task=' . urlencode($taskCode)
+			: $this->appUrl;
 
 		$replace = [
 			'{actor}' => $payload->actorName ?? '',
