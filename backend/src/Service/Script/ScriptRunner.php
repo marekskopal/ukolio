@@ -15,6 +15,7 @@ use Ukolio\Model\Entity\ScriptRun;
 use Ukolio\Model\Repository\ScriptRepository;
 use Ukolio\Model\Repository\ScriptRunRepository;
 use Ukolio\Service\Provider\EventProviderInterface;
+use Ukolio\Service\Provider\WorkspaceProviderInterface;
 use Ukolio\Service\Script\Engine\ScriptEngineInterface;
 use Ukolio\Service\Script\Host\ScriptHostApiFactory;
 use Ukolio\Service\Script\Host\ScriptRunContext;
@@ -40,6 +41,7 @@ final readonly class ScriptRunner
 		private ScriptRepository $scriptRepository,
 		private ScriptVariableProviderInterface $variableProvider,
 		private EventProviderInterface $eventProvider,
+		private WorkspaceProviderInterface $workspaceProvider,
 		private LoggerInterface $logger,
 	) {
 	}
@@ -67,10 +69,17 @@ final readonly class ScriptRunner
 		ScriptExecutionGuard::enter();
 
 		try {
-			$hostApi = $this->hostApiFactory->create($context);
-			$result = $this->engine->execute($script->source, $hostApi, self::TimeLimitMs, self::MemoryLimitBytes);
-			$run->status = $result->status;
-			$run->error = $result->error;
+			// The script runs with its creator's identity for every host mutation. If that user has
+			// been removed from the workspace, refuse to execute rather than act with stale privileges.
+			if (!$this->workspaceProvider->isMember($script->createdBy, $script->workspace)) {
+				$run->status = ScriptRunStatusEnum::Error;
+				$run->error = 'Script owner is no longer a member of the workspace; run skipped.';
+			} else {
+				$hostApi = $this->hostApiFactory->create($context);
+				$result = $this->engine->execute($script->source, $hostApi, self::TimeLimitMs, self::MemoryLimitBytes);
+				$run->status = $result->status;
+				$run->error = $result->error;
+			}
 		} catch (Throwable $e) {
 			// Defensive: a host/engine fault must still close out the run row, not crash the worker.
 			$this->logger->error('Script run crashed: ' . $e->getMessage(), ['scriptId' => $script->id, 'exception' => $e]);
