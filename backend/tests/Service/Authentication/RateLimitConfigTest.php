@@ -16,6 +16,7 @@ final class RateLimitConfigTest extends TestCase
 	protected function tearDown(): void
 	{
 		putenv(self::PasswordResetEnv);
+
 		parent::tearDown();
 	}
 

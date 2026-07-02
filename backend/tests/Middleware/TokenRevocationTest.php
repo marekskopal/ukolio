@@ -40,8 +40,15 @@ final class TokenRevocationTest extends IntegrationTestCase
 		// The token is valid while the user is still at token version 0.
 		self::assertSame(200, $this->request('GET', '/api/current-user', bearerToken: $token)->getStatusCode());
 
-		// A password change bumps the token version, which must invalidate the old token.
-		$this->userProvider()->updateUserPassword($user, 'BrandNewPass1!');
+		// Change the password through the real endpoint (Fixture users start with 'TestPass1!').
+		// This bumps the token version, which must invalidate the token just used above.
+		$changed = $this->request(
+			'POST',
+			'/api/current-user/password',
+			body: ['currentPassword' => 'TestPass1!', 'newPassword' => 'BrandNewPass1!'],
+			bearerToken: $token,
+		);
+		self::assertSame(200, $changed->getStatusCode());
 
 		self::assertSame(401, $this->request('GET', '/api/current-user', bearerToken: $token)->getStatusCode());
 	}
