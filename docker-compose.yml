@@ -131,7 +131,7 @@ services:
             - ukolio_data:/var/lib/mysql
 
     adminer:
-        image: adminer:6.1.1
+        image: adminer:6.1.2
         restart: unless-stopped
         networks:
             - frontend
