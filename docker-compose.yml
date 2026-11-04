@@ -131,7 +131,7 @@ services:
             - ukolio_data:/var/lib/mysql
 
     adminer:
-        image: adminer:6.1.2
+        image: adminer:6.3.0
         restart: unless-stopped
         networks:
             - frontend
@@ -140,7 +140,7 @@ services:
             - dev
 
     mailpit:
-        image: axllent/mailpit:v1.31
+        image: axllent/mailpit:v1.33
         restart: unless-stopped
         networks:
             - backend
@@ -173,7 +173,7 @@ services:
             - backend
 
     redis:
-        image: redis:8.10.2-alpine
+        image: redis:8.10.3-alpine
         restart: unless-stopped
         environment:
             REDIS_PASSWORD: ${REDIS_PASSWORD}
