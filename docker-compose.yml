@@ -142,7 +142,7 @@ services:
             - dev
 
     mailpit:
-        image: axllent/mailpit:v1.33
+        image: axllent/mailpit:v1.34
         restart: unless-stopped
         networks:
             - backend
@@ -192,7 +192,7 @@ services:
             - ukolio_redis:/data
 
     rabbitmq:
-        image: rabbitmq:4.4.0-alpine
+        image: rabbitmq:4.4.1-alpine
         restart: unless-stopped
         environment:
             RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
